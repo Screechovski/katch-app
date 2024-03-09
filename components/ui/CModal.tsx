@@ -1,50 +1,70 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   Button,
   Dimensions,
+  GestureResponderEvent,
   Modal,
+  StyleSheet,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
-import { IChildren } from "../../model/Children";
+import { CButton } from "./CButton";
+import { COLORS } from "../../theme";
 
-type Props = {
-  children: IChildren;
+interface Props {
+  children: ReactNode;
   visible: boolean;
   onHide: () => void;
-};
+  style?: ViewStyle;
+}
+
+const style = StyleSheet.create({
+  wrap: {
+    flex: 1,
+  },
+});
 
 export function CModal(props: Props) {
-  const size = Dimensions.get("window");
+  function onPressHandler(e: GestureResponderEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    props.onHide();
+  }
+
+  if (!props.visible) return <></>;
 
   return (
-    <Modal visible={props.visible} animationType="slide" transparent={true}>
-      {props.visible && (
-        <TouchableOpacity
+    <Modal
+      style={[style.wrap, props.style]}
+      visible={props.visible}
+      animationType="slide"
+      transparent={true}
+    >
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          paddingVertical: 20,
+        }}
+        onPress={onPressHandler}
+      >
+        <View
           style={{
+            backgroundColor: COLORS.light.i4,
+            padding: 15,
+            borderRadius: 10,
+            marginBottom: 15,
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0,0,0,0.5)",
           }}
-          onPress={props.onHide}
         >
-          <View
-            style={{
-              backgroundColor: "white",
-              padding: 15,
-              width: size.width - 30,
-              height: size.height - 100,
-              borderRadius: 10,
-              marginBottom: 15,
-            }}
-          >
-            {props.children}
-          </View>
+          {props.children}
+        </View>
 
-          <Button title="Close" onPress={props.onHide} />
-        </TouchableOpacity>
-      )}
+        <CButton onPress={props.onHide}>Закрыть</CButton>
+      </TouchableOpacity>
     </Modal>
   );
 }

@@ -1,0 +1,4 @@
+export enum Routes {
+  CREATE_TRAINING = "CREATE_TRAINING",
+  VIEW_TRAINS = "VIEW_TRAINS",
+}

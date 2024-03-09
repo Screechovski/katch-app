@@ -1,17 +1,29 @@
 import { ExerciseList } from "../elements/ExerciseList";
-import { IExercise } from "../../model/PhysicalExercise";
+import { IPhysicalExercise } from "../../entity/PhysicalExercise";
 import { CModal } from "../ui/CModal";
+import { ExerciseListSearch } from "../elements/ExerciseListSearch";
+import { StyleSheet } from "react-native";
 
 interface Props {
   visible: boolean;
-  onSelect(item: IExercise): void;
+  onSelect(item: IPhysicalExercise): void;
   onVisible(flag: boolean): void;
 }
 
+const style = StyleSheet.create({
+  wrap: {
+    flex: 1,
+  },
+});
+
 export function ChooseExerciseModal(props: Props) {
   return (
-    <CModal visible={props.visible} onHide={() => props.onVisible(false)}>
-      <ExerciseList count={3} onPress={props.onSelect} />
+    <CModal
+      style={style.wrap}
+      visible={props.visible}
+      onHide={() => props.onVisible(false)}
+    >
+      <ExerciseListSearch count={3} onSelect={props.onSelect} />
     </CModal>
   );
 }

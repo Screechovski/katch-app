@@ -1,20 +1,18 @@
+import { Dimensions, FlatList, StyleProp } from "react-native";
 import {
-  Dimensions,
-  FlatList,
-  ScrollView,
-  StyleProp,
-  StyleSheet,
-} from "react-native";
-import { IExercise, exercises } from "../../model/PhysicalExercise";
-import { ExerciseCard } from "./ExerciseCard";
+  IPhysicalExercise,
+  exercises as exercisesStore,
+} from "../../entity/PhysicalExercise";
 import { useMemo } from "react";
+import { ExerciseCardVertical } from "./ExerciseCardVertical";
 
 const { width } = Dimensions.get("window");
 
 interface Props {
   count?: number;
+  exercises?: IPhysicalExercise[];
   style?: StyleProp<FlatList>;
-  onPress?(item: IExercise): void;
+  onPress?(item: IPhysicalExercise): void;
 }
 
 export function ExerciseList(props: Props) {
@@ -32,21 +30,30 @@ export function ExerciseList(props: Props) {
     return 3;
   }, [props.count]);
 
-  function pressHandler(item: IExercise) {
+  function pressHandler(item: IPhysicalExercise) {
     if ("onPress" in props && typeof props.onPress === "function") {
       props.onPress(item);
     }
   }
+
+  const exercises = useMemo(() => {
+    if (props.exercises) {
+      return props.exercises;
+    }
+    return exercisesStore;
+  }, [props.exercises]);
 
   return (
     <FlatList
       data={exercises}
       style={style}
       renderItem={({ item }) => (
-        <ExerciseCard
+        <ExerciseCardVertical
           onPress={() => pressHandler(item)}
           style={{ width: (width - 60) / count }}
-          {...item}
+          photo={item.photo}
+          name={item.name}
+          id={item.id}
         />
       )}
       numColumns={count}

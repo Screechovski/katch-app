@@ -1,55 +1,34 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, View } from "react-native";
 import { useState } from "react";
-import { IExercise } from "./model/PhysicalExercise";
-import { ChooseExerciseModal } from "./components/modal/ChooseExerciseModal";
-import { ExerciseCard } from "./components/elements/ExerciseCard";
-import { ApproachController } from "./components/elements/ApproachController";
+import { Routes } from "./router/router";
+import { MainPage } from "./components/pages/MainPage";
+import { TrainingPage } from "./components/pages/TrainingPage";
+import { ITraining } from "./entity/Training";
+import { HistoryPage } from "./components/pages/HistoryPage";
+import { CWrapper } from "./components/ui/CWrapper";
+import { Menu } from "./components/elements/Menu";
 
 export default function App() {
-  const [chooseExerciseIsOpen, toggleChooseExerciseIsOpen] = useState(false);
-  const [exercise, setExercise] = useState<IExercise | null>(null);
+  const [page, setPage] = useState(Routes.CREATE_TRAINING);
+  const [trains, setTrains] = useState<ITraining[]>([]);
 
-  function setExerciseProxy(item: IExercise) {
-    setExercise(item);
-    toggleChooseExerciseIsOpen(false);
+  function saveTraining(training: ITraining) {
+    setTrains((prev) => [...prev, training]);
+    setPage(Routes.VIEW_TRAINS)
   }
 
   return (
     <>
       <StatusBar style="dark" />
-      <View>
-        <View>
-          {/* <Datepicker date={trainingDate} onSelect={setTrainingDate} /> */}
-          {exercise === null && (
-            <Button
-              title="Выбрать упражнение"
-              onPress={() => toggleChooseExerciseIsOpen(true)}
-            />
-          )}
-          {exercise !== null && (
-            <>
-              <ExerciseCard {...exercise} />
-              <ApproachController approaches={[]} onAdd={() => {}} />
-            </>
-          )}
-        </View>
-      </View>
 
-      <ChooseExerciseModal
-        visible={chooseExerciseIsOpen}
-        onVisible={toggleChooseExerciseIsOpen}
-        onSelect={setExerciseProxy}
-      />
+      <CWrapper>
+        {page === Routes.CREATE_TRAINING && (
+          <TrainingPage saveTraining={saveTraining} />
+        )}
+        {page === Routes.VIEW_TRAINS && <HistoryPage trains={trains} />}
+      </CWrapper>
+
+      <Menu setPage={setPage} page={page} />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#222222",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

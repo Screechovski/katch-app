@@ -7,48 +7,68 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { IExercise } from "../../model/PhysicalExercise";
-import { color } from "../../theme";
+import { IPhysicalExercise } from "../../entity/PhysicalExercise";
+import { COLORS } from "../../theme";
 import { useMemo } from "react";
 
-type ExerciseCardProps = IExercise & {
+type ExerciseCardProps = IPhysicalExercise & {
   style?: StyleProp<ViewStyle>;
+  horizontal?: boolean;
   onPress?: (e: number) => void;
+  children?: JSX.Element | JSX.Element[];
 };
 
-const ExerciseCardStyle = StyleSheet.create({
-  wrapper: {
-    padding: 5,
-    borderStyle: "solid",
-    borderWidth: 1,
-  },
-  text: {
-    fontSize: 14,
-    textAlign: "center",
-    color: color.dark.i7,
-    height: 14 * 1.2 * 2,
-  },
-  inner: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  image: {
-    width: "100%",
-  },
-});
+const createStyle = (isHorizontal = false) =>
+  StyleSheet.create({
+    wrapper: {
+      padding: 5,
+    },
+    inner: {
+      display: "flex",
+      flexDirection: isHorizontal ? "row" : "column",
+      alignItems: isHorizontal ? "flex-start" : "center",
+      backgroundColor: COLORS.light.i2,
+      borderRadius: 10,
+      padding: 5,
+    },
+    image: {
+      width: isHorizontal ? 100 : "100%",
+      height: 100,
+      marginBottom: 5,
+    },
+    textWrap: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      marginLeft: isHorizontal ? 20 : 0,
+      marginTop: isHorizontal ? 5 : 0,
+    },
+    text: {
+      display: "flex",
+      flex: 1,
+      fontSize: isHorizontal ? 20 : 12,
+      textAlign: isHorizontal ? "left" : "center",
+      color: COLORS.dark.i7,
+      height: isHorizontal ? "auto" : 12 * 1.2 * 3,
+    },
+  });
 
 export function ExerciseCard(props: ExerciseCardProps) {
+  const style = useMemo(
+    () => createStyle(props.horizontal),
+    [props.horizontal]
+  );
+
   const wrapperStyle = useMemo(() => {
     if (props.style && typeof props.style === "object") {
       return {
         ...props.style,
-        ...ExerciseCardStyle.wrapper,
+        ...style.wrapper,
       };
     }
 
-    return ExerciseCardStyle.wrapper;
-  }, [props.style]);
+    return style.wrapper;
+  }, [props.style, props.horizontal]);
 
   function pressHandler() {
     if ("onPress" in props && typeof props.onPress === "function") {
@@ -58,9 +78,12 @@ export function ExerciseCard(props: ExerciseCardProps) {
 
   return (
     <Pressable style={wrapperStyle} onPress={pressHandler}>
-      <View style={ExerciseCardStyle.inner}>
-        <Image source={props.photo} style={ExerciseCardStyle.image} />
-        <Text style={ExerciseCardStyle.text}>{props.name}</Text>
+      <View style={style.inner}>
+        <Image source={props.photo} style={style.image} />
+        <View style={style.textWrap}>
+          <Text style={style.text}>{props.name}</Text>
+          {(props.children && props.horizontal) &&  props.children}
+        </View>
       </View>
     </Pressable>
   );

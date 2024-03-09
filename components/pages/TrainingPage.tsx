@@ -1,39 +1,102 @@
-import { Button, View } from "react-native";
+import { Text, View } from "react-native";
 import { useState } from "react";
 import { ChooseExerciseModal } from "../modal/ChooseExerciseModal";
-import { IExercise } from "../../model/PhysicalExercise";
-import { ExerciseCard } from "../elements/ExerciseCard";
+import { IPhysicalExercise } from "../../entity/PhysicalExercise";
+import { CButton } from "../ui/CButton";
+import { CWrapper } from "../ui/CWrapper";
+import { getPrettyDate } from "../../utility/prettyDate";
+import { ITraining, ITrainingExecise } from "../../entity/Training";
+import { ExerciseCardWithApprouches } from "../elements/ExerciseCardWithApprouches";
+import { ApproachCreate } from "../elements/ApproachCreate";
+import { IApproach } from "../../entity/Approach";
+import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
+import { COLORS } from "../../theme";
 
-export function TrainingPage() {
-  // const [trainingDate, setTrainingDate] = useState(new Date());
+interface Props {
+  saveTraining(training: ITraining): void;
+}
+
+export function TrainingPage(props: Props) {
   const [chooseExerciseIsOpen, toggleChooseExerciseIsOpen] = useState(false);
-  const [exercise, setExercise] = useState<IExercise | null>(null);
+  const [exercises, setExercise] = useState<ITrainingExecise[]>([]);
 
-  function setExerciseProxy(item: IExercise) {
-    setExercise(item);
+  const date = new Date();
+  const prettyDate = getPrettyDate(date);
+  const name = `train_${prettyDate}`;
+
+  function setExerciseProxy(item: IPhysicalExercise) {
+    setExercise((prev) => [
+      ...prev,
+      {
+        ...item,
+        trainingExeciseId: new Date().getTime(),
+        approuch: [],
+      },
+    ]);
     toggleChooseExerciseIsOpen(false);
   }
 
+  const addApprouch = (id: number) => (approuch: IApproach) =>
+    setExercise((prev) =>
+      prev.map((ex) => {
+        if (ex.trainingExeciseId !== id) return ex;
+
+        return {
+          ...ex,
+          approuch: [...ex.approuch, approuch],
+        };
+      }),
+    );
+
+  const save = () =>
+    props.saveTraining({
+      date,
+      name,
+      exercises: exercises,
+    });
+
   return (
     <>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "flex-end",
-          borderStyle: "solid",
-          borderWidth: 1,
-          padding: 20,
-        }}
-      >
-        {exercise === null && (
-          <Button
-            title="Выбрать упражнение"
-            onPress={() => toggleChooseExerciseIsOpen(true)}
-          />
+      <>
+        <Text>Дата: {prettyDate}</Text>
+        <Text>Название тренировки: {name}</Text>
+
+        <CWrapper style={{ marginBottom: 10 }} padding="s">
+          {exercises.map((ex, key) => (
+            <View
+              style={{
+                marginBottom: 7,
+                backgroundColor: COLORS.primary.i5,
+                borderRadius: 10,
+                padding: 10,
+              }}
+              key={key}
+            >
+              <ExerciseCardExpanded
+                id={ex.id}
+                name={ex.name}
+                photo={ex.photo}
+                approuch={ex.approuch}
+                trainingExeciseId={ex.trainingExeciseId}
+              />
+              <ApproachCreate onAdd={addApprouch(ex.trainingExeciseId)} />
+            </View>
+          ))}
+        </CWrapper>
+
+        <CButton
+          style={{ marginBottom: 10 }}
+          onPress={() => toggleChooseExerciseIsOpen(true)}
+        >
+          Добавить упражнение
+        </CButton>
+
+        {exercises.length > 0 && (
+          <CButton variant="success" onPress={save}>
+            Сохранить
+          </CButton>
         )}
-        {exercise !== null && <ExerciseCard {...exercise} />}
-      </View>
+      </>
 
       <ChooseExerciseModal
         visible={chooseExerciseIsOpen}
