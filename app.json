@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "fit-app-last",
+    "name": "KatchApp",
     "slug": "fit-app-last",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/weightlifting.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/weightlifting.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/weightlifting.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.dmyavl.fitapplast"
@@ -29,6 +29,7 @@
     },
     "extra": {
       "eas": {
+        "projectId": "778c3957-bfbd-4486-bef6-56151bb6c7a8"
       }
     }
   }

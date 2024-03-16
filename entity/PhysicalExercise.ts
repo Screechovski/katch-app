@@ -483,3 +483,7 @@ export const exercises: IPhysicalExercise[] = [
     id: 95,
   },
 ];
+
+export function getExerciseById(id: number) {
+  return exercises.find((ex) => ex.id === id);
+}

@@ -11,6 +11,7 @@ import { ApproachCreate } from "../elements/ApproachCreate";
 import { IApproach } from "../../entity/Approach";
 import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
 import { COLORS } from "../../theme";
+import { CInput } from "../ui/CInput";
 
 interface Props {
   saveTraining(training: ITraining): void;
@@ -22,7 +23,7 @@ export function TrainingPage(props: Props) {
 
   const date = new Date();
   const prettyDate = getPrettyDate(date);
-  const name = `train_${prettyDate}`;
+  const [name, setName] = useState(`train_${prettyDate}`);
 
   function setExerciseProxy(item: IPhysicalExercise) {
     setExercise((prev) => [
@@ -48,18 +49,27 @@ export function TrainingPage(props: Props) {
       }),
     );
 
-  const save = () =>
+  function save() {
+    const date = new Date();
+
     props.saveTraining({
-      date,
+      date: date,
       name,
-      exercises: exercises,
+      exercises,
     });
+  }
 
   return (
     <>
       <>
-        <Text>Дата: {prettyDate}</Text>
-        <Text>Название тренировки: {name}</Text>
+        <Text style={{ marginTop: 20 }}>Дата: {prettyDate}</Text>
+
+        <CInput
+          placeholder={name}
+          value={name}
+          onInput={setName}
+          label="Название тренировки"
+        />
 
         <CWrapper style={{ marginBottom: 10 }} padding="s">
           {exercises.map((ex, key) => (

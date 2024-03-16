@@ -1,20 +1,18 @@
 import {
   Image,
-  Pressable,
   StyleProp,
   StyleSheet,
   Text,
   View,
   ViewStyle,
 } from "react-native";
-import { COLORS } from "../../theme";
-import { useMemo } from "react";
-import { ITrainingExecise } from "../../entity/Training";
 import { CIconButton } from "../ui/CIconButton";
+import { COLORS } from "../../theme";
+import { ITrainingExecise } from "../../entity/Training";
+import { useMemo } from "react";
 
-type ExerciseCardProps = ITrainingExecise & {
+type Props = ITrainingExecise & {
   style?: StyleProp<ViewStyle>;
-  onPress?: (e: number) => void;
   children?: JSX.Element | JSX.Element[];
 };
 
@@ -25,10 +23,10 @@ const style = StyleSheet.create({
     gap: 5,
   },
   image: {
-    width: 90,
-    height: 81,
+    width: 70,
+    height: 70 * 0.9,
     marginRight: 10,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   content: {
     flexDirection: "row",
@@ -37,12 +35,11 @@ const style = StyleSheet.create({
   },
   textLine: {
     flexDirection: "row",
-    gap: 5,
-    marginBottom: 3,
+    marginBottom: -3,
   },
   text: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "left",
     color: COLORS.dark.i7,
     height: "auto",
@@ -54,21 +51,20 @@ const style = StyleSheet.create({
   approachesList: {
     flexDirection: "column",
     alignItems: "flex-start",
-    gap: 5,
   },
   approaches: {
     alignItems: "center",
     flexDirection: "row",
-    gap: 10,
+    gap: 5,
   },
   approachesText: {
-    fontSize: 16,
+    fontSize: 14,
     width: 64,
     textAlign: "right",
   },
 });
 
-export function ExerciseCardExpanded(props: ExerciseCardProps) {
+export function ExerciseCardHistory(props: Props) {
   const wrapperStyle = useMemo(() => {
     if (props.style && typeof props.style === "object") {
       return {
@@ -80,24 +76,11 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
     return style.wrapper;
   }, [props.style]);
 
-  function pressHandler() {
-    if ("onPress" in props && typeof props.onPress === "function") {
-      props.onPress(props.id);
-    }
-  }
-
   return (
-    <Pressable style={wrapperStyle} onPress={pressHandler}>
+    <View style={wrapperStyle}>
       <View style={style.inner}>
         <View style={style.textLine}>
           <Text style={style.text}>{props.name}</Text>
-
-          <CIconButton
-            onPress={() => {}}
-            size="m"
-            variant="error"
-            name="close"
-          />
         </View>
 
         <View style={style.content}>
@@ -116,19 +99,11 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
                   </Text>
                   <Text style={style.approachesText}>{ap.weight} вес</Text>
                 </View>
-
-                <CIconButton
-                  name="close"
-                  iconColor={COLORS.light.i2}
-                  variant="error"
-                  onPress={() => {}}
-                  size="s"
-                />
               </View>
             ))}
           </View>
         </View>
       </View>
-    </Pressable>
+    </View>
   );
 }

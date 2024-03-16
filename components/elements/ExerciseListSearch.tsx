@@ -1,9 +1,11 @@
-import { StyleSheet, TextInput, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { ExerciseList } from "./ExerciseList";
 import { IPhysicalExercise } from "../../entity/PhysicalExercise";
 import { exercises } from "../../entity/PhysicalExercise";
 import { useMemo, useState } from "react";
 import { CInput } from "../ui/CInput";
+
+const { width } = Dimensions.get("window");
 
 interface Props {
   count: number;
@@ -11,16 +13,26 @@ interface Props {
 }
 
 const ExerciseListSearchStyle = StyleSheet.create({
-  wrap: { flex: 1, display: "flex", flexDirection: "column" },
+  wrap: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    width: width - 60,
+  },
   input: { marginBottom: 15 },
+  emptyText: {
+    width: "100%",
+    textAlign: "center",
+  },
 });
 
 export function ExerciseListSearch(props: Props) {
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const filteredExercises = useMemo<IPhysicalExercise[]>(() => {
-    return exercises.filter((ex) => ex.name.includes(searchValue));
-  }, []);
+  const filteredExercises = useMemo<IPhysicalExercise[]>(
+    () => exercises.filter((ex) => ex.name.includes(searchValue)),
+    [searchValue],
+  );
 
   return (
     <View style={ExerciseListSearchStyle.wrap}>
@@ -31,11 +43,17 @@ export function ExerciseListSearch(props: Props) {
         placeholder="Поиск"
       />
 
-      <ExerciseList
-        exercises={filteredExercises}
-        count={3}
-        onPress={props.onSelect}
-      />
+      {filteredExercises.length > 0 && (
+        <ExerciseList
+          exercises={filteredExercises}
+          count={3}
+          onPress={props.onSelect}
+        />
+      )}
+
+      {filteredExercises.length === 0 && (
+        <Text style={ExerciseListSearchStyle.emptyText}>Пусто</Text>
+      )}
     </View>
   );
 }

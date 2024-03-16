@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { COLORS } from "../../theme";
 
@@ -12,7 +12,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const createStyle = (bgColor: string) =>
+const createStyle = (isActive: boolean, bgColor: string, borderColor: string) =>
   StyleSheet.create({
     wrap: {
       height: 40,
@@ -20,29 +20,47 @@ const createStyle = (bgColor: string) =>
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 10,
+      borderRadius: 8,
+      borderLeftWidth: 1,
+      borderTopWidth: 1,
+      borderBottomWidth: isActive ? 1 : 3,
+      borderRightWidth: isActive ? 1 : 3,
+      borderTopColor: bgColor,
+      borderLeftColor: bgColor,
+      borderBottomColor: borderColor,
+      borderRightColor: borderColor,
     },
   });
 
 export function CButtonBase(props: Props) {
+  const [isActive, setIsActive] = useState(false);
+
   const style = useMemo(() => {
     switch (props.variant) {
       case "error":
-        return createStyle(COLORS.danger.i6);
+        return createStyle(isActive, COLORS.danger.i6, COLORS.danger.i7);
       case "success":
-        return createStyle(COLORS.success.i7);
+        return createStyle(isActive, COLORS.success.i7, COLORS.success.i9);
       case "warning":
-        return createStyle(COLORS.warning.i9);
+        return createStyle(isActive, COLORS.warning.i8, COLORS.warning.i9);
       default:
-        return createStyle(COLORS.primary.i90);
+        return createStyle(isActive, COLORS.primary.i70, COLORS.primary.i90);
     }
-  }, [props.variant]);
+  }, [props.variant, isActive]);
+
+  function pressHandler(){
+    if (props.disabled) return;
+
+    setIsActive(true);
+    props.onPress();
+    setTimeout(() => setIsActive(false), 300)
+  }
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={[style.wrap, props.style].flat()}
-      onPress={props.onPress}
+      onPress={pressHandler}
       disabled={props.disabled}
     >
       {props.children}

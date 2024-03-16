@@ -55,7 +55,7 @@ export function Menu(props: Props) {
       style={{
         flexDirection: "row",
         backgroundColor: COLORS.primary.i90,
-        paddingBottom: 10,
+        paddingBottom: 7,
       }}
     >
       <TouchableOpacity
