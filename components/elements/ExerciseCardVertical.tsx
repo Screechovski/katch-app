@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { IPhysicalExercise } from "../../entity/PhysicalExercise";
+import { IPhysicalExercise } from "../../entity/IExercise";
 import { COLORS } from "../../theme";
 import { useMemo } from "react";
 

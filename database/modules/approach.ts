@@ -1,4 +1,4 @@
-import { IDB } from "../types";
+import { IDB, IDBRow } from "../types";
 
 export class Approach {
   id: number;
@@ -6,18 +6,11 @@ export class Approach {
   repetitions: number;
   approaches: number;
 
-  constructor(
-    options: Partial<{
-      id: number;
-      weight: number;
-      repetitions: number;
-      approaches: number;
-    }>,
-  ) {
-    this.id = options.id ?? -1;
-    this.weight = options.weight ?? -1;
-    this.repetitions = options.repetitions ?? -1;
-    this.approaches = options.approaches ?? -1;
+  constructor(options: IDBRow) {
+    this.id = +(options.id ?? -1);
+    this.weight = +(options.weight ?? -1);
+    this.repetitions = +(options.repetitions ?? -1);
+    this.approaches = +(options.approaches ?? -1);
   }
 }
 
@@ -34,7 +27,7 @@ export function createApproachModule(db: IDB) {
     async insert(data: Omit<Approach, "id">): Promise<number> {
       const res = await db(
         "INSERT INTO approach (approach,repetitions,weight) VALUES (?, ?, ?)",
-        [data.approaches, data.repetitions, data.weight],
+        [data.approach, data.repetitions, data.weight],
       );
 
       return res.id;

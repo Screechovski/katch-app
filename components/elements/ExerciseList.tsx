@@ -2,7 +2,7 @@ import { Dimensions, FlatList, StyleProp } from "react-native";
 import {
   IPhysicalExercise,
   exercises as exercisesStore,
-} from "../../entity/PhysicalExercise";
+} from "../../entity/IExercise";
 import { useMemo } from "react";
 import { ExerciseCardVertical } from "./ExerciseCardVertical";
 

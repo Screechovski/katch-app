@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { IApproach } from "../../entity/Approach";
+import { IApproach } from "../../entity/IApproach";
 import { CInput } from "../ui/CInput";
 import { CIconButton } from "../ui/CIconButton";
 import { useState } from "react";
@@ -24,12 +24,11 @@ export function ApproachCreate(props: Props) {
   const [weight, setWeight] = useState("40");
 
   function addHandler() {
-    // TODO validation
-    props.onAdd({
+    props.onAdd(new IApproach({
       weight: +weight,
       approaches: +approaches,
       repetitions: +repetitions,
-    });
+    }));
   }
 
   return (

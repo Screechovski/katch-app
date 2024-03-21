@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { ExerciseList } from "./ExerciseList";
-import { IPhysicalExercise } from "../../entity/PhysicalExercise";
-import { exercises } from "../../entity/PhysicalExercise";
+import { IPhysicalExercise } from "../../entity/IExercise";
+import { exercises } from "../../entity/IExercise";
 import { useMemo, useState } from "react";
 import { CInput } from "../ui/CInput";
 

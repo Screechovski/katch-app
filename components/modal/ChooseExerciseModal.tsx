@@ -1,5 +1,5 @@
 import { ExerciseList } from "../elements/ExerciseList";
-import { IPhysicalExercise } from "../../entity/PhysicalExercise";
+import { IPhysicalExercise } from "../../entity/IExercise";
 import { CModal } from "../ui/CModal";
 import { ExerciseListSearch } from "../elements/ExerciseListSearch";
 import { StyleSheet } from "react-native";

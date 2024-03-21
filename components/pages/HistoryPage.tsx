@@ -1,26 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import { ITraining } from "../../entity/Training";
+import { ITraining } from "../../entity/ITraining";
 import { useEffect, useMemo, useState } from "react";
 import { COLORS } from "../../theme";
-import { getTraining } from "../../database";
-import { getExerciseById } from "../../entity/PhysicalExercise";
 import { CButton } from "../ui/CButton";
-import { SQLResultSet } from "expo-sqlite";
 import { TrainingCard } from "../elements/TrainingCard";
-
-interface DBRow {
-  name: string;
-  date: Date;
-  id: number;
-  id_exercise: number;
-  approach: number;
-  repetitions: number;
-  weight: number;
-}
-
-interface Props {
-  cleanHistory(): Promise<void>;
-}
+import { Database } from "../../database/database";
 
 const style = StyleSheet.create({
   first: { marginBottom: 10, marginTop: 20 },
@@ -35,77 +19,19 @@ const style = StyleSheet.create({
   },
 });
 
-export function HistoryPage(props: Props) {
+export function HistoryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [trainings, setTrainings] = useState<ITraining[]>([]);
   const [clickCleanCount, setClickCleanCount] = useState(0);
 
-  function readDbRows(sqlRes: SQLResultSet) {
-    const res: DBRow[] = [];
-
-    for (let i = 0; i < sqlRes.rows.length; i++) {
-      const item = sqlRes.rows.item(i);
-
-      res.push({
-        name: item.name,
-        date: new Date(item.date),
-        id: item.id,
-        id_exercise: item.id_exercise,
-        approach: item.approach,
-        repetitions: item.repetitions,
-        weight: item.weight,
-      });
-    }
-
-    return res;
-  }
-
-  function flatTrainingObject(object: any) {
-    return Object.values(object).map((tr: any) => ({
-      ...tr,
-      exercises: Object.values(tr.exercises),
-    })) as ITraining[];
-  }
-
-  // FIXME refactor thi shit
   async function loadAndConvertTrainings() {
-    const dbRes = await getTraining();
-
-    const dbRows = readDbRows(dbRes);
-
-    const res: any = {};
-
-    dbRows.forEach((item) => {
-      if (res[item.id] === undefined) {
-        res[item.id] = {
-          id: item.id,
-          date: item.date,
-          name: item.name,
-          exercises: {},
-        };
-      }
-
-      if (res[item.id].exercises[item.id_exercise] === undefined) {
-        res[item.id].exercises[item.id_exercise] = {
-          id: item.id_exercise,
-          name: getExerciseById(item.id_exercise)!.name,
-          photo: getExerciseById(item.id_exercise)!.photo,
-          approuch: [],
-        };
-      }
-
-      res[item.id].exercises[item.id_exercise].approuch.push({
-        approaches: item.approach,
-        repetitions: item.repetitions,
-        weight: item.weight,
-      });
-    });
-
-    return flatTrainingObject(res).reverse();
+    return [];
   }
 
   async function load() {
     setIsLoading(true);
+    console.log(Database.readTrainings());
+
     const dbRows = await loadAndConvertTrainings();
 
     setTrainings(dbRows);
@@ -116,7 +42,7 @@ export function HistoryPage(props: Props) {
     if (clickCleanCount < 2) {
       setClickCleanCount((v) => v + 1);
     } else {
-      await props.cleanHistory();
+      await Database.drop();
       load();
       setClickCleanCount(0);
     }
@@ -127,6 +53,17 @@ export function HistoryPage(props: Props) {
   }, []);
 
   const hasTrainings = useMemo(() => trainings.length > 0, [trainings]);
+
+  const cleanText = useMemo(
+    () => {
+      if (clickCleanCount === 2){
+        return 'Очистить базу'
+      }
+
+      return `Очистить базу (${(2 - clickCleanCount).toString()})`;
+    },
+    [clickCleanCount],
+  );
 
   if (isLoading) {
     return <Text style={style.first}>Loading...</Text>;
@@ -139,7 +76,7 @@ export function HistoryPage(props: Props) {
         onPress={cleanDBClickHandler}
         variant="error"
       >
-        Очистить базу
+        {cleanText}
       </CButton>
 
       <View style={style.list}>

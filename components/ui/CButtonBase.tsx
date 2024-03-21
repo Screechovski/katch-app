@@ -35,25 +35,43 @@ const createStyle = (isActive: boolean, bgColor: string, borderColor: string) =>
 export function CButtonBase(props: Props) {
   const [isActive, setIsActive] = useState(false);
 
-  const style = useMemo(() => {
+  const colors = useMemo(() => {
     switch (props.variant) {
       case "error":
-        return createStyle(isActive, COLORS.danger.i6, COLORS.danger.i7);
+        return [COLORS.danger.i6, COLORS.danger.i7];
       case "success":
-        return createStyle(isActive, COLORS.success.i7, COLORS.success.i9);
+        return [COLORS.success.i7, COLORS.success.i9];
       case "warning":
-        return createStyle(isActive, COLORS.warning.i8, COLORS.warning.i9);
+        return [COLORS.warning.i8, COLORS.warning.i9];
       default:
-        return createStyle(isActive, COLORS.primary.i70, COLORS.primary.i90);
+        return [COLORS.primary.i70, COLORS.primary.i90];
     }
-  }, [props.variant, isActive]);
+  }, [props.variant]);
 
-  function pressHandler(){
+  const style = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          height: 40,
+          backgroundColor: colors[0],
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 8,
+          borderWidth: 3,
+          borderColor: colors[1],
+          opacity: props.disabled ? 0.5 : 1,
+        },
+      }),
+    [props.variant, colors, props.disabled],
+  );
+
+  function pressHandler() {
     if (props.disabled) return;
 
     setIsActive(true);
     props.onPress();
-    setTimeout(() => setIsActive(false), 300)
+    setTimeout(() => setIsActive(false), 300);
   }
 
   return (

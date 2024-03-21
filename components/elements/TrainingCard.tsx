@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import { ExerciseCardHistory } from "./ExerciseCardHistory";
-import { ITrainingExecise } from "../../entity/Training";
 import { getPrettyDate } from "../../utility/prettyDate";
 import { COLORS } from "../../theme";
+import { IExerciseApproach } from "../../entity/IExerciseApproach";
 
 interface Props {
   name: string;
   date: Date;
-  exercises: ITrainingExecise[];
+  exercises: IExerciseApproach[];
 }
 
 const style = StyleSheet.create({
@@ -42,11 +42,10 @@ export function TrainingCard(props: Props) {
         {props.exercises.map((ex, i) => (
           <ExerciseCardHistory
             key={i}
-            approuch={ex.approuch}
-            id={ex.id}
-            name={ex.name}
-            photo={ex.photo}
-            trainingExeciseId={ex.trainingExeciseId}
+            approaches={ex.approaches}
+            id={ex.exercise.id}
+            name={ex.exercise.name}
+            photo={ex.exercise.photo}
           />
         ))}
       </View>

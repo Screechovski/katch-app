@@ -4,10 +4,11 @@ import { createExerciseApproachModule } from "./modules/exerciseApproach";
 import { createTrainingExerciseApproachModule } from "./modules/trainingExerciseApproach";
 import { createTrainingModule } from "./modules/training";
 import { IDB } from "./types";
+import { ITraining } from "../entity/ITraining";
+
+const db = SQLite.openDatabase("primary.db");
 
 const dbExecuter = (command: string, params?: (string | number)[]) => {
-  const db = SQLite.openDatabase("primary.db");
-
   return new Promise<Awaited<ReturnType<IDB>>>((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -34,24 +35,96 @@ const trainingModule = createTrainingModule(dbExecuter);
 const trainingExerciseApproachModule =
   createTrainingExerciseApproachModule(dbExecuter);
 
-export async function init() {
+async function init() {
   await approachModule.createTable();
   await exerciseApproachModule.createTable();
   await trainingModule.createTable();
   await trainingExerciseApproachModule.createTable();
 }
 
-export async function drop() {
+async function drop() {
   await approachModule.dropTable();
   await exerciseApproachModule.dropTable();
   await trainingModule.dropTable();
   await trainingExerciseApproachModule.dropTable();
 }
 
-export async function reset() {
+async function reset() {
   await drop();
   await init();
 }
+
+async function insertTraining(training: ITraining) {
+  const idTraining = await trainingModule.insert({
+    name: training.name,
+    date: training.date,
+  });
+
+  console.log({ idTraining });
+
+  for (let i = 0; i < training.exercises.length; i++) {
+    const exercise = training.exercises[i];
+    const approachIds: number[] = [];
+    const exerciseApproachModuleIds: number[] = [];
+
+    for (let j = 0; j < exercise.approaches.length; j++) {
+      const approach = exercise.approaches[j];
+
+      approachIds.push(await approachModule.insert(approach));
+    }
+
+    console.log({ approachIds });
+
+    for (let j = 0; j < approachIds.length; j++) {
+      const idApproach = approachIds[j];
+
+      exerciseApproachModuleIds.push(
+        await exerciseApproachModule.insert({
+          idApproach,
+          idExercise: exercise.exercise.id,
+        }),
+      );
+    }
+
+    console.log({ exerciseApproachModuleIds });
+
+    for (let j = 0; j < exerciseApproachModuleIds.length; j++) {
+      const exerciseApproachModuleId = exerciseApproachModuleIds[j];
+
+      await trainingExerciseApproachModule.insert({
+        idExerciseApproach: exerciseApproachModuleId,
+        idTraining,
+      });
+    }
+  }
+}
+
+async function readTrainings() {
+  await trainingExerciseApproachModule.read();
+}
+
+export const Database = {
+  drop,
+  init,
+  reset,
+  insertTraining,
+  readTrainings,
+};
+
+// export async function loadTrainings() {
+//   return await dbExecuter(`SELECT
+//     training.name,
+//     training.date,
+//     training.id,
+//     exercise_approach.id_exercise,
+//     approach.approach,
+//     approach.repetitions,
+//     approach.weight
+//     FROM training_exercise_approach
+//     JOIN training ON training_exercise_approach.id_training = training.id
+//     JOIN exercise_approach ON training_exercise_approach.id_exercise_approach = exercise_approach.id
+//     JOIN approach ON exercise_approach.id_approach = approach.id;`);
+// }
 
 // type IExecuter<T extends IExecuterT> = (
 //   command: string,
@@ -103,7 +176,7 @@ export function createDatabase(dbExecuter: IExecuter<IExecuterT>) {
       "DROP exercise_approach",
     ),
     createExerciseApproachTable: executerWrapper(
-      "CREATE TABLE IF NOT EXISTS exercise_approach (id integer primary key AUTOINCREMENT,id_approach integer NOT NULL,id_exercise integer NOT NULL,FOREIGN KEY(id) REFERENCES approach(id));",
+CREATE TABLE IF NOT EXISTS exercise_approach (id integer primary key AUTOINCREMENT,id_approach integer NOT NULL,id_exercise integer NOT NULL,FOREIGN KEY(id) REFERENCES approach(id));      "",
       "CREATE exercise_approach",
     ),
     dropTrainingTable: executerWrapper(

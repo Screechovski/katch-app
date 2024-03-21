@@ -1,62 +1,129 @@
 import { Text, View } from "react-native";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChooseExerciseModal } from "../modal/ChooseExerciseModal";
-import { IPhysicalExercise } from "../../entity/PhysicalExercise";
 import { CButton } from "../ui/CButton";
 import { CWrapper } from "../ui/CWrapper";
 import { getPrettyDate } from "../../utility/prettyDate";
-import { ITraining, ITrainingExecise } from "../../entity/Training";
-import { ExerciseCardWithApprouches } from "../elements/ExerciseCardWithApprouches";
 import { ApproachCreate } from "../elements/ApproachCreate";
-import { IApproach } from "../../entity/Approach";
+import { IApproach } from "../../entity/IApproach";
 import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
 import { COLORS } from "../../theme";
 import { CInput } from "../ui/CInput";
+import { IExercise } from "../../entity/IExercise";
+import { IExerciseApproach } from "../../entity/IExerciseApproach";
+import { Database } from "../../database/database";
+import { Storage } from "../../storage/storage";
+import { ITraining } from "../../entity/ITraining";
+import { debounce } from "../../utility/debounse";
 
 interface Props {
-  saveTraining(training: ITraining): void;
+  callback: () => void;
 }
 
 export function TrainingPage(props: Props) {
+  const [isLoading, setIsLoading] = useState(false);
   const [chooseExerciseIsOpen, toggleChooseExerciseIsOpen] = useState(false);
-  const [exercises, setExercise] = useState<ITrainingExecise[]>([]);
-
+  const [exercises, setExercise] = useState<IExerciseApproach[]>([]);
   const date = new Date();
   const prettyDate = getPrettyDate(date);
   const [name, setName] = useState(`train_${prettyDate}`);
 
-  function setExerciseProxy(item: IPhysicalExercise) {
+  useEffect(() => {
+    Storage.read()
+      .then((tr) => {
+        console.log({ tr });
+
+        setName(tr.name);
+        setExercise(tr.exercises);
+      })
+      .catch(console.warn);
+  }, []);
+
+  const isDisabled = useMemo(() => {
+    if (exercises.length === 0) {
+      return true;
+    }
+
+    if (exercises.some((ex) => ex.approaches.length === 0)) {
+      return true;
+    }
+
+    return false;
+  }, [exercises]);
+
+  const currentTrain = useMemo<ITraining>(() => {
+    const date = new Date();
+
+    return {
+      date,
+      name,
+      exercises,
+    };
+  }, [name, exercises]);
+
+  useEffect(() => {
+    if (exercises.length === 0) {
+      return;
+    }
+    Storage.save(currentTrain);
+  }, [exercises, name]);
+
+  function addExercise(exercise: IExercise) {
     setExercise((prev) => [
       ...prev,
       {
-        ...item,
-        trainingExeciseId: new Date().getTime(),
-        approuch: [],
+        id: new Date().getTime(),
+        exercise,
+        approaches: [],
       },
     ]);
     toggleChooseExerciseIsOpen(false);
   }
 
-  const addApprouch = (id: number) => (approuch: IApproach) =>
+  const addApprouch = (id: number) => (approuch: IApproach) => {
     setExercise((prev) =>
       prev.map((ex) => {
-        if (ex.trainingExeciseId !== id) return ex;
+        if (ex.id !== id) return ex;
 
         return {
           ...ex,
-          approuch: [...ex.approuch, approuch],
+          approaches: [...ex.approaches, approuch],
         };
       }),
     );
+  };
 
-  function save() {
-    const date = new Date();
+  function deleteExercise(id: number) {
+    setExercise((prev) => prev.filter((ex) => ex.id !== id));
+  }
 
-    props.saveTraining({
-      date: date,
-      name,
-      exercises,
-    });
+  function deleteApprouch(exId: number, apId: number) {
+    setExercise((prev) =>
+      prev.map((ex) => {
+        if (ex.id !== exId) {
+          return ex;
+        }
+
+        return {
+          ...ex,
+          approaches: ex.approaches.filter((ap) => ap.id !== apId),
+        };
+      }),
+    );
+  }
+
+  async function save() {
+    setIsLoading(true);
+
+    await Database.insertTraining(currentTrain);
+    Storage.clear();
+    props.callback();
+
+    setIsLoading(false);
+  }
+
+  if (isLoading) {
+    return <Text>Loading</Text>;
   }
 
   return (
@@ -83,13 +150,14 @@ export function TrainingPage(props: Props) {
               key={key}
             >
               <ExerciseCardExpanded
-                id={ex.id}
-                name={ex.name}
-                photo={ex.photo}
-                approuch={ex.approuch}
-                trainingExeciseId={ex.trainingExeciseId}
+                id={ex.exercise.id}
+                name={ex.exercise.name}
+                photo={ex.exercise.photo}
+                approuches={ex.approaches}
+                onDeleteExercise={() => deleteExercise(ex.id)}
+                onDeleteApprouch={(id: number) => deleteApprouch(ex.id, id)}
               />
-              <ApproachCreate onAdd={addApprouch(ex.trainingExeciseId)} />
+              <ApproachCreate onAdd={addApprouch(ex.id)} />
             </View>
           ))}
         </CWrapper>
@@ -102,7 +170,7 @@ export function TrainingPage(props: Props) {
         </CButton>
 
         {exercises.length > 0 && (
-          <CButton variant="success" onPress={save}>
+          <CButton disabled={isDisabled} variant="success" onPress={save}>
             Сохранить
           </CButton>
         )}
@@ -111,7 +179,7 @@ export function TrainingPage(props: Props) {
       <ChooseExerciseModal
         visible={chooseExerciseIsOpen}
         onVisible={toggleChooseExerciseIsOpen}
-        onSelect={setExerciseProxy}
+        onSelect={addExercise}
       />
     </>
   );

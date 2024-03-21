@@ -7,3 +7,7 @@ export type IDB = (
   id: number;
   rows: IDBRow[];
 }>;
+
+type Nullable<T extends Record<string, number | string>> = {
+  [key in keyof T]: T[key] | undefined | null;
+};

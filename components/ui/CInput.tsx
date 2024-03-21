@@ -24,7 +24,7 @@ export function CInput(props: Props) {
     input: {
       paddingHorizontal: 15,
       borderRadius: 10,
-      borderWidth: 2,
+      borderWidth: 3,
       borderColor: isDisabled ? COLORS.dark.i3 : COLORS.primary.i90,
       backgroundColor: isDisabled ? COLORS.light.i4 : COLORS.light.i2,
       color: isDisabled ? COLORS.dark.i4 : COLORS.primary.i80,

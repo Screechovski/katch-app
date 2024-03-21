@@ -1,12 +1,6 @@
 import { ImagePropsBase } from "react-native";
 
-export type IPhysicalExercise = {
-  id: number;
-  name: string;
-  photo: ImagePropsBase;
-};
-
-export const exercises: IPhysicalExercise[] = [
+export const exercises: IExercise[] = [
   {
     photo: require("../assets/exercise/1.jpg"),
     name: "Шраги со штангой",
@@ -482,8 +476,26 @@ export const exercises: IPhysicalExercise[] = [
     name: "Подъем EZ-штанги на бицепс на скамье Скотта",
     id: 95,
   },
-];
+] as const;
 
 export function getExerciseById(id: number) {
   return exercises.find((ex) => ex.id === id);
+}
+
+export class IExercise {
+  id: number;
+  name: string;
+  photo: ImagePropsBase;
+
+  constructor(id: number) {
+    let ex = getExerciseById(id);
+
+    if (!ex) {
+      ex = exercises[0];
+    }
+
+    this.id = ex.id;
+    this.name = ex.name;
+    this.photo = ex.photo;
+  }
 }

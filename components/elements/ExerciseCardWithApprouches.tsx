@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { ITrainingExecise } from "../../entity/Training";
+import { ITrainingExecise } from "../../entity/ITraining";
 import { ExerciseCard } from "./ExerciseCard";
 
 export function ExerciseCardWithApprouches(props: Omit<ITrainingExecise, 'trainingExeciseId'>) {

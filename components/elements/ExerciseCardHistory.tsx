@@ -6,12 +6,12 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { CIconButton } from "../ui/CIconButton";
 import { COLORS } from "../../theme";
-import { ITrainingExecise } from "../../entity/Training";
 import { useMemo } from "react";
+import { IExerciseApproach } from "../../entity/IExerciseApproach";
 
-type Props = ITrainingExecise & {
+type Props = IExerciseApproach['exercise'] & {
+  approaches: IExerciseApproach['approaches'],
   style?: StyleProp<ViewStyle>;
   children?: JSX.Element | JSX.Element[];
 };
@@ -87,7 +87,7 @@ export function ExerciseCardHistory(props: Props) {
           <Image source={props.photo} style={style.image} />
 
           <View style={style.approachesList}>
-            {props.approuch.map((ap, key) => (
+            {props.approaches.map((ap, key) => (
               <View style={style.approaches} key={key}>
                 <View style={style.approachesTextLine}>
                   <Text style={style.approachesText}>

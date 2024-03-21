@@ -9,13 +9,17 @@ import {
 } from "react-native";
 import { COLORS } from "../../theme";
 import { useMemo } from "react";
-import { ITrainingExecise } from "../../entity/Training";
 import { CIconButton } from "../ui/CIconButton";
+import { IExercise } from "../../entity/IExercise";
+import { IApproach } from "../../entity/IApproach";
 
-type ExerciseCardProps = ITrainingExecise & {
+type ExerciseCardProps = IExercise & {
+  approuches: IApproach[];
   style?: StyleProp<ViewStyle>;
   onPress?: (e: number) => void;
   children?: JSX.Element | JSX.Element[];
+  onDeleteExercise: () => void;
+  onDeleteApprouch: (id: number) => void;
 };
 
 const style = StyleSheet.create({
@@ -93,7 +97,7 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
           <Text style={style.text}>{props.name}</Text>
 
           <CIconButton
-            onPress={() => {}}
+            onPress={props.onDeleteExercise}
             size="m"
             variant="error"
             name="close"
@@ -104,7 +108,7 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
           <Image source={props.photo} style={style.image} />
 
           <View style={style.approachesList}>
-            {props.approuch.map((ap, key) => (
+            {props.approuches.map((ap, key) => (
               <View style={style.approaches} key={key}>
                 <View style={style.approachesTextLine}>
                   <Text style={style.approachesText}>
@@ -121,7 +125,7 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
                   name="close"
                   iconColor={COLORS.light.i2}
                   variant="error"
-                  onPress={() => {}}
+                  onPress={() => props.onDeleteApprouch(ap.id)}
                   size="s"
                 />
               </View>

@@ -8,6 +8,7 @@ interface Props {
   onPress(): void;
   style?: ViewStyle;
   variant?: CButtonBaseType;
+  disabled?: boolean;
 }
 
 const style = StyleSheet.create({
@@ -25,6 +26,7 @@ export function CButton(props: Props) {
       variant={props.variant}
       style={props.style}
       onPress={props.onPress}
+      disabled={props.disabled}
     >
       <Text style={style.text}>{props.children}</Text>
     </CButtonBase>
