@@ -1,4 +1,5 @@
-import { IDB, IDBRow } from "../types";
+import { IDBRow } from "../types";
+import { DBModule } from "./module";
 
 export class Approach {
   id: number;
@@ -14,35 +15,35 @@ export class Approach {
   }
 }
 
-export function createApproachModule(db: IDB) {
-  return {
-    async createTable() {
-      await db(
-        "CREATE TABLE IF NOT EXISTS approach (id integer primary key AUTOINCREMENT,approach integer NOT NULL,repetitions integer NOT NULL,weight integer NOT NULL);",
-      );
-    },
-    async dropTable() {
-      await db("DROP TABLE IF EXISTS approach;");
-    },
-    async insert(data: Omit<Approach, "id">): Promise<number> {
-      const res = await db(
-        "INSERT INTO approach (approach,repetitions,weight) VALUES (?, ?, ?)",
-        [data.approach, data.repetitions, data.weight],
-      );
+export class ApproachModule extends DBModule {
+  static async createTable() {
+    await this.execut(
+      "CREATE TABLE IF NOT EXISTS approach (id integer primary key AUTOINCREMENT,approach integer NOT NULL,repetitions integer NOT NULL,weight integer NOT NULL);",
+    );
+  }
 
-      return res.id;
-    },
-    async readSingle(id: number): Promise<Approach> {
-      const res = await db("SELECT * FROM approach WHERE id = ?", [id]);
+  static async dropTable() {
+    await this.execut("DROP TABLE IF EXISTS approach;");
+  }
 
-      return new Approach(res.rows[0]);
-    },
-    async read(): Promise<Approach[]> {
-      const res = await db("SELECT * FROM approach");
+  static async insert(data: Omit<Approach, "id">): Promise<number> {
+    const res = await this.execut(
+      "INSERT INTO approach (approach,repetitions,weight) VALUES (?, ?, ?)",
+      [data.approaches, data.repetitions, data.weight],
+    );
 
-      return res.rows.map((row) => new Approach(row));
-    },
-  };
+    return res.id;
+  }
+
+  static async readSingle(id: number): Promise<Approach> {
+    const res = await this.execut("SELECT * FROM approach WHERE id = ?", [id]);
+
+    return new Approach(res.rows[0]);
+  }
+
+  static async read(): Promise<Approach[]> {
+    const res = await this.execut("SELECT * FROM approach");
+
+    return res.rows.map((row) => new Approach(row));
+  }
 }
-
-export type IApproachModule = ReturnType<typeof createApproachModule>;

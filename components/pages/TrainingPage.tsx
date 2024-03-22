@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChooseExerciseModal } from "../modal/ChooseExerciseModal";
 import { CButton } from "../ui/CButton";
 import { CWrapper } from "../ui/CWrapper";
@@ -14,7 +14,6 @@ import { IExerciseApproach } from "../../entity/IExerciseApproach";
 import { Database } from "../../database/database";
 import { Storage } from "../../storage/storage";
 import { ITraining } from "../../entity/ITraining";
-import { debounce } from "../../utility/debounse";
 
 interface Props {
   callback: () => void;
@@ -28,15 +27,18 @@ export function TrainingPage(props: Props) {
   const prettyDate = getPrettyDate(date);
   const [name, setName] = useState(`train_${prettyDate}`);
 
-  useEffect(() => {
-    Storage.read()
-      .then((tr) => {
-        console.log({ tr });
+  async function onMounted(){
+    try {
+      const train = await Storage.read();
+      setName(train.name);
+      setExercise(train.exercises);
+    } catch (error) {
 
-        setName(tr.name);
-        setExercise(tr.exercises);
-      })
-      .catch(console.warn);
+    }
+  }
+
+  useEffect(() => {
+    onMounted()
   }, []);
 
   const isDisabled = useMemo(() => {

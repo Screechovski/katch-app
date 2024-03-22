@@ -39,9 +39,9 @@ export function TrainingCard(props: Props) {
         <Text style={style.date}>{getPrettyDate(props.date)}</Text>
       </View>
       <View style={style.list}>
-        {props.exercises.map((ex, i) => (
+        {props.exercises.map((ex) => (
           <ExerciseCardHistory
-            key={i}
+            key={ex.id}
             approaches={ex.approaches}
             id={ex.exercise.id}
             name={ex.exercise.name}

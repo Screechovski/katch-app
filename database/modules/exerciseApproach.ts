@@ -1,4 +1,5 @@
-import { IDB, IDBRow } from "../types";
+import { IDBRow } from "../types";
+import { DBModule } from "./module";
 
 export class ExerciseApproach {
   id: number;
@@ -12,46 +13,45 @@ export class ExerciseApproach {
   }
 }
 
-export function createExerciseApproachModule(db: IDB) {
-  return {
-    async createTable() {
-      await db(
-        "CREATE TABLE IF NOT EXISTS exercise_approach (id integer primary key AUTOINCREMENT,id_approach integer NOT NULL,id_exercise integer NOT NULL,FOREIGN KEY(id) REFERENCES approach(id));",
-      );
-    },
-    async dropTable() {
-      await db("DROP TABLE IF EXISTS exercise_approach;");
-    },
-    async insert(data: Omit<ExerciseApproach, "id">): Promise<number> {
-      const res = await db(
-        "INSERT INTO exercise_approach (id_approach,id_exercise) VALUES (?, ?)",
-        [data.idApproach, data.idExercise],
-      );
+export class ExerciseApproachModule extends DBModule {
+  static async createTable() {
+    await this.execut(
+      "CREATE TABLE IF NOT EXISTS exercise_approach (id integer primary key AUTOINCREMENT,id_approach integer NOT NULL,id_exercise integer NOT NULL,FOREIGN KEY(id) REFERENCES approach(id));",
+    );
+  }
 
-      return res.id;
-    },
-    async readSingle(id: number): Promise<ExerciseApproach> {
-      const res = await db("SELECT * FROM exercise_approach WHERE id = ?", [
-        id,
-      ]);
+  static async dropTable() {
+    await this.execut("DROP TABLE IF EXISTS exercise_approach;");
+  }
 
-      return new ExerciseApproach(res.rows[0]);
-    },
-    async read(): Promise<ExerciseApproach[]> {
-      const res = await db("SELECT * FROM exercise_approach");
+  static async insert(data: Omit<ExerciseApproach, "id">): Promise<number> {
+    const res = await this.execut(
+      "INSERT INTO exercise_approach (id_approach,id_exercise) VALUES (?, ?)",
+      [data.idApproach, data.idExercise],
+    );
 
-      return res.rows.map(
-        (row) =>
-          new ExerciseApproach({
-            id: row.id,
-            idApproach: row.idApproach,
-            idExercise: row.idExercise,
-          }),
-      );
-    },
-  };
+    return res.id;
+  }
+
+  static async readSingle(id: number): Promise<ExerciseApproach> {
+    const res = await this.execut(
+      "SELECT * FROM exercise_approach WHERE id = ?",
+      [id],
+    );
+
+    return new ExerciseApproach(res.rows[0]);
+  }
+
+  static async read(): Promise<ExerciseApproach[]> {
+    const res = await this.execut("SELECT * FROM exercise_approach");
+
+    return res.rows.map(
+      (row) =>
+        new ExerciseApproach({
+          id: row.id,
+          idApproach: row.idApproach,
+          idExercise: row.idExercise,
+        }),
+    );
+  }
 }
-
-export type IExerciseApproachModule = ReturnType<
-  typeof createExerciseApproachModule
->;

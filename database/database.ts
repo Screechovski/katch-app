@@ -1,362 +1,151 @@
-import * as SQLite from "expo-sqlite";
-import { createApproachModule } from "./modules/approach";
-import { createExerciseApproachModule } from "./modules/exerciseApproach";
-import { createTrainingExerciseApproachModule } from "./modules/trainingExerciseApproach";
-import { createTrainingModule } from "./modules/training";
-import { IDB } from "./types";
+import { ApproachModule } from "./modules/approach";
+import { ExerciseApproachModule } from "./modules/exerciseApproach";
+import { TrainingExerciseApproachModule } from "./modules/trainingExerciseApproach";
+import { TrainingModule } from "./modules/training";
 import { ITraining } from "../entity/ITraining";
+import { DBModule } from "./modules/module";
+import { getExerciseById } from "../entity/IExercise";
 
-const db = SQLite.openDatabase("primary.db");
+export class Database extends DBModule {
+  static async init() {
+    await ApproachModule.createTable();
+    await ExerciseApproachModule.createTable();
+    await TrainingModule.createTable();
+    await TrainingExerciseApproachModule.createTable();
+  }
 
-const dbExecuter = (command: string, params?: (string | number)[]) => {
-  return new Promise<Awaited<ReturnType<IDB>>>((resolve, reject) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        command,
-        params,
-        (_, result) => {
-          resolve({
-            id: result.insertId ?? -1,
-            rows: result.rows._array,
-          });
-        },
-        (_, error) => {
-          reject(error);
-          return false;
-        },
-      );
+  private static async drop() {
+    await ApproachModule.dropTable();
+    await ExerciseApproachModule.dropTable();
+    await TrainingModule.dropTable();
+    await TrainingExerciseApproachModule.dropTable();
+  }
+
+  static async reset() {
+    await this.drop();
+    await this.init();
+  }
+
+  static async insertTraining(training: ITraining) {
+    const idTraining = await TrainingModule.insert({
+      name: training.name,
+      date: training.date,
     });
-  });
-};
 
-const approachModule = createApproachModule(dbExecuter);
-const exerciseApproachModule = createExerciseApproachModule(dbExecuter);
-const trainingModule = createTrainingModule(dbExecuter);
-const trainingExerciseApproachModule =
-  createTrainingExerciseApproachModule(dbExecuter);
+    for (let i = 0; i < training.exercises.length; i++) {
+      const exercise = training.exercises[i];
+      const approachIds: number[] = [];
+      const exerciseApproachModuleIds: number[] = [];
 
-async function init() {
-  await approachModule.createTable();
-  await exerciseApproachModule.createTable();
-  await trainingModule.createTable();
-  await trainingExerciseApproachModule.createTable();
-}
+      for (let j = 0; j < exercise.approaches.length; j++) {
+        const approach = exercise.approaches[j];
 
-async function drop() {
-  await approachModule.dropTable();
-  await exerciseApproachModule.dropTable();
-  await trainingModule.dropTable();
-  await trainingExerciseApproachModule.dropTable();
-}
+        approachIds.push(await ApproachModule.insert(approach));
+      }
 
-async function reset() {
-  await drop();
-  await init();
-}
+      for (let j = 0; j < approachIds.length; j++) {
+        const idApproach = approachIds[j];
 
-async function insertTraining(training: ITraining) {
-  const idTraining = await trainingModule.insert({
-    name: training.name,
-    date: training.date,
-  });
+        exerciseApproachModuleIds.push(
+          await ExerciseApproachModule.insert({
+            idApproach,
+            idExercise: exercise.exercise.id,
+          }),
+        );
+      }
 
-  console.log({ idTraining });
+      for (let j = 0; j < exerciseApproachModuleIds.length; j++) {
+        const exerciseApproachModuleId = exerciseApproachModuleIds[j];
 
-  for (let i = 0; i < training.exercises.length; i++) {
-    const exercise = training.exercises[i];
-    const approachIds: number[] = [];
-    const exerciseApproachModuleIds: number[] = [];
-
-    for (let j = 0; j < exercise.approaches.length; j++) {
-      const approach = exercise.approaches[j];
-
-      approachIds.push(await approachModule.insert(approach));
+        await TrainingExerciseApproachModule.insert({
+          idExerciseApproach: exerciseApproachModuleId,
+          idTraining,
+        });
+      }
     }
+  }
 
-    console.log({ approachIds });
+  static async readTrainings() {
+    const { rows } = await this.execut<{
+      approach: number;
+      date: string;
+      id: number;
+      id_exercise: number;
+      id_exercise_approach: number;
+      name: string;
+      repetitions: number;
+      weight: number;
+    }>(`
+    SELECT
+      training.name,
+      training.date,
+      training.id,
+      exercise_approach.id_exercise,
+      exercise_approach.id as id_exercise_approach,
+      approach.approach,
+      approach.repetitions,
+      approach.weight
+    FROM training_exercise_approach
+    JOIN training ON training_exercise_approach.id_training = training.id
+    JOIN exercise_approach ON training_exercise_approach.id_exercise_approach = exercise_approach.id
+    JOIN approach ON exercise_approach.id_approach = approach.id;
+    `);
 
-    for (let j = 0; j < approachIds.length; j++) {
-      const idApproach = approachIds[j];
+    const trainings: ITraining[] = [];
 
-      exerciseApproachModuleIds.push(
-        await exerciseApproachModule.insert({
-          idApproach,
-          idExercise: exercise.exercise.id,
-        }),
-      );
-    }
+    rows.forEach((row) => {
+      if (trainings.find((t) => t.id === row.id)) {
+        return;
+      }
 
-    console.log({ exerciseApproachModuleIds });
-
-    for (let j = 0; j < exerciseApproachModuleIds.length; j++) {
-      const exerciseApproachModuleId = exerciseApproachModuleIds[j];
-
-      await trainingExerciseApproachModule.insert({
-        idExerciseApproach: exerciseApproachModuleId,
-        idTraining,
+      trainings.push({
+        id: row.id,
+        name: row.name,
+        date: new Date(row.date),
+        exercises: [],
       });
-    }
-  }
-}
-
-async function readTrainings() {
-  await trainingExerciseApproachModule.read();
-}
-
-export const Database = {
-  drop,
-  init,
-  reset,
-  insertTraining,
-  readTrainings,
-};
-
-// export async function loadTrainings() {
-//   return await dbExecuter(`SELECT
-//     training.name,
-//     training.date,
-//     training.id,
-//     exercise_approach.id_exercise,
-//     approach.approach,
-//     approach.repetitions,
-//     approach.weight
-//     FROM training_exercise_approach
-//     JOIN training ON training_exercise_approach.id_training = training.id
-//     JOIN exercise_approach ON training_exercise_approach.id_exercise_approach = exercise_approach.id
-//     JOIN approach ON exercise_approach.id_approach = approach.id;`);
-// }
-
-// type IExecuter<T extends IExecuterT> = (
-//   command: string,
-//   params?: (string | number | null)[],
-// ) => Promise<T>;
-/*
-export function createDatabase(dbExecuter: IExecuter<IExecuterT>) {
-  function executerWrapper<T extends IExecuterT = unknown>(
-    command: string,
-    error: string,
-    params: (string | number | null)[] = [],
-  ) {
-    return async () => {
-      try {
-        const res = await dbExecuter<T>(command, params);
-
-        return res;
-      } catch (err) {
-        throw new Error(`${error}: ${err}`);
-      }
-    };
-  }
-
-  async function exec(command: string, error: string) {
-    await executerWrapper(command, error);
-  }
-
-  async function read(command: string, error: string) {
-    return await executerWrapper<>(command, error);
-  }
-
-  async function insert(
-    command: string,
-    error: string,
-    params?: (string | number | null)[],
-  ) {}
-
-  return {
-    dropApproachTable: executerWrapper(
-      "DROP TABLE IF EXISTS approach;",
-      "DROP approach",
-    ),
-    createApproachTable: executerWrapper(
-      "CREATE TABLE IF NOT EXISTS approach (id integer primary key AUTOINCREMENT,approach integer NOT NULL,repetitions integer NOT NULL,weight integer NOT NULL);",
-      "CREATE approach",
-    ),
-    dropExerciseApproachTable: executerWrapper(
-      "DROP TABLE IF EXISTS exercise_approach;",
-      "DROP exercise_approach",
-    ),
-    createExerciseApproachTable: executerWrapper(
-CREATE TABLE IF NOT EXISTS exercise_approach (id integer primary key AUTOINCREMENT,id_approach integer NOT NULL,id_exercise integer NOT NULL,FOREIGN KEY(id) REFERENCES approach(id));      "",
-      "CREATE exercise_approach",
-    ),
-    dropTrainingTable: executerWrapper(
-      "DROP TABLE IF EXISTS training;",
-      "DROP training",
-    ),
-    createTrainingTable: executerWrapper(
-      "CREATE TABLE IF NOT EXISTS training (id integer primary key AUTOINCREMENT,date text NOT NULL,name text NOT NULL);",
-      "CREATE training",
-    ),
-    dropTrainingExerciseApproachTable: executerWrapper(
-      "DROP TABLE IF EXISTS training_exercise_approach;",
-      "DROP training_exercise_approach",
-    ),
-    createTrainingExerciseApproachTable: executerWrapper(
-      "CREATE TABLE IF NOT EXISTS training_exercise_approach (id integer primary key AUTOINCREMENT,id_training integer NOT NULL,id_exercise_approach integer NOT NULL,FOREIGN KEY(id_training) REFERENCES training(id),FOREIGN KEY(id_exercise_approach) REFERENCES exercise_approach(id));",
-      "CREATE training_exercise_approach",
-    ),
-  };
-}
-
-export async function resetDatabase() {
-  await dropDatabase();
-  await initDatabase();
-}
-
-export async function dropDatabase() {
-  try {
-    await dropTrainingExerciseApproachTable();
-    await dropTrainingTable();
-    await dropExerciseApproachTable();
-    await dropApproachTable();
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-
-export async function initDatabase() {
-  try {
-    await createApproachTable();
-    await createExerciseApproachTable();
-    await createTrainingTable();
-    await createTrainingExerciseApproachTable();
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-
-type Approach = {
-  id: number;
-  weight: number;
-  repetitions: number;
-  approaches: number;
-};
-
-async function saveApproach(ap: Omit<Approach, "id">) {
-  const executerRes = await dbExecuter(
-    "INSERT INTO approach (approach,repetitions,weight) VALUES (?, ?, ?)",
-    [ap.approaches, ap.repetitions, ap.weight],
-  );
-
-  return executerRes.insertId!; // FIXME number | undefined
-}
-
-type ExerciseApproach = {
-  id: number;
-  id_approach: number;
-  id_exercise: number;
-};
-
-async function saveExerciseApproach(
-  exericeApproach: Omit<ExerciseApproach, "id">,
-) {
-  const executerRes = await dbExecuter(
-    "INSERT INTO exercise_approach (id_approach,id_exercise) VALUES (?, ?)",
-    [exericeApproach.id_approach, exericeApproach.id_exercise],
-  );
-
-  return executerRes.insertId!; // FIXME number | undefined
-}
-
-type Training = {
-  id: number;
-  date: string;
-  name: string;
-};
-
-async function saveTrainingOnly(train: Omit<Training, "id">) {
-  const executerRes = await dbExecuter(
-    "INSERT INTO training (date,name ) VALUES (?, ?)",
-    [train.date, train.name],
-  );
-
-  return executerRes.insertId!; // FIXME number | undefined
-}
-
-type TrainingFinish = {
-  id: number;
-  id_training: number;
-  id_exercise_approach: number;
-};
-
-async function saveTrainingEnd(train: Omit<TrainingFinish, "id">) {
-  await dbExecuter(
-    "INSERT INTO training_exercise_approach (id_training,id_exercise_approach) VALUES (?, ?)",
-    [train.id_training, train.id_exercise_approach],
-  );
-}
-
-export async function saveTraining(train: ITraining) {
-  try {
-    const trainOnlyId = await saveTrainingOnly({
-      name: train.name,
-      date: train.date.toISOString(),
     });
 
-    for (const ex of train.exercises) {
-      for (const ap of ex.approuch) {
-        const approachId = await saveApproach(ap);
+    rows.forEach((row) => {
+      const train = trainings.find((t) => t.id === row.id);
+      const ex = getExerciseById(row.id_exercise);
 
-        const exerciseApproachId = await saveExerciseApproach({
-          id_approach: approachId,
-          id_exercise: ex.id,
-        });
-
-        await saveTrainingEnd({
-          id_exercise_approach: exerciseApproachId,
-          id_training: trainOnlyId,
+      if (
+        train &&
+        ex &&
+        !train.exercises.find((_ex) => _ex.exercise.id === ex.id)
+      ) {
+        train.exercises.push({
+          id: train.exercises.length,
+          exercise: ex,
+          approaches: [],
         });
       }
-    }
-  } catch (error) {
-    console.error(error);
+    });
+
+    rows.forEach((row) => {
+      const train = trainings.find((t) => t.id === row.id);
+
+      if (!train) {
+        return;
+      }
+
+      const ex = train.exercises.find(
+        (ex) => ex.exercise.id === row.id_exercise,
+      );
+
+      if (!ex) {
+        return;
+      }
+
+      ex.approaches.push({
+        id: row.id_exercise_approach,
+        approaches: row.approach,
+        repetitions: row.repetitions,
+        weight: row.weight,
+      });
+    });
+
+    return trainings;
   }
 }
-
-export async function getTraining() {
-  return await dbExecuter(`SELECT
-training.name,
-training.date,
-training.id,
-exercise_approach.id_exercise,
-approach.approach,
-approach.repetitions,
-approach.weight
-FROM training_exercise_approach
-JOIN training ON training_exercise_approach.id_training = training.id
-JOIN exercise_approach ON training_exercise_approach.id_exercise_approach = exercise_approach.id
-JOIN approach ON exercise_approach.id_approach = approach.id;`);
-}
-
-export async function getTraining1() {
-  try {
-    return await dbExecuter("SELECT * FROM training;");
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-
-export async function getTrainingExerciseApproach() {
-  try {
-    return await dbExecuter("SELECT * FROM training_exercise_approach;");
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-
-export async function getExerciseApproaches() {
-  try {
-    return await dbExecuter("SELECT * FROM exercise_approach;");
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-
-export async function getApproaches() {
-  try {
-    return await dbExecuter("SELECT * FROM approach;");
-  } catch (error) {
-    throw new Error("DBError: " + error);
-  }
-}
-*/

@@ -24,17 +24,9 @@ export function HistoryPage() {
   const [trainings, setTrainings] = useState<ITraining[]>([]);
   const [clickCleanCount, setClickCleanCount] = useState(0);
 
-  async function loadAndConvertTrainings() {
-    return [];
-  }
-
   async function load() {
     setIsLoading(true);
-    console.log(Database.readTrainings());
-
-    const dbRows = await loadAndConvertTrainings();
-
-    setTrainings(dbRows);
+    setTrainings(await Database.readTrainings());
     setIsLoading(false);
   }
 
@@ -42,7 +34,7 @@ export function HistoryPage() {
     if (clickCleanCount < 2) {
       setClickCleanCount((v) => v + 1);
     } else {
-      await Database.drop();
+      await Database.reset();
       load();
       setClickCleanCount(0);
     }
@@ -83,6 +75,7 @@ export function HistoryPage() {
         {hasTrainings &&
           trainings.map((tr) => (
             <TrainingCard
+              key={tr.id}
               name={tr.name}
               date={tr.date}
               exercises={tr.exercises}

@@ -482,20 +482,8 @@ export function getExerciseById(id: number) {
   return exercises.find((ex) => ex.id === id);
 }
 
-export class IExercise {
+export type IExercise = {
   id: number;
   name: string;
   photo: ImagePropsBase;
-
-  constructor(id: number) {
-    let ex = getExerciseById(id);
-
-    if (!ex) {
-      ex = exercises[0];
-    }
-
-    this.id = ex.id;
-    this.name = ex.name;
-    this.photo = ex.photo;
-  }
-}
+};

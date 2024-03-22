@@ -12,13 +12,6 @@ export default function App() {
   const [page, setPage] = useState(Routes.CREATE_TRAINING);
   const [isLoading, setIsLoading] = useState(false);
 
-  // async function saveHandler(training: ITraining) {
-  //   setIsLoading(true);
-  //   await saveTraining(training);
-  //   setPage(Routes.VIEW_TRAINS);
-  //   setIsLoading(false);
-  // }
-
   async function onMounted() {
     setIsLoading(true);
     await Database.init();

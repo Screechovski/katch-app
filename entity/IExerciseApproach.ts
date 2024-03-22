@@ -1,18 +1,8 @@
 import { IApproach } from "./IApproach";
-import { IExercise, exercises } from "./IExercise";
+import { IExercise } from "./IExercise";
 
-export class IExerciseApproach {
+export type IExerciseApproach = {
   id: number;
   exercise: IExercise;
   approaches: IApproach[];
-
-  constructor(options: {
-    id?: number;
-    exercise: IExercise;
-    approaches: IApproach[];
-  }) {
-    this.id = options.id ?? new Date().getTime();
-    this.exercise = options.exercise ?? exercises[0];
-    this.approaches = options.approaches ?? [];
-  }
-}
+};

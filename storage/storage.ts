@@ -14,24 +14,26 @@ const instance = new StorageCreator({
   sync: {},
 });
 
-export const Storage = {
-  save(data: ITraining) {
+export class Storage {
+  static save(data: ITraining) {
     instance.save({
       key,
       id,
       data: data,
       expires,
     });
-  },
-  read() {
+  }
+
+  static read() {
     return instance.load<ITraining>({
       key,
       id,
       autoSync: true,
       syncInBackground: true,
     });
-  },
-  clear() {
+  }
+
+  static clear() {
     instance.remove({ key, id });
-  },
-};
+  }
+}
