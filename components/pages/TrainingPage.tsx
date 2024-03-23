@@ -176,6 +176,7 @@ export function TrainingPage(props: Props) {
               key={key}
             >
               <ExerciseCardExpanded
+                count={ex.exercise.count}
                 id={ex.exercise.id}
                 name={ex.exercise.name}
                 photo={ex.exercise.photo}
@@ -189,6 +190,7 @@ export function TrainingPage(props: Props) {
         </CWrapper>
 
         <CButton
+          variant="success"
           style={{ marginBottom: 10 }}
           onPress={() => toggleChooseExerciseIsOpen(true)}
         >
