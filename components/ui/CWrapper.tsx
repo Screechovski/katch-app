@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from "react";
-import { Dimensions, ScrollView, StyleSheet, ViewStyle } from "react-native";
+import { ScrollView, StyleSheet, ViewStyle } from "react-native";
 
 interface Props {
   padding?: "s" | "m" | "l";

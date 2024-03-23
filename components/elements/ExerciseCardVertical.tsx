@@ -7,11 +7,11 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { IPhysicalExercise } from "../../entity/IExercise";
+import { IExercise } from "../../entity/IExercise";
 import { COLORS } from "../../theme";
 import { useMemo } from "react";
 
-type ExerciseCardProps = IPhysicalExercise & {
+type ExerciseCardProps = IExercise & {
   style?: StyleProp<ViewStyle>;
   onPress?: (e: number) => void;
   children?: JSX.Element | JSX.Element[];
@@ -49,6 +49,21 @@ const style = StyleSheet.create({
     color: COLORS.dark.i7,
     height: 12 * 1.2 * 3,
   },
+  countsList: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 2,
+    flexWrap: 'wrap',
+    minHeight: 5,
+    marginTop: 5
+  },
+  countsItem: {
+    display: 'flex',
+    height: 5,
+    width: 5,
+    backgroundColor: COLORS.primary.i50,
+    borderRadius: 3
+  }
 });
 
 export function ExerciseCardVertical(props: ExerciseCardProps) {
@@ -75,6 +90,11 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
         <Image source={props.photo} style={style.image} />
         <View style={style.textWrap}>
           <Text style={style.text}>{props.name}</Text>
+        </View>
+        <View style={style.countsList}>
+          {Array.from({ length: props.count }).map(() => (
+            <View style={style.countsItem} />
+          ))}
         </View>
       </View>
     </Pressable>

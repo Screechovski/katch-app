@@ -1,12 +1,11 @@
-import { ExerciseList } from "../elements/ExerciseList";
-import { IPhysicalExercise } from "../../entity/IExercise";
+import { IExercise } from "../../entity/IExercise";
 import { CModal } from "../ui/CModal";
 import { ExerciseListSearch } from "../elements/ExerciseListSearch";
 import { StyleSheet } from "react-native";
 
 interface Props {
   visible: boolean;
-  onSelect(item: IPhysicalExercise): void;
+  onSelect(item: IExercise): void;
   onVisible(flag: boolean): void;
 }
 

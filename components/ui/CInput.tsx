@@ -29,7 +29,7 @@ export function CInput(props: Props) {
       backgroundColor: isDisabled ? COLORS.light.i4 : COLORS.light.i2,
       color: isDisabled ? COLORS.dark.i4 : COLORS.primary.i80,
       fontSize: 16,
-      height: 40,
+      height: 50,
       display: "flex",
     },
   }), [props]);
@@ -48,6 +48,7 @@ export function CInput(props: Props) {
         style={style.input}
         value={props.value}
         editable={!props.disabled}
+        placeholder={props.placeholder}
         selectTextOnFocus={!props.disabled}
         onChangeText={props.onInput}
       />

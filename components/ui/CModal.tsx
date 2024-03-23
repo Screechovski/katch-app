@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { CButton } from "./CButton";
 import { COLORS } from "../../theme";
+import { CIconButton } from "./CIconButton";
 
 interface Props {
   children: ReactNode;
@@ -63,7 +64,7 @@ export function CModal(props: Props) {
           {props.children}
         </View>
 
-        <CButton onPress={props.onHide}>Закрыть</CButton>
+        <CIconButton onPress={props.onHide} name="close" />
       </TouchableOpacity>
     </Modal>
   );

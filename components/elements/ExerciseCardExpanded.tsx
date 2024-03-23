@@ -32,6 +32,7 @@ const style = StyleSheet.create({
     width: 90,
     height: 81,
     marginRight: 10,
+    marginBottom: 10,
     borderRadius: 10,
   },
   content: {

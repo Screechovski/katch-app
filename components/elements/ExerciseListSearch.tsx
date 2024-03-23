@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { ExerciseList } from "./ExerciseList";
-import { IPhysicalExercise } from "../../entity/IExercise";
-import { exercises } from "../../entity/IExercise";
+import { IExercise, getSortedExercises } from "../../entity/IExercise";
+import { getExercises } from "../../entity/IExercise";
 import { useMemo, useState } from "react";
 import { CInput } from "../ui/CInput";
 
@@ -9,7 +9,7 @@ const { width } = Dimensions.get("window");
 
 interface Props {
   count: number;
-  onSelect(item: IPhysicalExercise): void;
+  onSelect(item: IExercise): void;
 }
 
 const ExerciseListSearchStyle = StyleSheet.create({
@@ -28,9 +28,18 @@ const ExerciseListSearchStyle = StyleSheet.create({
 
 export function ExerciseListSearch(props: Props) {
   const [searchValue, setSearchValue] = useState<string>("");
+  const exercises = getSortedExercises();
 
-  const filteredExercises = useMemo<IPhysicalExercise[]>(
-    () => exercises.filter((ex) => ex.name.includes(searchValue)),
+  const filteredExercises = useMemo<IExercise[]>(
+    () => {
+      const searchValueLower = searchValue.toLowerCase();
+
+      return exercises.filter((ex) => {
+        const nameLower = ex.name.toLowerCase();
+
+        return nameLower.includes(searchValueLower)
+      })
+    },
     [searchValue],
   );
 

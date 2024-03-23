@@ -12,28 +12,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const createStyle = (isActive: boolean, bgColor: string, borderColor: string) =>
-  StyleSheet.create({
-    wrap: {
-      height: 40,
-      backgroundColor: bgColor,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 8,
-      borderLeftWidth: 1,
-      borderTopWidth: 1,
-      borderBottomWidth: isActive ? 1 : 3,
-      borderRightWidth: isActive ? 1 : 3,
-      borderTopColor: bgColor,
-      borderLeftColor: bgColor,
-      borderBottomColor: borderColor,
-      borderRightColor: borderColor,
-    },
-  });
-
 export function CButtonBase(props: Props) {
-  const [isActive, setIsActive] = useState(false);
 
   const colors = useMemo(() => {
     switch (props.variant) {
@@ -67,11 +46,11 @@ export function CButtonBase(props: Props) {
   );
 
   function pressHandler() {
-    if (props.disabled) return;
+    if (props.disabled) {
+      return;
+    }
 
-    setIsActive(true);
     props.onPress();
-    setTimeout(() => setIsActive(false), 300);
   }
 
   return (

@@ -31,6 +31,20 @@
       "eas": {
         "projectId": "778c3957-bfbd-4486-bef6-56151bb6c7a8"
       }
+    },
+    "plugins": [
+      [
+        "expo-updates",
+        {
+          "username": "dmyavl"
+        }
+      ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/778c3957-bfbd-4486-bef6-56151bb6c7a8"
     }
   }
 }

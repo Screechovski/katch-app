@@ -1,4 +1,4 @@
-export enum Routes {
-  CREATE_TRAINING = "CREATE_TRAINING",
-  VIEW_TRAINS = "VIEW_TRAINS",
+export class Routes {
+  static CREATE_TRAINING = "CREATE_TRAINING";
+  static VIEW_TRAINS = "VIEW_TRAINS";
 }

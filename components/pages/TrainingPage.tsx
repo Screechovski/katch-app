@@ -1,19 +1,21 @@
 import { Text, View } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { ChooseExerciseModal } from "../modal/ChooseExerciseModal";
-import { CButton } from "../ui/CButton";
-import { CWrapper } from "../ui/CWrapper";
-import { getPrettyDate } from "../../utility/prettyDate";
-import { ApproachCreate } from "../elements/ApproachCreate";
 import { IApproach } from "../../entity/IApproach";
-import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
-import { COLORS } from "../../theme";
-import { CInput } from "../ui/CInput";
 import { IExercise } from "../../entity/IExercise";
 import { IExerciseApproach } from "../../entity/IExerciseApproach";
+import { ITraining } from "../../entity/ITraining";
+import { CButton } from "../ui/CButton";
+import { CWrapper } from "../ui/CWrapper";
+import { CInput } from "../ui/CInput";
+import { getPrettyDate } from "../../utility/prettyDate";
+import { dateMask } from "../../utility/dateMask";
+import { getDateFromPrettyDate } from "../../utility/getDateFromPrettyDate";
+import { ApproachCreate } from "../elements/ApproachCreate";
+import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
+import { COLORS } from "../../theme";
 import { Database } from "../../database/database";
 import { Storage } from "../../storage/storage";
-import { ITraining } from "../../entity/ITraining";
 
 interface Props {
   callback: () => void;
@@ -23,23 +25,37 @@ export function TrainingPage(props: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [chooseExerciseIsOpen, toggleChooseExerciseIsOpen] = useState(false);
   const [exercises, setExercise] = useState<IExerciseApproach[]>([]);
-  const date = new Date();
-  const prettyDate = getPrettyDate(date);
-  const [name, setName] = useState(`train_${prettyDate}`);
+  const [inputDate, setInputDate] = useState(getPrettyDate(new Date()));
+  const [name, setName] = useState(`train_${inputDate}`);
 
-  async function onMounted(){
+  async function onMounted() {
     try {
-      const train = await Storage.read();
-      setName(train.name);
-      setExercise(train.exercises);
-    } catch (error) {
-
-    }
+      const train = Storage.read();
+      if (train) {
+        setName(train.name);
+        setExercise(train.exercises);
+      }
+    } catch (error) {}
   }
 
   useEffect(() => {
-    onMounted()
+    onMounted();
   }, []);
+
+  const dateValue = useMemo(() => {
+    try {
+      if (![16, 10].includes(inputDate.length)) {
+        return undefined;
+      }
+
+      const date = new Date(inputDate);
+      date.toISOString();
+
+      return date;
+    } catch (error) {
+      return undefined;
+    }
+  }, [inputDate]);
 
   const isDisabled = useMemo(() => {
     if (exercises.length === 0) {
@@ -50,14 +66,16 @@ export function TrainingPage(props: Props) {
       return true;
     }
 
+    if (getDateFromPrettyDate(inputDate) === null) {
+      return true;
+    }
+
     return false;
-  }, [exercises]);
+  }, [exercises, dateValue]);
 
   const currentTrain = useMemo<ITraining>(() => {
-    const date = new Date();
-
     return {
-      date,
+      date: getDateFromPrettyDate(inputDate) ?? new Date(),
       name,
       exercises,
     };
@@ -131,7 +149,13 @@ export function TrainingPage(props: Props) {
   return (
     <>
       <>
-        <Text style={{ marginTop: 20 }}>Дата: {prettyDate}</Text>
+        <CInput
+          style={{ marginTop: 20 }}
+          placeholder={name}
+          value={inputDate}
+          onInput={(v) => setInputDate(dateMask(v))}
+          label="Дата"
+        />
 
         <CInput
           placeholder={name}
@@ -140,7 +164,7 @@ export function TrainingPage(props: Props) {
           label="Название тренировки"
         />
 
-        <CWrapper style={{ marginBottom: 10 }} padding="s">
+        <CWrapper style={{ marginBottom: 10, marginTop: 15 }} padding="s">
           {exercises.map((ex, key) => (
             <View
               style={{

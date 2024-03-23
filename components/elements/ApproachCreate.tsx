@@ -24,11 +24,12 @@ export function ApproachCreate(props: Props) {
   const [weight, setWeight] = useState("40");
 
   function addHandler() {
-    props.onAdd(new IApproach({
+    props.onAdd({
+      id: new Date().getTime(),
       weight: +weight,
       approaches: +approaches,
       repetitions: +repetitions,
-    }));
+    });
   }
 
   return (

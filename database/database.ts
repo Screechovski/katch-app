@@ -65,6 +65,23 @@ export class Database extends DBModule {
     }
   }
 
+  static async getExercisesCounts() {
+    const { rows } = await this.execut<{
+      id: number;
+      id_exercise: number;
+    }>(
+      `SELECT
+        training.id,
+        exercise_approach.id_exercise
+      FROM training_exercise_approach
+      JOIN training ON training_exercise_approach.id_training = training.id
+      JOIN exercise_approach ON training_exercise_approach.id_exercise_approach = exercise_approach.id;
+      `,
+    );
+
+    return rows;
+  }
+
   static async readTrainings() {
     const { rows } = await this.execut<{
       approach: number;

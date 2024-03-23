@@ -1,7 +1,6 @@
 import { Dimensions, FlatList, StyleProp } from "react-native";
 import {
-  IPhysicalExercise,
-  exercises as exercisesStore,
+  IExercise, getSortedExercises,
 } from "../../entity/IExercise";
 import { useMemo } from "react";
 import { ExerciseCardVertical } from "./ExerciseCardVertical";
@@ -10,9 +9,9 @@ const { width } = Dimensions.get("window");
 
 interface Props {
   count?: number;
-  exercises?: IPhysicalExercise[];
+  exercises?: IExercise[];
   style?: StyleProp<FlatList>;
-  onPress?(item: IPhysicalExercise): void;
+  onPress?(item: IExercise): void;
 }
 
 export function ExerciseList(props: Props) {
@@ -30,7 +29,7 @@ export function ExerciseList(props: Props) {
     return 3;
   }, [props.count]);
 
-  function pressHandler(item: IPhysicalExercise) {
+  function pressHandler(item: IExercise) {
     if ("onPress" in props && typeof props.onPress === "function") {
       props.onPress(item);
     }
@@ -40,7 +39,7 @@ export function ExerciseList(props: Props) {
     if (props.exercises) {
       return props.exercises;
     }
-    return exercisesStore;
+    return getSortedExercises();
   }, [props.exercises]);
 
   return (
@@ -54,6 +53,7 @@ export function ExerciseList(props: Props) {
           photo={item.photo}
           name={item.name}
           id={item.id}
+          count={item.count}
         />
       )}
       numColumns={count}
