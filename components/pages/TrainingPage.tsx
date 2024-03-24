@@ -190,7 +190,6 @@ export function TrainingPage(props: Props) {
         </CWrapper>
 
         <CButton
-          variant="success"
           style={{ marginBottom: 10 }}
           onPress={() => toggleChooseExerciseIsOpen(true)}
         >
