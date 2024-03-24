@@ -1,6 +1,7 @@
 import { ReactNode, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { COLORS } from "../../theme";
+import { CLoader } from "./CLoader";
 
 export type CButtonBaseType = "primary" | "success" | "error" | "warning";
 
@@ -10,6 +11,7 @@ interface Props {
   style?: ViewStyle | (ViewStyle | undefined)[];
   variant?: CButtonBaseType;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 export function CButtonBase(props: Props) {
@@ -60,7 +62,8 @@ export function CButtonBase(props: Props) {
       onPress={pressHandler}
       disabled={props.disabled}
     >
-      {props.children}
+      {props.loading && <CLoader />}
+      {!props.loading && props.children}
     </TouchableOpacity>
   );
 }
