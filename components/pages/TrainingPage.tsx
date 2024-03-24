@@ -192,6 +192,7 @@ export function TrainingPage(props: Props) {
         <CButton
           style={{ marginBottom: 10 }}
           onPress={() => toggleChooseExerciseIsOpen(true)}
+          variant="warning"
         >
           Добавить упражнение
         </CButton>
