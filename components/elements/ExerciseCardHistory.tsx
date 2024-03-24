@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { useMemo } from "react";
 import { IExerciseApproach } from "../../entity/IExerciseApproach";
 
@@ -41,7 +41,7 @@ const style = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     textAlign: "left",
-    color: COLORS.dark.i7,
+    color: Colors.dark.i7,
     height: "auto",
   },
   approachesTextLine: {

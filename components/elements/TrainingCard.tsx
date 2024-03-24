@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { ExerciseCardHistory } from "./ExerciseCardHistory";
 import { getPrettyDate } from "../../utility/prettyDate";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { IExerciseApproach } from "../../entity/IExerciseApproach";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 const style = StyleSheet.create({
   wrap: {
     padding: 10,
-    backgroundColor: COLORS.light.i5,
+    backgroundColor: Colors.light.i5,
     borderRadius: 10,
   },
   headlint: {
@@ -26,7 +26,7 @@ const style = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: COLORS.dark.i5,
+    color: Colors.dark.i5,
   },
   list: {},
 });

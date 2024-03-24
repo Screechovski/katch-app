@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { ITraining } from "../../entity/ITraining";
 import { useEffect, useMemo, useState } from "react";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { CButton } from "../ui/CButton";
 import { TrainingCard } from "../elements/TrainingCard";
 import { Database } from "../../database/database";
@@ -14,7 +14,7 @@ const style = StyleSheet.create({
   },
   train: {
     padding: 5,
-    backgroundColor: COLORS.light.i5,
+    backgroundColor: Colors.light.i5,
     borderRadius: 10,
   },
 });

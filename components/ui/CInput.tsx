@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, TextStyle, View } from "react-native";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { useMemo } from "react";
 
 interface Props {
@@ -18,16 +18,16 @@ export function CInput(props: Props) {
     wrap: {},
     label: {
       fontSize: 16,
-      color: COLORS.dark.i4,
+      color: Colors.dark.i4,
       height: 16 * 1.5,
     },
     input: {
       paddingHorizontal: 15,
       borderRadius: 10,
       borderWidth: 3,
-      borderColor: isDisabled ? COLORS.dark.i3 : COLORS.primary.i90,
-      backgroundColor: isDisabled ? COLORS.light.i4 : COLORS.light.i2,
-      color: isDisabled ? COLORS.dark.i4 : COLORS.primary.i80,
+      borderColor: isDisabled ? Colors.dark.i3 : Colors.primary.i90,
+      backgroundColor: isDisabled ? Colors.light.i4 : Colors.light.i2,
+      color: isDisabled ? Colors.dark.i4 : Colors.primary.i80,
       fontSize: 16,
       height: 50,
       display: "flex",

@@ -13,7 +13,7 @@ import { dateMask } from "../../utility/dateMask";
 import { getDateFromPrettyDate } from "../../utility/getDateFromPrettyDate";
 import { ApproachCreate } from "../elements/ApproachCreate";
 import { ExerciseCardExpanded } from "../elements/ExerciseCardExpanded";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { Database } from "../../database/database";
 import { Storage } from "../../storage/storage";
 
@@ -169,7 +169,7 @@ export function TrainingPage(props: Props) {
             <View
               style={{
                 marginBottom: 7,
-                backgroundColor: COLORS.primary.i5,
+                backgroundColor: Colors.primary.i5,
                 borderRadius: 10,
                 padding: 10,
               }}

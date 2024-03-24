@@ -1,5 +1,5 @@
 import { StyleSheet, Text, ViewStyle } from "react-native";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { CButtonBase, CButtonBaseType } from "./CButtonBase";
 
 interface Props {
@@ -16,7 +16,7 @@ const style = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: COLORS.light.i3,
+    color: Colors.light.i3,
     textTransform: "uppercase",
     paddingHorizontal: 20,
   },

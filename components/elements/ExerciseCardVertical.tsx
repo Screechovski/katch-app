@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { IExercise } from "../../entity/IExercise";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { useMemo } from "react";
 
 type ExerciseCardProps = IExercise & {
@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: COLORS.light.i2,
+    backgroundColor: Colors.light.i2,
     borderRadius: 10,
     padding: 5,
   },
@@ -46,7 +46,7 @@ const style = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     textAlign: "center",
-    color: COLORS.dark.i7,
+    color: Colors.dark.i7,
     height: 12 * 1.2 * 3,
   },
   countsList: {
@@ -61,7 +61,7 @@ const style = StyleSheet.create({
     display: 'flex',
     height: 5,
     width: 5,
-    backgroundColor: COLORS.primary.i50,
+    backgroundColor: Colors.primary.i50,
     borderRadius: 3
   }
 });

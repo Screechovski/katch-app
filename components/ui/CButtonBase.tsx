@@ -1,6 +1,6 @@
 import { ReactNode, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { CLoader } from "./CLoader";
 
 export type CButtonBaseType = "primary" | "success" | "error" | "warning";
@@ -19,13 +19,13 @@ export function CButtonBase(props: Props) {
   const colors = useMemo(() => {
     switch (props.variant) {
       case "error":
-        return [COLORS.danger.i6, COLORS.danger.i7];
+        return [Colors.danger.i6, Colors.danger.i7];
       case "success":
-        return [COLORS.success.i7, COLORS.success.i9];
+        return [Colors.success.i7, Colors.success.i9];
       case "warning":
-        return [COLORS.warning.i8, COLORS.warning.i9];
+        return [Colors.warning.i8, Colors.warning.i9];
       default:
-        return [COLORS.primary.i70, COLORS.primary.i90];
+        return [Colors.primary.i70, Colors.primary.i90];
     }
   }, [props.variant]);
 

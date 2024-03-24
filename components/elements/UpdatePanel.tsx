@@ -1,6 +1,6 @@
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { StyleSheet, Text, View } from "react-native";
 import { CButton } from "../ui/CButton";
 
@@ -10,22 +10,30 @@ const style = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 15,
-    backgroundColor: COLORS.primary.i50,
+    backgroundColor: Colors.primary.i50,
   },
   text: { marginBottom: 5 },
 });
 
 export function UpdatePanel() {
   const [hasUpdates, setHasUpdates] = useState(false);
+  let intervalId: NodeJS.Timeout;
 
   useEffect(() => {
-    checkUpdates();
+    intervalId = setInterval(() => {
+      checkUpdates();
+    }, 10_000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   async function checkUpdates() {
     const update = await Updates.checkForUpdateAsync();
 
-    setHasUpdates(update.isAvailable);
+    if (update.isAvailable) {
+      setHasUpdates(true);
+      clearInterval(intervalId);
+    }
   }
 
   async function update() {

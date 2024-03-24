@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
 import {
-  Button,
-  Dimensions,
   GestureResponderEvent,
   Modal,
   StyleSheet,
@@ -9,8 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { CButton } from "./CButton";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { CIconButton } from "./CIconButton";
 
 interface Props {
@@ -54,7 +51,7 @@ export function CModal(props: Props) {
       >
         <View
           style={{
-            backgroundColor: COLORS.light.i4,
+            backgroundColor: Colors.light.i4,
             padding: 15,
             borderRadius: 10,
             marginBottom: 15,

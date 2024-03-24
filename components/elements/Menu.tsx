@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { Routes } from "../../router/router";
 import { useCallback } from "react";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 
 interface Props {
   page: Routes;
@@ -23,7 +23,7 @@ export function Menu(props: Props) {
       };
 
       if (page === props.page) {
-        style.backgroundColor = COLORS.light.i2;
+        style.backgroundColor = Colors.light.i2;
         style.borderBottomLeftRadius = 10;
         style.borderBottomRightRadius = 10;
       }
@@ -37,12 +37,12 @@ export function Menu(props: Props) {
     (page: Routes): TextStyle => {
       const style: TextStyle = {
         fontSize: 14,
-        color: COLORS.light.i3,
+        color: Colors.light.i3,
         textAlign: "center",
       };
 
       if (page === props.page) {
-        style.color = COLORS.primary.i90;
+        style.color = Colors.primary.i90;
       }
 
       return style;
@@ -54,7 +54,7 @@ export function Menu(props: Props) {
     <View
       style={{
         flexDirection: "row",
-        backgroundColor: COLORS.primary.i90,
+        backgroundColor: Colors.primary.i90,
         paddingBottom: 7,
       }}
     >

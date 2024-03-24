@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 import { useEffect, useState } from "react";
 import { Database } from "./database/database";
 import { Routes } from "./router/router";

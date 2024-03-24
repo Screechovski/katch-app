@@ -1,7 +1,7 @@
 import { StyleSheet, ViewStyle } from "react-native";
 import { CButtonBase, CButtonBaseType } from "./CButtonBase";
 import { AntDesign } from "@expo/vector-icons";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { IIconButtonName } from "../../utility/IconButtonNames";
 import { useMemo } from "react";
 
@@ -40,7 +40,7 @@ export function CIconButton(props: Props) {
     },
   }), [size]);
   const iconSize = useMemo(() => size * 0.75, [size]);
-  const iconColor = useMemo(() => props.iconColor ?? COLORS.light.i2, [props.iconColor])
+  const iconColor = useMemo(() => props.iconColor ?? Colors.light.i2, [props.iconColor])
 
   return (
     <CButtonBase

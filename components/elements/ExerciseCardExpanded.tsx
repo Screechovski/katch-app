@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { COLORS } from "../../theme";
+import { Colors } from "../../theme";
 import { useMemo } from "react";
 import { CIconButton } from "../ui/CIconButton";
 import { IExercise } from "../../entity/IExercise";
@@ -49,7 +49,7 @@ const style = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     textAlign: "left",
-    color: COLORS.dark.i7,
+    color: Colors.dark.i7,
     height: "auto",
   },
   approachesTextLine: {
@@ -124,7 +124,7 @@ export function ExerciseCardExpanded(props: ExerciseCardProps) {
 
                 <CIconButton
                   name="close"
-                  iconColor={COLORS.light.i2}
+                  iconColor={Colors.light.i2}
                   variant="error"
                   onPress={() => props.onDeleteApprouch(ap.id)}
                   size="s"
