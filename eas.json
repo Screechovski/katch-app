@@ -1,6 +1,5 @@
 {
   "cli": {
-    "version": ">= 7.3.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -20,6 +19,5 @@
   },
   "submit": {
     "production": {}
-  },
-  "owner": "dmyavl"
+  }
 }
