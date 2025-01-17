@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Text } from "react-native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Database } from "./database/database";
 import { Routes } from "./router/router";
 import { TrainingPage } from "./components/pages/TrainingPage";
@@ -44,11 +44,13 @@ export default function App() {
 
       <CWrapper>
         {isLoading && <Text>Database initing ...</Text>}
+
         {!isLoading && (
           <>
             {page === Routes.CREATE_TRAINING && (
               <TrainingPage callback={() => setPage(Routes.VIEW_TRAINS)} />
             )}
+
             {page === Routes.VIEW_TRAINS && <HistoryPage />}
           </>
         )}

@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ChooseExerciseModal } from "../modal/ChooseExerciseModal";
 import { IApproach } from "../../entity/IApproach";
 import { IExercise } from "../../entity/IExercise";

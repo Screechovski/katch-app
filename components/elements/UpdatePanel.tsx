@@ -1,5 +1,5 @@
 import * as Updates from "expo-updates";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "../../theme";
 import { StyleSheet, Text, View } from "react-native";
 import { CButton } from "../ui/CButton";
@@ -51,5 +51,6 @@ export function UpdatePanel() {
       </View>
     );
   }
+
   return <></>;
 }

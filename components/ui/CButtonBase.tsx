@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Colors } from "../../theme";
 import { CLoader } from "./CLoader";

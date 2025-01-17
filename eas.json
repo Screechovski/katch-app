@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 7.3.0"
+    "version": ">= 7.3.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -11,6 +12,7 @@
       "distribution": "internal"
     },
     "production": {
+      "autoIncrement": true,
       "android": {
         "buildType": "apk"
       }
@@ -18,5 +20,6 @@
   },
   "submit": {
     "production": {}
-  }
+  },
+  "owner": "dmyavl"
 }

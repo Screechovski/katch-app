@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import { ITraining } from "../../entity/ITraining";
-import { useEffect, useMemo, useState } from "react";
 import { Colors } from "../../theme";
 import { CButton } from "../ui/CButton";
 import { TrainingCard } from "../elements/TrainingCard";
