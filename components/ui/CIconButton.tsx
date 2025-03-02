@@ -1,15 +1,14 @@
 import { StyleSheet, ViewStyle } from "react-native";
 import { CButtonBase, CButtonBaseType } from "./CButtonBase";
 import { AntDesign } from "@expo/vector-icons";
-import { Colors } from "../../theme";
-import { IIconButtonName } from "../../utility/IconButtonNames";
 import { useMemo } from "react";
+import {Colors} from "@/constants/Theme";
 
 interface Props {
   onPress(): void;
   disabled?: boolean;
   style?: ViewStyle;
-  name: IIconButtonName;
+  name: string;
   variant?: CButtonBaseType;
   size?: 's' | 'm' | 'l';
   iconColor?: string;

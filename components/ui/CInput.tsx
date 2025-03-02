@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TextStyle, View } from "react-native";
-import { Colors } from "../../theme";
 import { useMemo } from "react";
+import {Colors} from "@/constants/Theme";
 
 interface Props {
   placeholder: string;

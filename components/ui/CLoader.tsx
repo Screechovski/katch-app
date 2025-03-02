@@ -1,7 +1,7 @@
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { Colors } from "../../theme";
 import { useEffect, useMemo, useRef } from "react";
+import {Colors} from "@/constants/Theme";
 
 interface Props {
   color?: string;

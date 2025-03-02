@@ -7,8 +7,8 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { Colors } from "../../theme";
 import { CIconButton } from "./CIconButton";
+import {Colors} from "@/constants/Theme";
 
 interface Props {
   children: ReactNode;
