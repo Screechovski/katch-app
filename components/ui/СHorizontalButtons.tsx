@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import {CButton} from "@/components/ui/CButton";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Colors } from "@/constants/Theme";
+import { CButtonBase } from "@/components/ui/CButtonBase";
 
 interface Props {
   selected: number;
@@ -14,19 +15,43 @@ export const HorizontalButtons = (props: Props) => {
   };
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
-      {props.options.map((option, key) => (
-          <CButton key={key} variant={props.selected === option ? 'primary' : 'success'} onPress={() => handleSelect(option)}>
-            {option.toString()}
-          </CButton>
-      ))}
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.container}
+    >
+      <View style={styles.track}>
+        {props.options.map((option, key) => (
+          <CButtonBase
+            key={key}
+            variant={props.selected === option ? "primary" : "success"}
+            style={styles.wrap}
+            onPress={() => handleSelect(option)}
+            disabled={false}
+          >
+            <Text style={styles.text}>{option.toString()}</Text>
+          </CButtonBase>
+        ))}
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
     flexDirection: "row",
+  },
+  track: {
+    gap: 3,
+    flexDirection: "row",
+  },
+  text: {
+    fontSize: 16,
+    color: Colors.light.i3,
+    textTransform: "uppercase",
+  },
+  wrap: {
+    height: 36,
+    width: 36,
   },
 });

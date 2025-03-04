@@ -1,13 +1,12 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { ExerciseList } from "./ExerciseList";
-import { useMemo, useState } from "react";
-import { CInput } from "../ui/CInput";
-import {getSortedExercises, IExercise} from "@/assets/entity/IExercise";
-
-const { width } = Dimensions.get("window");
+import {StyleSheet, Text, View} from "react-native";
+import {ExerciseList} from "./ExerciseList";
+import {useMemo, useState} from "react";
+import {getExercises, IExercise} from "@/assets/entity/IExercise";
+import {CInput} from "@/components/ui/CInput";
 
 interface Props {
     count: number;
+
     onSelect(item: IExercise): void;
 }
 
@@ -17,7 +16,7 @@ const ExerciseListSearchStyle = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
     },
-    input: { marginBottom: 15 },
+    input: {marginBottom: 15},
     emptyText: {
         width: "100%",
         textAlign: "center",
@@ -26,20 +25,24 @@ const ExerciseListSearchStyle = StyleSheet.create({
 
 export function ExerciseListSearch(props: Props) {
     const [searchValue, setSearchValue] = useState<string>("");
-    const exercises = getSortedExercises();
+    const exercises = getExercises();
 
-    const filteredExercises = useMemo<IExercise[]>(
-        () => {
-            const searchValueLower = searchValue.toLowerCase();
+    const filteredExercises = useMemo<IExercise[]>(() => {
+        const searchValueLower = searchValue.toLowerCase();
 
-            return exercises.filter((ex) => {
-                const nameLower = ex.name.toLowerCase();
+        return exercises.filter((ex) => {
+            const nameLower = ex.name.toLowerCase();
 
-                return nameLower.includes(searchValueLower)
-            })
-        },
-        [searchValue],
-    );
+            // TODO улучшить поиск
+            //   const nameLowerSplited = nameLower.split(' ');
+            //   const searchLowerSplited = searchValueLower.trim().split(' ');
+            //   nameLowerSplited.findIndex((word) => {
+            //     searchLowerSplited.findIndex(_word => _word === word)
+            //   })
+
+            return nameLower.includes(searchValueLower);
+        });
+    }, [searchValue]);
 
     return (
         <View style={ExerciseListSearchStyle.wrap}>

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, ViewStyle } from "react-native";
 import { CButtonBase, CButtonBaseType } from "./CButtonBase";
-import {Colors} from "@/constants/Theme";
+import { Colors } from "@/constants/Theme";
 
 interface Props {
   children: string;
@@ -12,7 +12,7 @@ interface Props {
 
 const style = StyleSheet.create({
   wrap: {
-    height: 50
+    height: 50,
   },
   text: {
     fontSize: 16,

@@ -8,7 +8,7 @@ interface Props {
   onPress(): void;
   disabled?: boolean;
   style?: ViewStyle;
-  name: string;
+  name: GLYPHS;
   variant?: CButtonBaseType;
   size?: 's' | 'm' | 'l';
   iconColor?: string;
@@ -38,7 +38,7 @@ export function CIconButton(props: Props) {
       borderRadius,
     },
   }), [size]);
-  const iconSize = useMemo(() => size * 0.75, [size]);
+  const iconSize = useMemo(() => size * 0.6, [size]);
   const iconColor = useMemo(() => props.iconColor ?? Colors.light.i2, [props.iconColor])
 
   return (

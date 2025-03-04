@@ -1,14 +1,15 @@
 import {Dimensions, FlatList, SafeAreaView, StyleProp} from "react-native";
-import { useMemo } from "react";
-import { ExerciseCardVertical } from "./ExerciseCardVertical";
+import {useMemo} from "react";
+import {ExerciseCardVertical} from "./ExerciseCardVertical";
 import {getSortedExercises, IExercise} from "@/assets/entity/IExercise";
 
-const { width } = Dimensions.get("window");
+const {width} = Dimensions.get("window");
 
 interface Props {
     count?: number;
     exercises?: IExercise[];
     style?: StyleProp<FlatList>;
+
     onPress?(item: IExercise): void;
 }
 
@@ -44,14 +45,14 @@ export function ExerciseList(props: Props) {
     const itemWidth = (width - 30) / count;
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{flex: 1}}>
             <FlatList
                 data={exercises}
                 style={style}
-                renderItem={({ item }) => (
+                renderItem={({item}) => (
                     <ExerciseCardVertical
                         onPress={() => pressHandler(item)}
-                        style={{ width: itemWidth }}
+                        style={{width: itemWidth}}
                         photo={item.photo}
                         name={item.name}
                         id={item.id}
