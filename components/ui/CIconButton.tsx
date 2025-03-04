@@ -8,7 +8,7 @@ interface Props {
   onPress(): void;
   disabled?: boolean;
   style?: ViewStyle;
-  name: GLYPHS;
+  name: keyof typeof AntDesign.glyphMap;
   variant?: CButtonBaseType;
   size?: 's' | 'm' | 'l';
   iconColor?: string;
