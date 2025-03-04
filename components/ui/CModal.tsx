@@ -1,9 +1,7 @@
 import React, {ReactNode} from "react";
 import {
-    GestureResponderEvent,
     Modal,
     StyleSheet,
-    TouchableOpacity,
     View,
     ViewStyle,
 } from "react-native";
@@ -25,12 +23,6 @@ const style = StyleSheet.create({
 });
 
 export function CModal(props: Props) {
-    function onPressHandler(e: GestureResponderEvent) {
-        e.stopPropagation();
-        e.preventDefault();
-        props.onHide();
-    }
-
     if (!props.visible) return <></>;
 
     return (

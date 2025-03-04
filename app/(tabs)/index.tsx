@@ -1,5 +1,5 @@
 import {Alert, StyleSheet, Text, View} from "react-native";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 
 import {CWrapper} from "@/components/ui/CWrapper";
 import {ExerciseListSearch} from "@/components/elements/ExerciseListSearch";
@@ -8,7 +8,6 @@ import {Colors} from "@/constants/Theme";
 import {HorizontalButtons} from "@/components/ui/СHorizontalButtons";
 import {CIconButton} from "@/components/ui/CIconButton";
 import {CButton} from "@/components/ui/CButton";
-import {Storage} from "@/helpers/Storage";
 import {useTrains} from "@/hooks/useTrains";
 
 export default function HomeScreen() {
