@@ -52,6 +52,6 @@ export function CInput(props: Props) {
         selectTextOnFocus={!props.disabled}
         onChangeText={props.onInput}
       />
-    </View>
+    </View> 
   );
 }

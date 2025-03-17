@@ -28,7 +28,7 @@ export default function TabTwoScreen() {
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const dayOfWeek = daysOfWeek[date.getDay()];
 
-        return `${day}.${month} ${dayOfWeek.toUpperCase()}`;
+        return `${dayOfWeek} ${day}.${month}`;
     }
 
     async function removeLocal(date: string) {
@@ -53,7 +53,7 @@ export default function TabTwoScreen() {
             {trains.list.map((train, trainKey) => (
                 <View style={styles.card} key={trainKey}>
                     <View style={styles.headline}>
-                        <Text style={styles.title}>Дата: {updateDateTime(train.date)}</Text>
+                        <Text style={styles.title}>{updateDateTime(train.date)}</Text>
                         <CIconButton
                             size={"s"}
                             variant={"error"}

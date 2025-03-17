@@ -2,6 +2,7 @@ import {Dimensions, FlatList, SafeAreaView, StyleProp} from "react-native";
 import {useMemo} from "react";
 import {ExerciseCardVertical} from "./ExerciseCardVertical";
 import {getSortedExercises, IExercise} from "@/assets/entity/IExercise";
+import { useTrains } from "@/hooks/useTrains";
 
 const {width} = Dimensions.get("window");
 
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export function ExerciseList(props: Props) {
+    const {list} = useTrains();
+
     const style = useMemo(() => {
         if (props.style) {
             return props.style;
@@ -39,7 +42,27 @@ export function ExerciseList(props: Props) {
             return props.exercises;
         }
         return getSortedExercises();
-    }, [props.exercises]);
+    }, [props.exercises, list]);
+
+    function sortObjectsByOccurrences<T extends Record<'id', number>>(objects: T[], ids: number[]): T[] {
+        const idCounts = ids.reduce((counts: any, id) => {
+            counts[id] = (counts[id] || 0) + 1;
+            return counts;
+        }, {});
+    
+        return objects.sort((a, b) => {
+            const countA = idCounts[a.id] || 0;
+            const countB = idCounts[b.id] || 0;
+            return countB - countA;
+        });
+    }
+
+    const sortedExercises = useMemo(() => {
+        return sortObjectsByOccurrences(
+            exercises,
+            list.map(item => item.exercises.map(ex => ex.exercise)).flat()
+        )
+    }, [exercises, list])
 
 
     const itemWidth = (width - 30) / count;
@@ -47,7 +70,7 @@ export function ExerciseList(props: Props) {
     return (
         <SafeAreaView style={{flex: 1}}>
             <FlatList
-                data={exercises}
+                data={sortedExercises}
                 style={style}
                 renderItem={({item}) => (
                     <ExerciseCardVertical

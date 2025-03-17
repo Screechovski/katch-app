@@ -1,5 +1,5 @@
 import {Storage} from "@/helpers/Storage";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export interface Train {
     date: string;
@@ -15,6 +15,10 @@ export function useTrains() {
     const [list, setList] = useState<Train[]>([])
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        load()
+    }, [])
+
     async function load() {
         const trains = (await Storage.getData<string[]>('trains')) ?? [];
         const _trains: Train[] = [];
@@ -22,6 +26,8 @@ export function useTrains() {
         if (trains.length == 0) {
             setIsLoading(true);
         }
+
+        trains.sort((a,b) => new Date(b).getTime() - new Date(a).getTime())
 
         for await (const trainKey of trains) {
             const exercises = (await Storage.getData<Train['exercises']>(trainKey)) ?? [];
