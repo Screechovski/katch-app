@@ -3,6 +3,7 @@ import {ExerciseList} from "./ExerciseList";
 import {useMemo, useState} from "react";
 import {getExercises, IExercise} from "@/assets/entity/IExercise";
 import {CInput} from "@/components/ui/CInput";
+import { BInput } from "@/components/ui/BInput";
 
 interface Props {
     count: number;
@@ -50,6 +51,9 @@ export function ExerciseListSearch(props: Props) {
                 style={ExerciseListSearchStyle.input}
                 value={searchValue}
                 onInput={setSearchValue}
+                placeholder="Поиск"
+            />
+            <BInput
                 placeholder="Поиск"
             />
 

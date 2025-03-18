@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { CLoader } from "./CLoader";
 import {Colors} from "@/constants/Theme";
 
-export type CButtonBaseType = "primary" | "success" | "error" | "warning";
+export type CButtonBaseType = "primary" | "primary-outline" | "success" | "error" | "warning";
 
 interface Props {
   children: ReactNode;
@@ -15,7 +15,6 @@ interface Props {
 }
 
 export function CButtonBase(props: Props) {
-
   const colors = useMemo(() => {
     switch (props.variant) {
       case "error":
@@ -24,6 +23,8 @@ export function CButtonBase(props: Props) {
         return [Colors.success.i7, Colors.success.i9];
       case "warning":
         return [Colors.warning.i8, Colors.warning.i9];
+      case "primary-outline":
+        return [Colors.light.i2, Colors.primary.i90];
       default:
         return [Colors.primary.i70, Colors.primary.i90];
     }

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-mobile",
-    "slug": "react-mobile",
+    "name": "YAD fitapp",
+    "slug": "yad_fitapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

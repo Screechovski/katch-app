@@ -10,19 +10,19 @@ interface Props {
   disabled?: boolean;
 }
 
-const style = StyleSheet.create({
-  wrap: {
-    height: 50,
-  },
-  text: {
-    fontSize: 16,
-    color: Colors.light.i3,
-    textTransform: "uppercase",
-    paddingHorizontal: 20,
-  },
-});
-
 export function CButton(props: Props) {
+  const style = StyleSheet.create({
+    wrap: {
+      height: 50,
+    },
+    text: {
+      fontSize: 16,
+      color: props.variant !== "primary-outline"  ? Colors.light.i3 : Colors.primary.i90,
+      textTransform: "uppercase",
+      paddingHorizontal: 20,
+    },
+  });
+
   return (
     <CButtonBase
       variant={props.variant}

@@ -10,7 +10,6 @@ interface Props {
     count?: number;
     exercises?: IExercise[];
     style?: StyleProp<FlatList>;
-
     onPress?(item: IExercise): void;
 }
 
