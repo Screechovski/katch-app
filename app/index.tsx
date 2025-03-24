@@ -1,14 +1,14 @@
-import {Alert, StyleSheet, Text, View} from "react-native";
-import {useEffect, useState} from "react";
+import {Alert, StyleSheet, Text, View} from 'react-native';
+import {useEffect, useState} from 'react';
 
-import {CWrapper} from "@/components/ui/CWrapper";
-import {ExerciseListSearch} from "@/components/elements/ExerciseListSearch";
-import {IExercise} from "@/assets/entity/IExercise";
-import {Colors} from "@/constants/Theme";
-import {HorizontalButtons} from "@/components/ui/СHorizontalButtons";
-import {CIconButton} from "@/components/ui/CIconButton";
-import {CButton} from "@/components/ui/CButton";
-import {useTrains} from "@/hooks/useTrains";
+import {CWrapper} from '@/components/ui/CWrapper';
+import {ExerciseListSearch} from '@/components/elements/ExerciseListSearch';
+import {IExercise} from '@/assets/entity/IExercise';
+import {Colors} from '@/constants/Theme';
+import {HorizontalButtons} from '@/components/ui/СHorizontalButtons';
+import {CIconButton} from '@/components/ui/CIconButton';
+import {CButton} from '@/components/ui/CButton';
+import {useTrains} from '@/hooks/useTrains';
 
 export default function HomeScreen() {
     const [step, setStep] = useState(0); // 0 select exerce, select count, select weight
@@ -19,8 +19,8 @@ export default function HomeScreen() {
     const [tempApproach, setTempApproach] = useState<number>(0);
 
     const weight = [
-        4, 5, 6, 7, 8, 9, 10, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65,
-        70, 75, 80,
+        4, 5, 6, 7, 8, 9, 10, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
+        80,
     ];
     const [tempWeight, setTempWeight] = useState<number>(0);
 
@@ -96,19 +96,19 @@ export default function HomeScreen() {
                 approaches.map((approach) => ({
                     ...approach,
                     exercise: approach.exercise.id,
-                }))
+                })),
             );
-            Alert.alert("Успешно", "Данные сохранены");
+            Alert.alert('Успешно', 'Данные сохранены');
             reset();
         } catch (e) {
-            Alert.alert("Ошибка", JSON.stringify(e));
+            Alert.alert('Ошибка', JSON.stringify(e));
         }
     }
 
     return (
         <CWrapper style={styles.wrapper}>
             {approaches.length > 0 && (
-                <CButton variant={"success"} style={styles.save} onPress={saveLocal}>
+                <CButton variant={'success'} style={styles.save} onPress={saveLocal}>
                     Сохранить
                 </CButton>
             )}
@@ -117,26 +117,24 @@ export default function HomeScreen() {
                 approaches.map((approache, index) => (
                     <View key={index} style={styles.approach}>
                         <Text style={styles.approachText}>
-                            {index + 1} {approache.exercise.name} {approache.weight}кг{" "}
+                            {index + 1} {approache.exercise.name} {approache.weight}кг{' '}
                             {approache.approach}x{approache.repeat}
                         </Text>
                         <CIconButton
-                            variant={"error"}
+                            variant={'error'}
                             onPress={() => onDelete(index)}
-                            name={"delete"}
+                            name={'delete'}
                         />
                     </View>
                 ))}
 
-            {approaches.length > 0 && <View style={styles.hr}/>}
+            {approaches.length > 0 && <View style={styles.hr} />}
 
             {tempExercises && (
                 <Text style={styles.exercisesName}>{tempExercises.name}</Text>
             )}
 
-            {step === 0 && (
-                <ExerciseListSearch count={3} onSelect={onSelectExercise}/>
-            )}
+            {step === 0 && <ExerciseListSearch count={3} onSelect={onSelectExercise} />}
 
             {step !== 0 && (
                 <View>
@@ -174,9 +172,6 @@ const styles = StyleSheet.create({
     save: {
         marginBottom: 10,
     },
-    wrapper: {
-        paddingTop: 26,
-    },
     hr: {
         height: 2,
         marginBottom: 20,
@@ -184,9 +179,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary.i80,
     },
     approach: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         marginBottom: 10,
     },
     approachText: {

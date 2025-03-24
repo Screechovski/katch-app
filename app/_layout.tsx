@@ -42,7 +42,7 @@ export default function RootLayout() {
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <View>
-                <View style={{height: height - 40}}>
+                <View style={{height: height - 40, paddingTop: 10}}>
                     {page === 'home' && <HomeScreen />}
                     {page === 'history' && <TabTwoScreen />}
                 </View>
