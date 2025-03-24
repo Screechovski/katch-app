@@ -78,7 +78,7 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
     wrapper: {
-        paddingTop: 40,
+        paddingTop: 26,
     },
     copy: {
         flexDirection: "row",

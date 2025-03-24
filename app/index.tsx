@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     wrapper: {
-        paddingTop: 40,
+        paddingTop: 26,
     },
     hr: {
         height: 2,

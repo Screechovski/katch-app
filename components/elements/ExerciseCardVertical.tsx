@@ -6,10 +6,10 @@ import {
     Text,
     View,
     ViewStyle,
-} from "react-native";
-import { useMemo } from "react";
-import {IExercise} from "@/assets/entity/IExercise";
-import {Colors} from "@/constants/Theme";
+} from 'react-native';
+import {useMemo} from 'react';
+import {IExercise} from '@/assets/entity/IExercise';
+import {Colors} from '@/constants/Theme';
 
 type ExerciseCardProps = IExercise & {
     style?: StyleProp<ViewStyle>;
@@ -19,56 +19,40 @@ type ExerciseCardProps = IExercise & {
 
 const style = StyleSheet.create({
     wrapper: {
-        padding: 5,
+        padding: 2,
     },
     inner: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         backgroundColor: Colors.light.i2,
-        borderRadius: 10,
-        padding: 5,
+        padding: 2,
     },
     image: {
-        width: "100%",
+        width: '100%',
         height: 100,
         marginBottom: 5,
     },
     textWrap: {
         flex: 1,
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         marginLeft: 0,
         marginTop: 0,
     },
     text: {
-        display: "flex",
-        flex: 1,
-        fontSize: 12,
-        textAlign: "center",
-        color: Colors.dark.i7,
-        height: 12 * 1.2 * 3,
-    },
-    countsList: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 2,
-        flexWrap: 'wrap',
-        minHeight: 5,
-        marginTop: 5
-    },
-    countsItem: {
         display: 'flex',
-        height: 5,
-        width: 5,
-        backgroundColor: Colors.primary.i50,
-        borderRadius: 3
-    }
+        fontSize: 12,
+        lineHeight: 12,
+        textAlign: 'center',
+        color: Colors.dark.i7,
+        height: 12 * 1.2 * 4,
+    },
 });
 
 export function ExerciseCardVertical(props: ExerciseCardProps) {
     const wrapperStyle = useMemo(() => {
-        if (props.style && typeof props.style === "object") {
+        if (props.style && typeof props.style === 'object') {
             return {
                 ...props.style,
                 ...style.wrapper,
@@ -79,7 +63,7 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
     }, [props.style]);
 
     function pressHandler() {
-        if ("onPress" in props && typeof props.onPress === "function") {
+        if ('onPress' in props && typeof props.onPress === 'function') {
             props.onPress(props.id);
         }
     }
@@ -90,11 +74,6 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
                 <Image source={props.photo} style={style.image} />
                 <View style={style.textWrap}>
                     <Text style={style.text}>{props.name}</Text>
-                </View>
-                <View style={style.countsList}>
-                    {Array.from({ length: props.count }).map(() => (
-                        <View style={style.countsItem} />
-                    ))}
                 </View>
             </View>
         </Pressable>

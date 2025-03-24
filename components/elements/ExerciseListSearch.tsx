@@ -53,14 +53,11 @@ export function ExerciseListSearch(props: Props) {
                 onInput={setSearchValue}
                 placeholder="Поиск"
             />
-            <BInput
-                placeholder="Поиск"
-            />
 
             {filteredExercises.length > 0 && (
                 <ExerciseList
                     exercises={filteredExercises}
-                    count={3}
+                    count={4}
                     onPress={props.onSelect}
                 />
             )}
