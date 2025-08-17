@@ -18,10 +18,10 @@ export function CTab(props: Props) {
     return (
         <TouchableOpacity
             style={{
+                height: 40,
                 flexDirection: 'row',
                 justifyContent: 'center',
                 backgroundColor: Colors.light.i2,
-                width: '50%',
                 paddingVertical: 5,
                 borderBottomWidth: 2,
                 borderStyle: 'solid',

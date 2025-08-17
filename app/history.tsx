@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Alert, View, Text} from 'react-native';
+import {StyleSheet, Alert, View, Text, ScrollView} from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
 import {CIconButton} from '@/components/ui/CIconButton';
@@ -41,7 +41,7 @@ export default function TabTwoScreen() {
     }
 
     return (
-        <CWrapper style={styles.wrapper}>
+        <CWrapper>
             <View style={styles.copy}>
                 <CIconButton variant={'success'} onPress={trains.load} name={'sync'} />
                 <CIconButton
@@ -60,26 +60,29 @@ export default function TabTwoScreen() {
                 onHide={() => setLoadBackupIsVisible(false)}
             />
 
-            {trains.list.map((train, trainKey) => (
-                <View style={styles.card} key={trainKey}>
-                    <View style={styles.headline}>
-                        <Text style={styles.title}>{updateDateTime(train.date)}</Text>
-                        <CIconButton
-                            size={'s'}
-                            variant={'error'}
-                            onPress={() => removeLocal(train.date)}
-                            name={'delete'}
-                        />
-                    </View>
+            <ScrollView>
+                {trains.list.map((train, trainKey) => (
+                    <View style={styles.card} key={trainKey}>
+                        <View style={styles.headline}>
+                            <Text style={styles.title}>{updateDateTime(train.date)}</Text>
+                            <CIconButton
+                                size={'s'}
+                                variant={'error'}
+                                onPress={() => removeLocal(train.date)}
+                                name={'delete'}
+                            />
+                        </View>
 
-                    {train.exercises.map((exercise, exerciseKey) => (
-                        <Text style={styles.line} key={exerciseKey}>
-                            {exerciseKey + 1} {getExerciseById(exercise.exercise)?.name}:{' '}
-                            {exercise.weight}кг {exercise.approach}x{exercise.repeat}
-                        </Text>
-                    ))}
-                </View>
-            ))}
+                        {train.exercises.map((exercise, exerciseKey) => (
+                            <Text style={styles.line} key={exerciseKey}>
+                                {exerciseKey + 1}{' '}
+                                {getExerciseById(exercise.exercise)?.name}:{' '}
+                                {exercise.weight}кг {exercise.approach}x{exercise.repeat}
+                            </Text>
+                        ))}
+                    </View>
+                ))}
+            </ScrollView>
 
             {trains.list.length === 0 && <Text>Пусто.</Text>}
         </CWrapper>

@@ -20,6 +20,8 @@ type ExerciseCardProps = IExercise & {
 const style = StyleSheet.create({
     wrapper: {
         padding: 2,
+        flex: 1,
+        maxWidth: '100%',
     },
     inner: {
         display: 'flex',
@@ -27,6 +29,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.light.i2,
         padding: 2,
+        width: '100%',
     },
     image: {
         width: '100%',
@@ -39,6 +42,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         marginLeft: 0,
         marginTop: 0,
+        width: '100%',
     },
     text: {
         display: 'flex',
@@ -47,6 +51,7 @@ const style = StyleSheet.create({
         textAlign: 'center',
         color: Colors.dark.i7,
         height: 12 * 1.2 * 4,
+        flexWrap: 'wrap',
     },
 });
 
@@ -73,7 +78,9 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
             <View style={style.inner}>
                 <Image source={props.photo} style={style.image} />
                 <View style={style.textWrap}>
-                    <Text style={style.text}>{props.name}</Text>
+                    <Text style={style.text} numberOfLines={4}>
+                        {props.name}
+                    </Text>
                 </View>
             </View>
         </Pressable>
