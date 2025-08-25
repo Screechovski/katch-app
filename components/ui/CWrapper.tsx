@@ -22,6 +22,7 @@ export function CWrapper(props: Props) {
         () =>
             StyleSheet.create({
                 wrap: {
+                    flex: 1,
                     paddingHorizontal: getPadding,
                     marginVertical: getPadding,
                     width: '100%',

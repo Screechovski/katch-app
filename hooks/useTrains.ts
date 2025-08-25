@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {Storage} from "@/helpers/Storage";
+import {useEffect, useState} from 'react';
+import {Storage} from '@/helpers/Storage';
 
 export interface Train {
     date: string;
@@ -8,16 +8,16 @@ export interface Train {
         weight: number;
         approach: number;
         repeat: number;
-    }[]
+    }[];
 }
 
 export function useTrains() {
-    const [list, setList] = useState<Train[]>([])
+    const [list, setList] = useState<Train[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        load()
-    }, [])
+        load();
+    }, []);
 
     async function load() {
         const trains = (await Storage.getData<string[]>('trains')) ?? [];
@@ -27,15 +27,15 @@ export function useTrains() {
             setIsLoading(true);
         }
 
-        trains.sort((a,b) => new Date(b).getTime() - new Date(a).getTime())
+        trains.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
         for await (const trainKey of trains) {
             const exercises = (await Storage.getData<Train['exercises']>(trainKey)) ?? [];
 
             _trains.push({
                 date: trainKey,
-                exercises
-            })
+                exercises,
+            });
         }
 
         setList(_trains);
@@ -45,16 +45,18 @@ export function useTrains() {
     async function remove(id: string) {
         const trains = (await Storage.getData<string[]>('trains')) ?? [];
 
-        await Storage.saveData('trains', trains.filter(trainId => trainId !== id));
-        await Storage.removeData(id)
+        await Storage.saveData(
+            'trains',
+            trains.filter((trainId) => trainId !== id),
+        );
+        await Storage.removeData(id);
         await load();
     }
 
-    async function save(exercises: Train['exercises']) {
-        const date = new Date().toISOString();
-        const prevTrains = (await Storage.getData<string[]>("trains")) || [];
+    async function save(exercises: Train['exercises'], date: string) {
+        const prevTrains = (await Storage.getData<string[]>('trains')) || [];
 
-        await Storage.saveData("trains", [...prevTrains, date]);
+        await Storage.saveData('trains', [...prevTrains, date]);
         await Storage.saveData(date, exercises);
     }
 
@@ -65,7 +67,7 @@ export function useTrains() {
             await Storage.removeData(trainKey);
         }
 
-        await Storage.removeData("trains");
+        await Storage.removeData('trains');
     }
 
     async function loadBackup(trains: unknown) {
@@ -76,7 +78,7 @@ export function useTrains() {
         await clean();
 
         for await (const train of trains) {
-            if (typeof train.exercises !== "object") {
+            if (typeof train.exercises !== 'object') {
                 return;
             }
 
@@ -89,12 +91,12 @@ export function useTrains() {
             ) {
                 const trainsStorage = (await Storage.getData<string[]>('trains')) ?? [];
 
-                await Storage.saveData("trains", [...trainsStorage, train.date]);
+                await Storage.saveData('trains', [...trainsStorage, train.date]);
                 await Storage.saveData(train.date, train.exercises);
             }
         }
 
-        await load()
+        await load();
     }
 
     return {
@@ -104,5 +106,5 @@ export function useTrains() {
         loadBackup,
         isLoading,
         list,
-    }
+    };
 }

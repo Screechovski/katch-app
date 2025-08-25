@@ -1,16 +1,8 @@
-import {
-    FlatList,
-    SafeAreaView,
-    StyleProp,
-    Text,
-    useWindowDimensions,
-    View,
-} from 'react-native';
+import {FlatList, StyleProp, useWindowDimensions} from 'react-native';
 import {useMemo} from 'react';
 import {ExerciseCardVertical} from './ExerciseCardVertical';
 import {getSortedExercises, IExercise} from '@/assets/entity/IExercise';
 import {useTrains} from '@/hooks/useTrains';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 interface Props {
     count?: number;
@@ -75,35 +67,28 @@ export function ExerciseList(props: Props) {
         [exercises, list],
     );
 
-    const itemWidth = (width - 30) / count; // Вычисляем ширину элемента
+    const itemWidth = width / count; // Вычисляем ширину элемента
 
     return (
-        <SafeAreaProvider>
-            <SafeAreaView style={{flex: 1}}>
-                <FlatList
-                    data={exercises}
-                    renderItem={({item}) => (
-                        <ExerciseCardVertical
-                            onPress={() => pressHandler(item)}
-                            style={{width: itemWidth}}
-                            photo={item.photo}
-                            name={item.name}
-                            id={item.id}
-                            count={item.count}
-                        />
-                    )}
-                    numColumns={count}
-                    keyExtractor={(item) => item.id.toString()}
-                    columnWrapperStyle={{
-                        justifyContent: 'space-between',
-                        marginBottom: 10,
-                    }}
-                    contentContainerStyle={{
-                        paddingHorizontal: 15,
-                    }}
-                    showsVerticalScrollIndicator={false}
+        <FlatList
+            data={exercises}
+            renderItem={({item}) => (
+                <ExerciseCardVertical
+                    onPress={() => pressHandler(item)}
+                    style={{width: itemWidth}}
+                    photo={item.photo}
+                    name={item.name}
+                    id={item.id}
+                    count={item.count}
                 />
-            </SafeAreaView>
-        </SafeAreaProvider>
+            )}
+            numColumns={count}
+            keyExtractor={(item) => item.id.toString()}
+            columnWrapperStyle={{
+                justifyContent: 'space-between',
+            }}
+            showsVerticalScrollIndicator={false}
+            style={{flex: 1}}
+        />
     );
 }

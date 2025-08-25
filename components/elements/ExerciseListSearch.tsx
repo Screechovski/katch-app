@@ -1,4 +1,4 @@
-import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {ExerciseList} from './ExerciseList';
 import {useMemo, useState} from 'react';
 import {getExercises, IExercise} from '@/assets/entity/IExercise';
@@ -11,8 +11,16 @@ interface Props {
 }
 
 const ExerciseListSearchStyle = StyleSheet.create({
-    wrap: {},
+    wrap: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+    },
     input: {marginBottom: 15},
+    listContainer: {
+        flex: 1,
+        minHeight: 0, // Важно для правильной работы flex
+    },
     emptyText: {
         width: '100%',
         textAlign: 'center',
@@ -22,7 +30,6 @@ const ExerciseListSearchStyle = StyleSheet.create({
 export function ExerciseListSearch(props: Props) {
     const [searchValue, setSearchValue] = useState<string>('');
     const exercises = getExercises();
-    const {height} = useWindowDimensions();
 
     const filteredExercises = useMemo<IExercise[]>(() => {
         // const searchValueLower = searchValue.toLowerCase();
@@ -37,16 +44,14 @@ export function ExerciseListSearch(props: Props) {
 
     return (
         <View style={ExerciseListSearchStyle.wrap}>
-            <View style={{borderWidth: 1, borderColor: 'red'}}>
-                <CInput
-                    style={ExerciseListSearchStyle.input}
-                    value={searchValue}
-                    onInput={setSearchValue}
-                    placeholder="Поиск"
-                />
-            </View>
+            <CInput
+                style={ExerciseListSearchStyle.input}
+                value={searchValue}
+                onInput={setSearchValue}
+                placeholder="Поиск"
+            />
 
-            <View style={{height: height - 200, borderWidth: 1, borderColor: 'red'}}>
+            <View style={[ExerciseListSearchStyle.listContainer]}>
                 {filteredExercises.length > 0 && (
                     <ExerciseList
                         exercises={filteredExercises}
@@ -54,11 +59,10 @@ export function ExerciseListSearch(props: Props) {
                         onPress={props.onSelect}
                     />
                 )}
+                {filteredExercises.length === 0 && (
+                    <Text style={ExerciseListSearchStyle.emptyText}>Пусто</Text>
+                )}
             </View>
-
-            {filteredExercises.length === 0 && (
-                <Text style={ExerciseListSearchStyle.emptyText}>Пусто</Text>
-            )}
         </View>
     );
 }

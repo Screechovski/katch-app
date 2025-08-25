@@ -1,16 +1,23 @@
-import React, {useState} from 'react';
-import {StyleSheet, Alert, View, Text, ScrollView} from 'react-native';
+import React, {useEffect, useState, useMemo} from 'react';
+import {StyleSheet, Alert, View, Text, ScrollView, Pressable} from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
 import {CIconButton} from '@/components/ui/CIconButton';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {useTrains} from '@/hooks/useTrains';
-import {getExerciseById} from '@/assets/entity/IExercise';
+import {getExerciseById, IExercise} from '@/assets/entity/IExercise';
 import {LoadBackupModal} from '@/components/elements/LoadBackupModal';
+import {useWeight} from '@/hooks/useWeight';
+import {FilterChips} from '@/components/FilterChips';
+import {HistoryCard} from '@/components/HistoryCard';
+import {Colors} from '@/constants/Theme';
 
 export default function TabTwoScreen() {
     const trains = useTrains();
+    const weightStorage = useWeight();
+
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
+    const [filterExerciseIds, setFilterExerciseIds] = useState<number[]>([]);
 
     async function handleCopy() {
         try {
@@ -40,6 +47,53 @@ export default function TabTwoScreen() {
         }
     }
 
+    const [weights, setWeights] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        (async () => {
+            const weights = await weightStorage.get();
+
+            let sum: Record<string, number> = {};
+
+            for (const w of weights) {
+                sum[w.date] = w.weight;
+            }
+
+            setWeights(sum);
+        })();
+    }, []);
+
+    const filteredTrains = useMemo(() => {
+        if (filterExerciseIds.length === 0) {
+            return trains.list;
+        }
+
+        return trains.list
+            .filter((train) => {
+                return train.exercises.some((exercise) =>
+                    filterExerciseIds.includes(exercise.exercise),
+                );
+            })
+            .map((train) => ({
+                ...train,
+                exercises: train.exercises.filter((exercise) =>
+                    filterExerciseIds.includes(exercise.exercise),
+                ),
+            }));
+    }, [trains.list, filterExerciseIds]);
+
+    function addFilter(id: number) {
+        if (filterExerciseIds.includes(id)) {
+            return;
+        }
+
+        setFilterExerciseIds((prev) => [...prev, id]);
+    }
+
+    function removeFilter(exerciseId: number) {
+        setFilterExerciseIds((prev) => prev.filter((id) => id !== exerciseId));
+    }
+
     return (
         <CWrapper>
             <View style={styles.copy}>
@@ -60,27 +114,21 @@ export default function TabTwoScreen() {
                 onHide={() => setLoadBackupIsVisible(false)}
             />
 
-            <ScrollView>
-                {trains.list.map((train, trainKey) => (
-                    <View style={styles.card} key={trainKey}>
-                        <View style={styles.headline}>
-                            <Text style={styles.title}>{updateDateTime(train.date)}</Text>
-                            <CIconButton
-                                size={'s'}
-                                variant={'error'}
-                                onPress={() => removeLocal(train.date)}
-                                name={'delete'}
-                            />
-                        </View>
+            <FilterChips
+                filterExerciseIds={filterExerciseIds}
+                onRemoveFilter={removeFilter}
+            />
 
-                        {train.exercises.map((exercise, exerciseKey) => (
-                            <Text style={styles.line} key={exerciseKey}>
-                                {exerciseKey + 1}{' '}
-                                {getExerciseById(exercise.exercise)?.name}:{' '}
-                                {exercise.weight}кг {exercise.approach}x{exercise.repeat}
-                            </Text>
-                        ))}
-                    </View>
+            <ScrollView>
+                {filteredTrains.map((train, trainKey) => (
+                    <HistoryCard
+                        key={trainKey}
+                        train={train}
+                        weights={weights}
+                        updateDateTime={updateDateTime}
+                        addFilter={addFilter}
+                        removeLocal={removeLocal}
+                    />
                 ))}
             </ScrollView>
 
@@ -95,24 +143,8 @@ const styles = StyleSheet.create({
         gap: 5,
         marginBottom: 20,
     },
-    headline: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
     titleContainer: {
         flexDirection: 'row',
         gap: 8,
-    },
-    card: {
-        flexDirection: 'column',
-        gap: 5,
-        padding: 5,
-        marginBottom: 10,
-    },
-    title: {
-        fontSize: 20,
-    },
-    line: {
-        fontSize: 16,
     },
 });

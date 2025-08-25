@@ -10,18 +10,13 @@ const styles = StyleSheet.create({
     },
     component: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: 'yellow',
     },
     bottomBar: {
         flexDirection: 'row',
-        borderWidth: 1,
-        borderColor: 'red',
     },
     tabButton: {
         flex: 1,
         width: '100%',
-        borderWidth: 1,
     },
 });
 

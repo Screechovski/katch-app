@@ -1,12 +1,7 @@
-import React, {ReactNode} from "react";
-import {
-    Modal,
-    StyleSheet,
-    View,
-    ViewStyle,
-} from "react-native";
-import {CIconButton} from "./CIconButton";
-import {Colors} from "@/constants/Theme";
+import React, {ReactNode} from 'react';
+import {Modal, StyleSheet, View, ViewStyle} from 'react-native';
+import {CIconButton} from './CIconButton';
+import {Colors} from '@/constants/Theme';
 
 interface Props {
     children: ReactNode;
@@ -17,7 +12,7 @@ interface Props {
 
 const style = StyleSheet.create({
     wrap: {
-        flexDirection: "row",
+        flexDirection: 'row',
         flex: 1,
     },
 });
@@ -30,29 +25,26 @@ export function CModal(props: Props) {
             style={[style.wrap, props.style]}
             visible={props.visible}
             animationType="slide"
-            transparent={true}
-        >
+            transparent={true}>
             <View
                 style={{
                     flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "rgba(0,0,0,0.5)",
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
                     paddingVertical: 20,
-                }}
-            >
+                }}>
                 <View
                     style={{
                         backgroundColor: Colors.light.i4,
                         padding: 15,
                         borderRadius: 10,
                         marginBottom: 15,
-                    }}
-                >
+                    }}>
                     {props.children}
                 </View>
 
-                <CIconButton onPress={props.onHide} name="close"/>
+                <CIconButton onPress={props.onHide} name="close" />
             </View>
         </Modal>
     );
