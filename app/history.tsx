@@ -4,13 +4,14 @@ import * as Clipboard from 'expo-clipboard';
 
 import {CIconButton} from '@/components/ui/CIconButton';
 import {CWrapper} from '@/components/ui/CWrapper';
+import {CLoader} from '@/components/ui/CLoader';
 import {useTrains} from '@/hooks/useTrains';
 import {LoadBackupModal} from '@/components/elements/LoadBackupModal';
 import {useWeight} from '@/hooks/useWeight';
 import {FilterChips} from '@/components/FilterChips';
 import {HistoryCard} from '@/components/HistoryCard';
 
-export default function TabTwoScreen() {
+export default function HistoryPage() {
     const trains = useTrains();
     const weightStorage = useWeight();
 
@@ -117,20 +118,24 @@ export default function TabTwoScreen() {
                 onRemoveFilter={removeFilter}
             />
 
-            <ScrollView>
-                {filteredTrains.map((train, trainKey) => (
-                    <HistoryCard
-                        key={trainKey}
-                        train={train}
-                        weights={weights}
-                        updateDateTime={updateDateTime}
-                        addFilter={addFilter}
-                        removeLocal={removeLocal}
-                    />
-                ))}
-            </ScrollView>
+            {trains.isLoading && <CLoader />}
 
-            {trains.list.length === 0 && <Text>Пусто.</Text>}
+            {!trains.isLoading && (
+                <ScrollView>
+                    {filteredTrains.map((train, trainKey) => (
+                        <HistoryCard
+                            key={trainKey}
+                            train={train}
+                            weights={weights}
+                            updateDateTime={updateDateTime}
+                            addFilter={addFilter}
+                            removeLocal={removeLocal}
+                        />
+                    ))}
+                </ScrollView>
+            )}
+
+            {!trains.isLoading && trains.list.length === 0 && <Text>Пусто.</Text>}
         </CWrapper>
     );
 }

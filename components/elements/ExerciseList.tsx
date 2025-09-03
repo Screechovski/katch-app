@@ -1,31 +1,25 @@
-import {FlatList, StyleProp, useWindowDimensions} from 'react-native';
-import {useMemo} from 'react';
+import {FlatList, StyleProp, Text, useWindowDimensions} from 'react-native';
+import {useEffect, useMemo} from 'react';
 import {ExerciseCardVertical} from './ExerciseCardVertical';
 import {getSortedExercises, IExercise} from '@/assets/entity/IExercise';
 import {useTrains} from '@/hooks/useTrains';
+import {CLoader} from '@/components/ui/CLoader';
 
 interface Props {
-    count?: number;
-    exercises?: IExercise[];
-    style?: StyleProp<FlatList>;
-    onPress?(item: IExercise): void;
+    count: number;
+    exercises: IExercise[];
+    onPress(item: IExercise): void;
 }
 
 export function ExerciseList(props: Props) {
-    const {list} = useTrains();
+    const trains = useTrains();
     const {width} = useWindowDimensions();
 
-    const style = useMemo(() => {
-        if (props.style) {
-            return props.style;
-        }
-        return {};
-    }, [props.style]);
-
     const count = useMemo(() => {
-        if ('count' in props && typeof props.count === 'number') {
+        if (props.count) {
             return props.count;
         }
+
         return 3;
     }, [props.count]);
 
@@ -34,13 +28,6 @@ export function ExerciseList(props: Props) {
             props.onPress(item);
         }
     }
-
-    const exercises = useMemo(() => {
-        if (props.exercises) {
-            return props.exercises;
-        }
-        return getSortedExercises();
-    }, [props.exercises, list]);
 
     function sortObjectsByOccurrences<T extends Record<'id', number>>(
         objects: T[],
@@ -61,17 +48,21 @@ export function ExerciseList(props: Props) {
     const sortedExercises = useMemo(
         () =>
             sortObjectsByOccurrences(
-                exercises,
-                list.map((item) => item.exercises.map((ex) => ex.exercise)).flat(),
+                props.exercises,
+                trains.list.map((item) => item.exercises.map((ex) => ex.exercise)).flat(),
             ),
-        [exercises, list],
+        [props.exercises, trains.list],
     );
 
     const itemWidth = width / count; // Вычисляем ширину элемента
 
+    if (trains.isLoading) {
+        return <CLoader />;
+    }
+
     return (
         <FlatList
-            data={exercises}
+            data={sortedExercises}
             renderItem={({item}) => (
                 <ExerciseCardVertical
                     onPress={() => pressHandler(item)}

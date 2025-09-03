@@ -20,12 +20,9 @@ export function useTrains() {
     }, []);
 
     async function load() {
+        setIsLoading(true);
         const trains = (await Storage.getData<string[]>('trains')) ?? [];
         const _trains: Train[] = [];
-
-        if (trains.length == 0) {
-            setIsLoading(true);
-        }
 
         trains.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
