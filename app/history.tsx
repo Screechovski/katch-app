@@ -5,12 +5,10 @@ import * as Clipboard from 'expo-clipboard';
 import {CIconButton} from '@/components/ui/CIconButton';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {useTrains} from '@/hooks/useTrains';
-import {getExerciseById, IExercise} from '@/assets/entity/IExercise';
 import {LoadBackupModal} from '@/components/elements/LoadBackupModal';
 import {useWeight} from '@/hooks/useWeight';
 import {FilterChips} from '@/components/FilterChips';
 import {HistoryCard} from '@/components/HistoryCard';
-import {Colors} from '@/constants/Theme';
 
 export default function TabTwoScreen() {
     const trains = useTrains();

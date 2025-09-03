@@ -63,6 +63,7 @@ export function HistoryCard({
                     {exercise.photo && (
                         <Image source={exercise.photo} style={styles.image} />
                     )}
+
                     <Pressable
                         style={styles.exerciseNameWrapper}
                         onPress={() => addFilter(exercise.exercise)}>
@@ -70,6 +71,7 @@ export function HistoryCard({
                             {getExerciseById(exercise.exercise)?.name}
                         </Text>
                     </Pressable>
+
                     <Text style={styles.exerciseParams}>
                         {exercise.weight}кг {exercise.approach}x{exercise.repeat}
                     </Text>
@@ -103,9 +105,9 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     date: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: 600,
-        color: Colors.light.i7,
+        color: Colors.light.i6,
         textAlign: 'center',
         marginBottom: 2,
     },

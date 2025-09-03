@@ -6,7 +6,7 @@ import {CInput} from '@/components/ui/CInput';
 
 interface Props {
     count: number;
-
+    exercises: IExercise[];
     onSelect(item: IExercise): void;
 }
 
@@ -29,17 +29,19 @@ const ExerciseListSearchStyle = StyleSheet.create({
 
 export function ExerciseListSearch(props: Props) {
     const [searchValue, setSearchValue] = useState<string>('');
-    const exercises = getExercises();
 
     const filteredExercises = useMemo<IExercise[]>(() => {
-        // const searchValueLower = searchValue.toLowerCase();
+        const searchValueLower = searchValue.toLowerCase();
 
-        return exercises;
-        // .filter((ex) => {
-        //     const nameLower = ex.name.toLowerCase();
+        return props.exercises.filter((ex) => {
+            const nameLower = ex.name.toLowerCase();
 
-        //     return !nameLower.includes(searchValueLower) && searchValueLower !== '';
-        // });
+            if (searchValueLower.trim() === '') {
+                return true;
+            }
+
+            return nameLower.includes(searchValueLower);
+        });
     }, [searchValue]);
 
     return (
@@ -59,6 +61,7 @@ export function ExerciseListSearch(props: Props) {
                         onPress={props.onSelect}
                     />
                 )}
+
                 {filteredExercises.length === 0 && (
                     <Text style={ExerciseListSearchStyle.emptyText}>Пусто</Text>
                 )}

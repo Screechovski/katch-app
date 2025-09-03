@@ -1,5 +1,5 @@
 import {Alert, View} from 'react-native';
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 
 import {CWrapper} from '@/components/ui/CWrapper';
 import {ExerciseListSearch} from '@/components/elements/ExerciseListSearch';
@@ -9,20 +9,18 @@ import {CurrentTrainApproaches} from '@/components/CurrentTrainApproaches';
 import {CurrentTraintSaveButton} from '@/components/CurrentTraintSaveButton';
 import {ExerciseParametersSelector} from '@/components/ExerciseParametersSelector';
 import {useWeight} from '@/hooks/useWeight';
+import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
 
-export default function HomeScreen() {
+interface Props {
+    approaches: ICurrentApproach[];
+    exercises: IExercise[];
+    setApproaches: Dispatch<SetStateAction<ICurrentApproach[]>>;
+}
+
+export default function HomeScreen(props: Props) {
     const [step, setStep] = useState(0); // 0 select exercise, 1 select parameters
 
     const [tempExercises, setTempExercises] = useState<null | IExercise>(null);
-
-    const [approaches, setApproaches] = useState<
-        {
-            exercise: IExercise;
-            approach: number;
-            repeat: number;
-            weight: number;
-        }[]
-    >([]);
 
     const weightStorage = useWeight();
 
@@ -39,7 +37,7 @@ export default function HomeScreen() {
         weight: number;
     }) {
         if (tempExercises) {
-            setApproaches((state) => [
+            props.setApproaches((state) => [
                 ...state,
                 {
                     exercise: tempExercises,
@@ -54,13 +52,13 @@ export default function HomeScreen() {
     }
 
     function onDelete(index: number) {
-        setApproaches((state) => state.filter((_, i) => i != index));
+        props.setApproaches((state) => state.filter((_, i) => i != index));
     }
 
     function reset() {
         setStep(0);
         setTempExercises(null);
-        setApproaches([]);
+        props.setApproaches([]);
     }
 
     async function saveLocal(weight?: number) {
@@ -68,7 +66,7 @@ export default function HomeScreen() {
             const date = new Date().toISOString();
 
             await trains.save(
-                approaches.map((approach) => ({
+                props.approaches.map((approach) => ({
                     ...approach,
                     exercise: approach.exercise.id,
                 })),
@@ -87,13 +85,17 @@ export default function HomeScreen() {
 
     return (
         <CWrapper style={{flex: 1}}>
-            <CurrentTraintSaveButton approaches={approaches} onSave={saveLocal} />
+            <CurrentTrainApproaches approaches={props.approaches} onDelete={onDelete} />
 
-            <CurrentTrainApproaches approaches={approaches} onDelete={onDelete} />
+            <CurrentTraintSaveButton approaches={props.approaches} onSave={saveLocal} />
 
             {step === 0 && (
                 <View style={{flex: 1, minHeight: 0}}>
-                    <ExerciseListSearch count={3} onSelect={onSelectExercise} />
+                    <ExerciseListSearch
+                        count={3}
+                        onSelect={onSelectExercise}
+                        exercises={props.exercises}
+                    />
                 </View>
             )}
 

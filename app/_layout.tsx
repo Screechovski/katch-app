@@ -8,26 +8,24 @@ import {useColorScheme} from '@/hooks/useColorScheme';
 import HomeScreen from '@/app/index';
 import TabTwoScreen from '@/app/history';
 import {RootLayout as RootLayoutBase} from '@/components/RootLayout';
+import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
+import {getExercises, IExercise} from '@/assets/entity/IExercise';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
-    const [loaded] = useFonts({
-        SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    });
 
     const [page, setPage] = useState('home');
 
-    useEffect(() => {
-        if (loaded) {
-            SplashScreen.hideAsync();
-        }
-    }, [loaded]);
+    const [exercises, setExercises] = useState<IExercise[]>([]);
+    const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
 
-    if (!loaded) {
-        return null;
-    }
+    SplashScreen.hideAsync();
+
+    useEffect(() => {
+        setExercises(getExercises());
+    }, []);
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -37,7 +35,13 @@ export default function RootLayout() {
                         id: 'home',
                         iconName: 'plussquare',
                         title: 'добавить',
-                        component: <HomeScreen />,
+                        component: (
+                            <HomeScreen
+                                exercises={exercises}
+                                approaches={approaches}
+                                setApproaches={setApproaches}
+                            />
+                        ),
                     },
                     {
                         id: 'history',
