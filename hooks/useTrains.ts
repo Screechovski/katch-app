@@ -105,3 +105,7 @@ export function useTrains() {
         list,
     };
 }
+
+export type SaveTrains = ReturnType<typeof useTrains>['save'];
+export type RemoveTrain = ReturnType<typeof useTrains>['remove'];
+export type LoadTrains = ReturnType<typeof useTrains>['load'];

@@ -5,4 +5,9 @@ export type ICurrentApproach = {
     approach: number;
     repeat: number;
     weight: number;
+    prev?: {
+        approach: number;
+        repeat: number;
+        weight: number;
+    };
 };

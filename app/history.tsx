@@ -1,18 +1,22 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import {StyleSheet, Alert, View, Text, ScrollView, Pressable} from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-
 import {CIconButton} from '@/components/ui/CIconButton';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {CLoader} from '@/components/ui/CLoader';
-import {useTrains} from '@/hooks/useTrains';
+import {LoadTrains, RemoveTrain, Train} from '@/hooks/useTrains';
 import {LoadBackupModal} from '@/components/elements/LoadBackupModal';
 import {useWeight} from '@/hooks/useWeight';
 import {FilterChips} from '@/components/FilterChips';
 import {HistoryCard} from '@/components/HistoryCard';
 
-export default function HistoryPage() {
-    const trains = useTrains();
+interface Props {
+    trainsList: Train[];
+    removeTrain: RemoveTrain;
+    loadTrains: LoadTrains;
+    isLoading: boolean;
+}
+export default function HistoryPage(props: Props) {
     const weightStorage = useWeight();
 
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
@@ -20,7 +24,7 @@ export default function HistoryPage() {
 
     async function handleCopy() {
         try {
-            await Clipboard.setStringAsync(btoa(JSON.stringify(trains.list)));
+            await Clipboard.setStringAsync(btoa(JSON.stringify(props.trainsList)));
             Alert.alert('Успешно', 'Бэкап скопирован в буфер обмена');
         } catch (error) {
             Alert.alert('Ошибка', JSON.stringify(error));
@@ -39,7 +43,7 @@ export default function HistoryPage() {
 
     async function removeLocal(date: string) {
         try {
-            await trains.remove(date);
+            await props.removeTrain(date);
             Alert.alert('Успешно');
         } catch (error) {
             Alert.alert('Ошибка', JSON.stringify(error));
@@ -64,10 +68,10 @@ export default function HistoryPage() {
 
     const filteredTrains = useMemo(() => {
         if (filterExerciseIds.length === 0) {
-            return trains.list;
+            return props.trainsList;
         }
 
-        return trains.list
+        return props.trainsList
             .filter((train) => {
                 return train.exercises.some((exercise) =>
                     filterExerciseIds.includes(exercise.exercise),
@@ -79,7 +83,7 @@ export default function HistoryPage() {
                     filterExerciseIds.includes(exercise.exercise),
                 ),
             }));
-    }, [trains.list, filterExerciseIds]);
+    }, [props.trainsList, filterExerciseIds]);
 
     function addFilter(id: number) {
         if (filterExerciseIds.includes(id)) {
@@ -96,9 +100,13 @@ export default function HistoryPage() {
     return (
         <CWrapper>
             <View style={styles.copy}>
-                <CIconButton variant={'success'} onPress={trains.load} name={'sync'} />
                 <CIconButton
-                    disabled={trains.list.length === 0}
+                    variant={'success'}
+                    onPress={props.loadTrains}
+                    name={'sync'}
+                />
+                <CIconButton
+                    disabled={props.trainsList.length === 0}
                     onPress={handleCopy}
                     name={'download'}
                 />
@@ -118,9 +126,9 @@ export default function HistoryPage() {
                 onRemoveFilter={removeFilter}
             />
 
-            {trains.isLoading && <CLoader />}
+            {props.isLoading && <CLoader />}
 
-            {!trains.isLoading && (
+            {!props.isLoading && (
                 <ScrollView>
                     {filteredTrains.map((train, trainKey) => (
                         <HistoryCard
@@ -135,7 +143,7 @@ export default function HistoryPage() {
                 </ScrollView>
             )}
 
-            {!trains.isLoading && trains.list.length === 0 && <Text>Пусто.</Text>}
+            {!props.isLoading && props.trainsList.length === 0 && <Text>Пусто.</Text>}
         </CWrapper>
     );
 }

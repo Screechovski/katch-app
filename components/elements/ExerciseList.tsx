@@ -1,18 +1,19 @@
-import {FlatList, StyleProp, Text, useWindowDimensions} from 'react-native';
-import {useEffect, useMemo} from 'react';
+import {FlatList, useWindowDimensions} from 'react-native';
+import {useMemo} from 'react';
 import {ExerciseCardVertical} from './ExerciseCardVertical';
-import {getSortedExercises, IExercise} from '@/assets/entity/IExercise';
-import {useTrains} from '@/hooks/useTrains';
+import {IExercise} from '@/assets/entity/IExercise';
+import {Train, useTrains} from '@/hooks/useTrains';
 import {CLoader} from '@/components/ui/CLoader';
 
 interface Props {
     count: number;
     exercises: IExercise[];
     onPress(item: IExercise): void;
+    trainsList: Train[];
+    trainsIsLoading: boolean;
 }
 
 export function ExerciseList(props: Props) {
-    const trains = useTrains();
     const {width} = useWindowDimensions();
 
     const count = useMemo(() => {
@@ -49,14 +50,16 @@ export function ExerciseList(props: Props) {
         () =>
             sortObjectsByOccurrences(
                 props.exercises,
-                trains.list.map((item) => item.exercises.map((ex) => ex.exercise)).flat(),
+                props.trainsList
+                    .map((item) => item.exercises.map((ex) => ex.exercise))
+                    .flat(),
             ),
-        [props.exercises, trains.list],
+        [props.exercises, props.trainsList],
     );
 
     const itemWidth = width / count; // Вычисляем ширину элемента
 
-    if (trains.isLoading) {
+    if (props.trainsIsLoading) {
         return <CLoader />;
     }
 

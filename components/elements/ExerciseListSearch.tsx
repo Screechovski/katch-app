@@ -1,13 +1,16 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {ExerciseList} from './ExerciseList';
 import {useMemo, useState} from 'react';
-import {getExercises, IExercise} from '@/assets/entity/IExercise';
+import {IExercise} from '@/assets/entity/IExercise';
 import {CInput} from '@/components/ui/CInput';
+import {Train} from '@/hooks/useTrains';
 
 interface Props {
     count: number;
     exercises: IExercise[];
     onSelect(item: IExercise): void;
+    trainsList: Train[];
+    trainsIsLoading: boolean;
 }
 
 const ExerciseListSearchStyle = StyleSheet.create({
@@ -56,6 +59,8 @@ export function ExerciseListSearch(props: Props) {
             <View style={[ExerciseListSearchStyle.listContainer]}>
                 {filteredExercises.length > 0 && (
                     <ExerciseList
+                        trainsList={props.trainsList}
+                        trainsIsLoading={props.trainsIsLoading}
                         exercises={filteredExercises}
                         count={4}
                         onPress={props.onSelect}

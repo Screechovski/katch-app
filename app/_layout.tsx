@@ -1,5 +1,4 @@
 import React from 'react';
-import * as SplashScreen from 'expo-splash-screen';
 import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import 'react-native-reanimated';
 import {useEffect, useState} from 'react';
@@ -9,24 +8,26 @@ import HistoryPage from '@/app/history';
 import {RootLayout as RootLayoutBase} from '@/components/RootLayout';
 import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
 import {getExercises, IExercise} from '@/assets/entity/IExercise';
-
-// SplashScreen.preventAutoHideAsync();
+import {useTrains} from '@/hooks/useTrains';
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+    const trains = useTrains();
 
     const [page, setPage] = useState('home');
 
     const [exercises, setExercises] = useState<IExercise[]>([]);
     const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
 
-    // SplashScreen.hideAsync();
-
     useEffect(() => {
-        console.log('useEffect _layout');
-
         setExercises(getExercises());
     }, []);
+
+    const setApproachesProxy: React.Dispatch<React.SetStateAction<ICurrentApproach[]>> = (
+        approaches,
+    ) => {
+        setApproaches(approaches);
+    };
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -38,9 +39,13 @@ export default function RootLayout() {
                         title: 'добавить',
                         component: (
                             <HomeScreen
+                                trainsList={trains.list}
+                                trainsIsLoading={trains.isLoading}
                                 exercises={exercises}
                                 approaches={approaches}
-                                setApproaches={setApproaches}
+                                setApproaches={setApproachesProxy}
+                                saveTrains={trains.save}
+                                loadTrains={trains.load}
                             />
                         ),
                     },
@@ -48,7 +53,14 @@ export default function RootLayout() {
                         id: 'history',
                         iconName: 'leftsquare',
                         title: 'история',
-                        component: <HistoryPage />,
+                        component: (
+                            <HistoryPage
+                                trainsList={trains.list}
+                                removeTrain={trains.remove}
+                                loadTrains={trains.load}
+                                isLoading={trains.isLoading}
+                            />
+                        ),
                     },
                 ]}
                 activeTabId={page}

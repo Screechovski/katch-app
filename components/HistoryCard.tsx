@@ -54,6 +54,7 @@ export function HistoryCard({
             photo: ImagePropsBase | null;
         }[];
     }, [train.exercises]);
+
     return (
         <View style={styles.card}>
             <Text style={styles.date}>{updateDateTime(train.date)}</Text>

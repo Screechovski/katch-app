@@ -4,7 +4,7 @@ import {Dispatch, SetStateAction, useState} from 'react';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {ExerciseListSearch} from '@/components/elements/ExerciseListSearch';
 import {IExercise} from '@/assets/entity/IExercise';
-import {useTrains} from '@/hooks/useTrains';
+import {LoadTrains, SaveTrains, Train} from '@/hooks/useTrains';
 import {CurrentTrainApproaches} from '@/components/CurrentTrainApproaches';
 import {CurrentTraintSaveButton} from '@/components/CurrentTraintSaveButton';
 import {ExerciseParametersSelector} from '@/components/ExerciseParametersSelector';
@@ -15,6 +15,10 @@ interface Props {
     approaches: ICurrentApproach[];
     exercises: IExercise[];
     setApproaches: Dispatch<SetStateAction<ICurrentApproach[]>>;
+    saveTrains: SaveTrains;
+    trainsList: Train[];
+    trainsIsLoading: boolean;
+    loadTrains: LoadTrains;
 }
 
 export default function HomeScreen(props: Props) {
@@ -23,8 +27,6 @@ export default function HomeScreen(props: Props) {
     const [tempExercises, setTempExercises] = useState<null | IExercise>(null);
 
     const weightStorage = useWeight();
-
-    const trains = useTrains();
 
     function onSelectExercise(exercise: IExercise) {
         setStep(1);
@@ -65,7 +67,7 @@ export default function HomeScreen(props: Props) {
         try {
             const date = new Date().toISOString();
 
-            await trains.save(
+            await props.saveTrains(
                 props.approaches.map((approach) => ({
                     ...approach,
                     exercise: approach.exercise.id,
@@ -78,6 +80,7 @@ export default function HomeScreen(props: Props) {
             }
 
             reset();
+            props.loadTrains();
         } catch (e) {
             Alert.alert('Ошибка', JSON.stringify(e));
         }
@@ -92,6 +95,8 @@ export default function HomeScreen(props: Props) {
             {step === 0 && (
                 <View style={{flex: 1, minHeight: 0}}>
                     <ExerciseListSearch
+                        trainsList={props.trainsList}
+                        trainsIsLoading={props.trainsIsLoading}
                         count={3}
                         onSelect={onSelectExercise}
                         exercises={props.exercises}
