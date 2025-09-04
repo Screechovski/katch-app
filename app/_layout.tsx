@@ -9,6 +9,7 @@ import {RootLayout as RootLayoutBase} from '@/components/RootLayout';
 import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
 import {getExercises, IExercise} from '@/assets/entity/IExercise';
 import {useTrains} from '@/hooks/useTrains';
+import {refactorStorageData} from '@/helpers/refactorStorage';
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -20,7 +21,11 @@ export default function RootLayout() {
     const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
 
     useEffect(() => {
-        setExercises(getExercises());
+        (async () => {
+            await refactorStorageData();
+            setExercises(getExercises());
+            trains.load();
+        })();
     }, []);
 
     const setApproachesProxy: React.Dispatch<React.SetStateAction<ICurrentApproach[]>> = (
@@ -57,7 +62,6 @@ export default function RootLayout() {
                             <HistoryPage
                                 trainsList={trains.list}
                                 removeTrain={trains.remove}
-                                loadTrains={trains.load}
                                 isLoading={trains.isLoading}
                             />
                         ),

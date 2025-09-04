@@ -4,21 +4,17 @@ import * as Clipboard from 'expo-clipboard';
 import {CIconButton} from '@/components/ui/CIconButton';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {CLoader} from '@/components/ui/CLoader';
-import {LoadTrains, RemoveTrain, Train} from '@/hooks/useTrains';
+import {RemoveTrain, Train} from '@/hooks/useTrains';
 import {LoadBackupModal} from '@/components/elements/LoadBackupModal';
-import {useWeight} from '@/hooks/useWeight';
 import {FilterChips} from '@/components/FilterChips';
 import {HistoryCard} from '@/components/HistoryCard';
 
 interface Props {
     trainsList: Train[];
     removeTrain: RemoveTrain;
-    loadTrains: LoadTrains;
     isLoading: boolean;
 }
 export default function HistoryPage(props: Props) {
-    const weightStorage = useWeight();
-
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
     const [filterExerciseIds, setFilterExerciseIds] = useState<number[]>([]);
 
@@ -49,22 +45,6 @@ export default function HistoryPage(props: Props) {
             Alert.alert('Ошибка', JSON.stringify(error));
         }
     }
-
-    const [weights, setWeights] = useState<Record<string, number>>({});
-
-    useEffect(() => {
-        (async () => {
-            const weights = await weightStorage.get();
-
-            let sum: Record<string, number> = {};
-
-            for (const w of weights) {
-                sum[w.date] = w.weight;
-            }
-
-            setWeights(sum);
-        })();
-    }, []);
 
     const filteredTrains = useMemo(() => {
         if (filterExerciseIds.length === 0) {
@@ -99,22 +79,13 @@ export default function HistoryPage(props: Props) {
 
     return (
         <CWrapper>
-            <View style={styles.copy}>
-                <CIconButton
-                    variant={'success'}
-                    onPress={props.loadTrains}
-                    name={'sync'}
-                />
-                <CIconButton
-                    disabled={props.trainsList.length === 0}
-                    onPress={handleCopy}
-                    name={'download'}
-                />
-                <CIconButton
-                    onPress={() => setLoadBackupIsVisible(true)}
-                    name={'upload'}
-                />
-            </View>
+            <CIconButton
+                style={styles.copy}
+                size={'s'}
+                disabled={props.trainsList.length === 0}
+                onPress={handleCopy}
+                name={'download'}
+            />
 
             <LoadBackupModal
                 visible={loadBackupIsVisible}
@@ -134,7 +105,6 @@ export default function HistoryPage(props: Props) {
                         <HistoryCard
                             key={trainKey}
                             train={train}
-                            weights={weights}
                             updateDateTime={updateDateTime}
                             addFilter={addFilter}
                             removeLocal={removeLocal}
@@ -150,9 +120,8 @@ export default function HistoryPage(props: Props) {
 
 const styles = StyleSheet.create({
     copy: {
-        flexDirection: 'row',
-        gap: 5,
-        marginBottom: 20,
+        marginBottom: 10,
+        marginLeft: 'auto',
     },
     titleContainer: {
         flexDirection: 'row',

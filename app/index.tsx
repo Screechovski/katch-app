@@ -8,7 +8,6 @@ import {LoadTrains, SaveTrains, Train} from '@/hooks/useTrains';
 import {CurrentTrainApproaches} from '@/components/CurrentTrainApproaches';
 import {CurrentTraintSaveButton} from '@/components/CurrentTraintSaveButton';
 import {ExerciseParametersSelector} from '@/components/ExerciseParametersSelector';
-import {useWeight} from '@/hooks/useWeight';
 import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
 
 interface Props {
@@ -25,8 +24,6 @@ export default function HomeScreen(props: Props) {
     const [step, setStep] = useState(0); // 0 select exercise, 1 select parameters
 
     const [tempExercises, setTempExercises] = useState<null | IExercise>(null);
-
-    const weightStorage = useWeight();
 
     function onSelectExercise(exercise: IExercise) {
         setStep(1);
@@ -73,11 +70,8 @@ export default function HomeScreen(props: Props) {
                     exercise: approach.exercise.id,
                 })),
                 date,
+                weight,
             );
-
-            if (weight) {
-                await weightStorage.save(weight, date);
-            }
 
             reset();
             props.loadTrains();

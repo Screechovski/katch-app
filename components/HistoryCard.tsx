@@ -3,33 +3,20 @@ import {StyleSheet, View, Text, Pressable, Image, ImagePropsBase} from 'react-na
 import {CIconButton} from '@/components/ui/CIconButton';
 import {getExerciseById} from '@/assets/entity/IExercise';
 import {Colors} from '@/constants/Theme';
+import {Train} from '@/hooks/useTrains';
 
-interface HistoryCardProps {
-    train: {
-        date: string;
-        exercises: Array<{
-            exercise: number;
-            weight: number;
-            approach: number;
-            repeat: number;
-        }>;
-    };
-    weights: Record<string, number>;
+interface Props {
+    train: Train;
     updateDateTime: (dateString: string) => string;
     addFilter: (id: number) => void;
     removeLocal: (date: string) => void;
 }
 
-export function HistoryCard({
-    train,
-    weights,
-    updateDateTime,
-    addFilter,
-    removeLocal,
-}: HistoryCardProps) {
-    const trains = useMemo(() => {
+export function HistoryCard({train, updateDateTime, addFilter, removeLocal}: Props) {
+    const exercises = useMemo(() => {
         return train.exercises.map((exercise, i) => {
             const _exercise = getExerciseById(exercise.exercise);
+
             // const prevWeight = train.exercises[i - 1].weight;
 
             // const isGrow = prevWeight ? +exercise.weight > +prevWeight : null;
@@ -59,7 +46,7 @@ export function HistoryCard({
         <View style={styles.card}>
             <Text style={styles.date}>{updateDateTime(train.date)}</Text>
 
-            {trains.map((exercise, exerciseKey) => (
+            {exercises.map((exercise, exerciseKey) => (
                 <View style={styles.line} key={exerciseKey}>
                     {exercise.photo && (
                         <Image source={exercise.photo} style={styles.image} />
@@ -80,8 +67,8 @@ export function HistoryCard({
             ))}
 
             <View style={styles.footer}>
-                {weights[train.date] && (
-                    <Text style={styles.weight}>{weights[train.date].toString()}кг</Text>
+                {train.weight && (
+                    <Text style={styles.weight}>{train.weight.toString()}кг</Text>
                 )}
 
                 <CIconButton
