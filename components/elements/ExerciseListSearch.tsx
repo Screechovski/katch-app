@@ -45,7 +45,7 @@ export function ExerciseListSearch(props: Props) {
 
             return nameLower.includes(searchValueLower);
         });
-    }, [searchValue]);
+    }, [props.exercises, searchValue]);
 
     return (
         <View style={ExerciseListSearchStyle.wrap}>
