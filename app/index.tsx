@@ -1,6 +1,5 @@
 import {Alert, View} from 'react-native';
-import {Dispatch, SetStateAction, useState} from 'react';
-
+import {Dispatch, SetStateAction, useMemo, useState} from 'react';
 import {CWrapper} from '@/components/ui/CWrapper';
 import {ExerciseListSearch} from '@/components/elements/ExerciseListSearch';
 import {IExercise} from '@/assets/entity/IExercise';
@@ -22,12 +21,11 @@ interface Props {
 
 export default function HomeScreen(props: Props) {
     const [step, setStep] = useState(0); // 0 select exercise, 1 select parameters
-
-    const [tempExercises, setTempExercises] = useState<null | IExercise>(null);
+    const [tempExercise, setTempExercise] = useState<null | IExercise>(null);
 
     function onSelectExercise(exercise: IExercise) {
         setStep(1);
-        setTempExercises(exercise);
+        setTempExercise(exercise);
     }
 
     function onParametersComplete(params: {
@@ -35,17 +33,17 @@ export default function HomeScreen(props: Props) {
         repeat: number;
         weight: number;
     }) {
-        if (tempExercises) {
+        if (tempExercise) {
             props.setApproaches((state) => [
                 ...state,
                 {
-                    exercise: tempExercises,
+                    exercise: tempExercise,
                     approach: params.approach,
                     weight: params.weight,
                     repeat: params.repeat,
                 },
             ]);
-            setTempExercises(null);
+            setTempExercise(null);
             setStep(0);
         }
     }
@@ -56,7 +54,7 @@ export default function HomeScreen(props: Props) {
 
     function reset() {
         setStep(0);
-        setTempExercises(null);
+        setTempExercise(null);
         props.setApproaches([]);
     }
 
@@ -80,11 +78,45 @@ export default function HomeScreen(props: Props) {
         }
     }
 
+    const getPrevTempWeight = useMemo(() => {
+        let last = 0;
+        let top = 0;
+
+        // TODO плохой код, переделать
+        // ищем тренировки в истории с таким же tempExercise.id
+        // и выписываем веса из них
+        if (tempExercise) {
+            props.trainsList.map((train) => {
+                train.exercises
+                    .filter(({exercise}) => exercise === tempExercise.id)
+                    .forEach((finded) => {
+                        if (finded) {
+                            last = finded.weight;
+
+                            if (finded.weight > top) {
+                                top = finded.weight;
+                            }
+                        }
+                    });
+            });
+        }
+
+        return {
+            last,
+            top,
+        };
+    }, [props.trainsList, tempExercise]);
+
     return (
         <CWrapper style={{flex: 1}}>
             <CurrentTrainApproaches approaches={props.approaches} onDelete={onDelete} />
 
-            <CurrentTraintSaveButton approaches={props.approaches} onSave={saveLocal} />
+            {!(tempExercise && step === 1) && (
+                <CurrentTraintSaveButton
+                    approaches={props.approaches}
+                    onSave={saveLocal}
+                />
+            )}
 
             {step === 0 && (
                 <View style={{flex: 1, minHeight: 0}}>
@@ -98,9 +130,11 @@ export default function HomeScreen(props: Props) {
                 </View>
             )}
 
-            {tempExercises && step === 1 && (
+            {tempExercise && step === 1 && (
                 <ExerciseParametersSelector
-                    exerciseName={tempExercises.name}
+                    exercisePhoto={tempExercise.photo}
+                    exerciseName={tempExercise.name}
+                    weight={getPrevTempWeight}
                     onComplete={onParametersComplete}
                 />
             )}

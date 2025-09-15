@@ -14,27 +14,15 @@ interface Props {
 
 export function HistoryCard({train, updateDateTime, addFilter, removeLocal}: Props) {
     const exercises = useMemo(() => {
-        return train.exercises.map((exercise, i) => {
+        return train.exercises.map((exercise) => {
             const _exercise = getExerciseById(exercise.exercise);
-
-            // const prevWeight = train.exercises[i - 1].weight;
-
-            // const isGrow = prevWeight ? +exercise.weight > +prevWeight : null;
 
             return {
                 ...exercise,
                 photo: _exercise ? _exercise.photo : null,
-                // weight: {
-                //     value: exercise.weight,
-                //     isGrow,
-                // },
             };
         }) as {
             exercise: number;
-            // weight: {
-            //     value: number;
-            //     isGrow: boolean | null;
-            // };
             weight: number;
             approach: number;
             repeat: number;
@@ -95,7 +83,7 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 13,
         fontWeight: 600,
-        color: Colors.light.i6,
+        color: Colors.light.i5,
         textAlign: 'center',
         marginBottom: 2,
     },

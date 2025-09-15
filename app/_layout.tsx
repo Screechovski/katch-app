@@ -21,13 +21,9 @@ export default function RootLayout() {
     const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
 
     useEffect(() => {
-        (async () => {
-            await refactorStorageData();
-            setExercises(getExercises());
-            trains.load();
-        })();
+        setExercises(getExercises());
+        trains.load();
     }, []);
-
     const setApproachesProxy: React.Dispatch<React.SetStateAction<ICurrentApproach[]>> = (
         approaches,
     ) => {

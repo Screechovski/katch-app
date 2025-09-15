@@ -1,7 +1,7 @@
 import {Colors} from '@/constants/Theme';
 import {AntDesign} from '@expo/vector-icons';
 import {useMemo} from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableHighlight, TouchableOpacity} from 'react-native';
 
 interface Props {
     isActive: boolean;
@@ -17,6 +17,7 @@ export function CTab(props: Props) {
 
     return (
         <TouchableOpacity
+            activeOpacity={1}
             style={{
                 height: 40,
                 flexDirection: 'row',

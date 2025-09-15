@@ -1,57 +1,81 @@
-import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Colors } from "@/constants/Theme";
-import { CButtonBase } from "@/components/ui/CButtonBase";
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {Colors} from '@/constants/Theme';
+import {CButtonBase} from '@/components/ui/CButtonBase';
 
 interface Props {
-  selected: number;
-  options: number[];
-  onSelect(index: number): void;
+    options: {
+        value: number;
+        isTop?: boolean;
+        isLast?: boolean;
+        isSelected: boolean;
+    }[];
+    onSelect(value: number): void;
 }
 
 export const HorizontalButtons = (props: Props) => {
-  const handleSelect = (value: number) => {
-    props.onSelect(value);
-  };
+    const handleSelect = (value: number) => {
+        props.onSelect(value);
+    };
 
-  return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}
-    >
-      <View style={styles.track}>
-        {props.options.map((option, key) => (
-          <CButtonBase
-            key={key}
-            variant={props.selected === option ? "primary" : "success"}
-            style={styles.wrap}
-            onPress={() => handleSelect(option)}
-            disabled={false}
-          >
-            <Text style={styles.text}>{option.toString()}</Text>
-          </CButtonBase>
-        ))}
-      </View>
-    </ScrollView>
-  );
+    return (
+        <View style={styles.items}>
+            {props.options.map((option, key) => (
+                <View style={styles.item}>
+                    <CButtonBase
+                        key={key}
+                        variant={option.isSelected ? 'primary' : 'success'}
+                        style={styles.wrap}
+                        onPress={() => handleSelect(option.value)}
+                        disabled={false}>
+                        <Text style={styles.text}>{option.value.toString()}</Text>
+                    </CButtonBase>
+
+                    {option.isTop && <Text style={styles.maxMark}>TOP</Text>}
+                    {option.isLast && <Text style={styles.lastMark}>PREV</Text>}
+                </View>
+            ))}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-  },
-  track: {
-    gap: 3,
-    flexDirection: "row",
-  },
-  text: {
-    fontSize: 16,
-    color: Colors.light.i3,
-    textTransform: "uppercase",
-  },
-  wrap: {
-    height: 36,
-    width: 36,
-  },
+    container: {
+        flexDirection: 'row',
+    },
+    items: {
+        gap: 4,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    text: {
+        fontSize: 16,
+        color: Colors.light.i3,
+        textTransform: 'uppercase',
+    },
+    wrap: {
+        height: 36,
+        width: 36,
+    },
+    item: {
+        flexDirection: 'column',
+        gap: 1,
+        alignItems: 'center',
+    },
+    maxMark: {
+        borderRadius: 3,
+        backgroundColor: Colors.danger.i4,
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: Colors.light.i2,
+        padding: 2,
+    },
+    lastMark: {
+        borderRadius: 3,
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: Colors.light.i2,
+        padding: 2,
+        backgroundColor: Colors.info.i5,
+    },
 });
