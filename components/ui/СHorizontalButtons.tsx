@@ -23,7 +23,7 @@ export const HorizontalButtons = (props: Props) => {
             {props.options.map((option, key) => (
                 <View style={styles.item}>
                     <CButtonBase
-                        key={key}
+                        key={option.value.toString() + key.toString()}
                         variant={option.isSelected ? 'primary' : 'success'}
                         style={styles.wrap}
                         onPress={() => handleSelect(option.value)}
