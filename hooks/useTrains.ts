@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Storage} from '@/helpers/Storage';
+import { Storage } from '@/helpers/Storage';
+import { useState } from 'react';
 
 export interface Train {
     date: string;
@@ -21,7 +21,9 @@ export function useTrains() {
 
     async function load() {
         setIsLoading(true);
-        const trains = (await Storage.getData<string[]>('trains')) ?? [];
+        const storageTrains = await Storage.getData<string[]>('trains');
+        console.log(storageTrains);
+        const trains = storageTrains ?? [];
         const _trains: Train[] = [];
 
         trains.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());

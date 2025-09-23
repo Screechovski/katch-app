@@ -1,7 +1,7 @@
-import {Colors} from '@/constants/Theme';
-import {AntDesign} from '@expo/vector-icons';
-import {useMemo} from 'react';
-import {Text, View, TouchableHighlight, TouchableOpacity} from 'react-native';
+import { Colors } from '@/constants/Theme';
+import { AntDesign } from '@expo/vector-icons';
+import { useMemo } from 'react';
+import { Text, TouchableOpacity } from 'react-native';
 
 interface Props {
     isActive: boolean;
@@ -22,6 +22,7 @@ export function CTab(props: Props) {
                 height: 40,
                 flexDirection: 'row',
                 justifyContent: 'center',
+                alignItems: 'center',
                 backgroundColor: Colors.light.i2,
                 paddingVertical: 5,
                 borderBottomWidth: 2,
@@ -32,13 +33,15 @@ export function CTab(props: Props) {
             <AntDesign
                 style={{marginRight: 10}}
                 name={props.icon}
-                size={30}
+                size={24}
                 color={getAccentColor}
             />
             <Text
                 style={{
                     color: getAccentColor,
                     fontSize: 20,
+                    lineHeight: 20,
+                    marginBottom: 6
                 }}>
                 {props.children}
             </Text>

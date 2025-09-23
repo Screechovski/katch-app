@@ -1,16 +1,16 @@
-import {StyleSheet, Text, View} from 'react-native';
-import {ExerciseList} from './ExerciseList';
-import {useMemo, useState} from 'react';
-import {IExercise} from '@/assets/entity/IExercise';
-import {CInput} from '@/components/ui/CInput';
-import {Train} from '@/hooks/useTrains';
+import { CInput } from '@/components/ui/CInput';
+import { ExercisesServer } from '@/hooks/useExercises';
+import { Train } from '@/hooks/useTrains';
+import { useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ExerciseList } from './ExerciseList';
 
 interface Props {
     count: number;
-    exercises: IExercise[];
-    onSelect(item: IExercise): void;
+    exercises: ExercisesServer[];
+    onSelect(item: ExercisesServer): void;
     trainsList: Train[];
-    trainsIsLoading: boolean;
+    loading: boolean;
 }
 
 const ExerciseListSearchStyle = StyleSheet.create({
@@ -24,16 +24,12 @@ const ExerciseListSearchStyle = StyleSheet.create({
         flex: 1,
         minHeight: 0, // Важно для правильной работы flex
     },
-    emptyText: {
-        width: '100%',
-        textAlign: 'center',
-    },
 });
 
 export function ExerciseListSearch(props: Props) {
     const [searchValue, setSearchValue] = useState<string>('');
 
-    const filteredExercises = useMemo<IExercise[]>(() => {
+    const filteredExercises = useMemo<ExercisesServer[]>(() => {
         const searchValueLower = searchValue.toLowerCase();
 
         return props.exercises.filter((ex) => {
@@ -57,19 +53,13 @@ export function ExerciseListSearch(props: Props) {
             />
 
             <View style={[ExerciseListSearchStyle.listContainer]}>
-                {filteredExercises.length > 0 && (
-                    <ExerciseList
-                        trainsList={props.trainsList}
-                        trainsIsLoading={props.trainsIsLoading}
-                        exercises={filteredExercises}
-                        count={4}
-                        onPress={props.onSelect}
-                    />
-                )}
-
-                {filteredExercises.length === 0 && (
-                    <Text style={ExerciseListSearchStyle.emptyText}>Пусто</Text>
-                )}
+                <ExerciseList
+                    trainsList={props.trainsList}
+                    loading={props.loading}
+                    exercises={filteredExercises}
+                    count={4}
+                    onPress={props.onSelect}
+                />
             </View>
         </View>
     );

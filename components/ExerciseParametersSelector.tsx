@@ -1,10 +1,10 @@
-import {Image, ImagePropsBase, StyleSheet, Text, View} from 'react-native';
-import {useEffect, useMemo, useState} from 'react';
-import {HorizontalButtons} from '@/components/ui/СHorizontalButtons';
+import { HorizontalButtons } from '@/components/ui/СHorizontalButtons';
+import { useEffect, useMemo, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
-    exercisePhoto: ImagePropsBase;
+    exercisePhoto: { uri: string };
     onComplete: (params: {approach: number; repeat: number; weight: number}) => void;
     weight: {
         last: number;

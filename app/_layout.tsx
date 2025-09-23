@@ -1,15 +1,13 @@
-import React from 'react';
-import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
-import 'react-native-reanimated';
-import {useEffect, useState} from 'react';
-import {useColorScheme} from '@/hooks/useColorScheme';
-import HomeScreen from '@/app/index';
 import HistoryPage from '@/app/history';
-import {RootLayout as RootLayoutBase} from '@/components/RootLayout';
-import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
-import {getExercises, IExercise} from '@/assets/entity/IExercise';
-import {useTrains} from '@/hooks/useTrains';
-import {refactorStorageData} from '@/helpers/refactorStorage';
+import HomeScreen from '@/app/index';
+import { ICurrentApproach } from '@/assets/entity/ICurrentApproach';
+import { getExercises, IExercise } from '@/assets/entity/IExercise';
+import { RootLayout as RootLayoutBase } from '@/components/RootLayout';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { useExercises } from '@/hooks/useExercises';
+import { useTrains } from '@/hooks/useTrains';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -19,6 +17,8 @@ export default function RootLayout() {
 
     const [exercises, setExercises] = useState<IExercise[]>([]);
     const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
+
+    const ex = useExercises();
 
     useEffect(() => {
         setExercises(getExercises());
@@ -36,13 +36,14 @@ export default function RootLayout() {
                 tabs={[
                     {
                         id: 'home',
-                        iconName: 'plussquare',
+                        iconName: 'plus-circle',
                         title: 'добавить',
                         component: (
                             <HomeScreen
                                 trainsList={trains.list}
                                 trainsIsLoading={trains.isLoading}
-                                exercises={exercises}
+                                exercisesIsLoading={ex.loading}
+                                exercises={ex.data}
                                 approaches={approaches}
                                 setApproaches={setApproachesProxy}
                                 saveTrains={trains.save}
@@ -52,7 +53,7 @@ export default function RootLayout() {
                     },
                     {
                         id: 'history',
-                        iconName: 'leftsquare',
+                        iconName: 'history',
                         title: 'история',
                         component: (
                             <HistoryPage

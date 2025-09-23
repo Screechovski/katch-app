@@ -1,4 +1,4 @@
-import {IExercise} from './IExercise';
+import { IExercise } from './IExercise';
 
 export type ICurrentApproach = {
     exercise: IExercise;

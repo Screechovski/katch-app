@@ -1,29 +1,30 @@
-import {Alert, View} from 'react-native';
-import {Dispatch, SetStateAction, useMemo, useState} from 'react';
-import {CWrapper} from '@/components/ui/CWrapper';
-import {ExerciseListSearch} from '@/components/elements/ExerciseListSearch';
-import {IExercise} from '@/assets/entity/IExercise';
-import {LoadTrains, SaveTrains, Train} from '@/hooks/useTrains';
-import {CurrentTrainApproaches} from '@/components/CurrentTrainApproaches';
-import {CurrentTraintSaveButton} from '@/components/CurrentTraintSaveButton';
-import {ExerciseParametersSelector} from '@/components/ExerciseParametersSelector';
-import {ICurrentApproach} from '@/assets/entity/ICurrentApproach';
+import { ICurrentApproach } from '@/assets/entity/ICurrentApproach';
+import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
+import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
+import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
+import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
+import { CWrapper } from '@/components/ui/CWrapper';
+import { ExercisesServer } from '@/hooks/useExercises';
+import { LoadTrains, SaveTrains, Train } from '@/hooks/useTrains';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface Props {
     approaches: ICurrentApproach[];
-    exercises: IExercise[];
+    exercises: ExercisesServer[];
+    trainsIsLoading: boolean;
     setApproaches: Dispatch<SetStateAction<ICurrentApproach[]>>;
     saveTrains: SaveTrains;
     trainsList: Train[];
-    trainsIsLoading: boolean;
+    exercisesIsLoading: boolean;
     loadTrains: LoadTrains;
 }
 
 export default function HomeScreen(props: Props) {
     const [step, setStep] = useState(0); // 0 select exercise, 1 select parameters
-    const [tempExercise, setTempExercise] = useState<null | IExercise>(null);
+    const [tempExercise, setTempExercise] = useState<null | ExercisesServer>(null);
 
-    function onSelectExercise(exercise: IExercise) {
+    function onSelectExercise(exercise: ExercisesServer) {
         setStep(1);
         setTempExercise(exercise);
     }
@@ -34,17 +35,17 @@ export default function HomeScreen(props: Props) {
         weight: number;
     }) {
         if (tempExercise) {
-            props.setApproaches((state) => [
-                ...state,
-                {
-                    exercise: tempExercise,
-                    approach: params.approach,
-                    weight: params.weight,
-                    repeat: params.repeat,
-                },
-            ]);
-            setTempExercise(null);
-            setStep(0);
+            // props.setApproaches((state) => [
+            //     ...state,
+            //     {
+            //         exercise: tempExercise,
+            //         approach: params.approach,
+            //         weight: params.weight,
+            //         repeat: params.repeat,
+            //     },
+            // ]);
+            // setTempExercise(null);
+            // setStep(0);
         }
     }
 
@@ -119,20 +120,18 @@ export default function HomeScreen(props: Props) {
             )}
 
             {step === 0 && (
-                <View style={{flex: 1, minHeight: 0}}>
-                    <ExerciseListSearch
-                        trainsList={props.trainsList}
-                        trainsIsLoading={props.trainsIsLoading}
-                        count={3}
-                        onSelect={onSelectExercise}
-                        exercises={props.exercises}
-                    />
-                </View>
+                <ExerciseListSearch
+                    trainsList={props.trainsList}
+                    loading={props.trainsIsLoading || props.exercisesIsLoading}
+                    count={3}
+                    onSelect={onSelectExercise}
+                    exercises={props.exercises}
+                />
             )}
 
             {tempExercise && step === 1 && (
                 <ExerciseParametersSelector
-                    exercisePhoto={tempExercise.photo}
+                    exercisePhoto={{ uri: `http://localhost:8080/image/exercise/${tempExercise.imageName}` }}
                     exerciseName={tempExercise.name}
                     weight={getPrevTempWeight}
                     onComplete={onParametersComplete}

@@ -1,4 +1,4 @@
-import {ImagePropsBase} from 'react-native';
+import { ImagePropsBase } from 'react-native';
 
 const exercisesData: Record<string, IExercise> = {
     '1': {

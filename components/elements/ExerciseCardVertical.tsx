@@ -1,3 +1,5 @@
+import { Colors } from '@/constants/Theme';
+import { JSX, useMemo } from 'react';
 import {
     Image,
     Pressable,
@@ -7,11 +9,12 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
-import {useMemo} from 'react';
-import {IExercise} from '@/assets/entity/IExercise';
-import {Colors} from '@/constants/Theme';
 
-type ExerciseCardProps = IExercise & {
+type ExerciseCardProps = {
+    id: number
+    name: string
+    photo: { uri: string }
+} & {
     style?: StyleProp<ViewStyle>;
     onPress?: (e: number) => void;
     children?: JSX.Element | JSX.Element[];
