@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     },
     hr: {
         height: 2,
-        marginBottom: 20,
-        marginTop: 20,
+        marginBottom: 10,
+        marginTop: 10,
         backgroundColor: Colors.primary.i80,
     },
     approach: {

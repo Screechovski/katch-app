@@ -10,6 +10,7 @@ interface Props {
     loading: boolean;
     exercises: ExerciseServer[];
     onSelect(item: ExerciseServer): void;
+    onRefresh?: () => void;
 }
 
 const style = StyleSheet.create({
@@ -18,10 +19,10 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
     },
-    input: { marginBottom: 15 },
+    input: { marginBottom: 10 },
     listContainer: {
         flex: 1,
-        minHeight: 0, // Важно для правильной работы flex
+        minHeight: 0,
     },
 });
 
@@ -57,6 +58,7 @@ export function ExerciseListSearch(props: Props) {
                     loading={props.loading}
                     exercises={filteredExercises}
                     onPress={props.onSelect}
+                    onRefresh={props.onRefresh}
                 />
             </View>
         </View>

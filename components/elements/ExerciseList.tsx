@@ -31,13 +31,11 @@ export function ExerciseList(props: Props) {
         return parentWidth / count;
     }, [width, props.width]);
 
-    if (props.loading) {
-        return (
-            <View style={{}}>
-                <CLoader />
-            </View>
-        );
-    }
+    const onRefresh = () => {
+        if (props.onRefresh) {
+            props.onRefresh();
+        }
+    };
 
     if (props.exercises.length === 0) {
         return (
@@ -75,7 +73,8 @@ export function ExerciseList(props: Props) {
                 justifyContent: 'space-between',
             }}
             showsVerticalScrollIndicator={false}
-            onRefresh={props.onRefresh}
+            onRefresh={onRefresh}
+            refreshing={props.loading}
         />
     );
 }

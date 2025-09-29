@@ -19,14 +19,13 @@ type ExerciseCardProps = {
 };
 
 const style = StyleSheet.create({
-    wrapper: {},
     inner: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         backgroundColor: Colors.light.i2,
         width: '100%',
-        borderRadius: 8,
+        borderRadius: 10,
     },
     image: {
         width: '100%',
@@ -34,40 +33,27 @@ const style = StyleSheet.create({
         height: 100,
         marginBottom: 5,
     },
-    textWrap: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 0,
-        marginTop: 0,
-        width: '100%',
-    },
     text: {
         display: 'flex',
-        fontSize: 12,
-        lineHeight: 12,
+        fontSize: 15,
+        lineHeight: 15,
         textAlign: 'center',
         width: '100%',
         color: Colors.dark.i7,
-        height: 12 * 1.2 * 4,
+        height: 15 * 1.2 * 4,
         flexWrap: 'wrap',
     },
 });
 
 export function ExerciseCardVertical(props: ExerciseCardProps) {
     return (
-        <Pressable
-            style={[props.style, style.wrapper]}
-            onPress={() => props.onPress(props.id)}
-        >
+        <Pressable style={props.style} onPress={() => props.onPress(props.id)}>
             <View style={style.inner}>
                 <Image source={props.photo} style={style.image} />
 
-                <View style={style.textWrap}>
-                    <Text style={style.text} numberOfLines={4}>
-                        {props.name}
-                    </Text>
-                </View>
+                <Text style={style.text} numberOfLines={4}>
+                    {props.name}
+                </Text>
             </View>
         </Pressable>
     );

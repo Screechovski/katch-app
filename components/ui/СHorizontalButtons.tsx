@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Colors} from '@/constants/Theme';
-import {CButtonBase} from '@/components/ui/CButtonBase';
+import { StyleSheet, Text, View } from 'react-native';
+import { Colors } from '@/constants/Theme';
+import { CButtonBase } from '@/components/ui/CButtonBase';
 
 interface Props {
     options: {
@@ -21,14 +21,16 @@ export const HorizontalButtons = (props: Props) => {
     return (
         <View style={styles.items}>
             {props.options.map((option, key) => (
-                <View style={styles.item}>
+                <View style={styles.item} key={key}>
                     <CButtonBase
-                        key={option.value.toString() + key.toString()}
                         variant={option.isSelected ? 'primary' : 'success'}
                         style={styles.wrap}
                         onPress={() => handleSelect(option.value)}
-                        disabled={false}>
-                        <Text style={styles.text}>{option.value.toString()}</Text>
+                        disabled={false}
+                    >
+                        <Text style={styles.text}>
+                            {option.value.toString()}
+                        </Text>
                     </CButtonBase>
 
                     {option.isTop && <Text style={styles.maxMark}>TOP</Text>}

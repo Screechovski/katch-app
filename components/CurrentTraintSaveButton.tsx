@@ -4,19 +4,13 @@ import { CButton } from '@/components/ui/CButton';
 import { WeightInputModal } from '@/components/WeightInputModal';
 
 interface CurrentTraintSaveButtonProps {
-    approaches: any[];
     onSave: (weight?: number) => void;
 }
 
 export function CurrentTraintSaveButton({
-    approaches,
     onSave,
 }: CurrentTraintSaveButtonProps) {
     const [showWeightModal, setShowWeightModal] = useState(false);
-
-    if (approaches?.length === 0) {
-        return null;
-    }
 
     function handleSavePress() {
         setShowWeightModal(true);

@@ -1,5 +1,6 @@
 import { UserTokenForm } from '@/components/elements/UserTokenForm';
 import { CLoader } from '@/components/ui/CLoader';
+import { CWrapper } from '@/components/ui/CWrapper';
 import { Api } from '@/helpers/Api';
 import { Storage } from '@/helpers/Storage';
 import {
@@ -53,7 +54,11 @@ export default function RootLayout() {
     }
 
     if (!hasToken) {
-        return <UserTokenForm onToken={() => setHasToken(true)} />;
+        return (
+            <CWrapper style={{ paddingTop: StatusBar.currentHeight }}>
+                <UserTokenForm onToken={() => setHasToken(true)} />
+            </CWrapper>
+        );
     }
 
     return (
@@ -61,14 +66,13 @@ export default function RootLayout() {
             <ThemeProvider
                 value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
             >
-                {/* <View style={{ paddingTop: StatusBar.currentHeight }}> */}
+                <View style={{ paddingTop: StatusBar.currentHeight }} />
                 <Stack>
                     <Stack.Screen
                         name="(tabs)"
                         options={{ headerShown: false }}
                     />
                 </Stack>
-                {/* </View> */}
             </ThemeProvider>
         </QueryClientProvider>
     );

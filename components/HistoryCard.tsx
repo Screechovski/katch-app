@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { Colors } from '@/constants/Theme';
 import { TrainServer } from '@/types/TrainsServer';
+import { Api } from '@/helpers/Api';
 
 interface Props {
     train: TrainServer;
@@ -12,37 +13,47 @@ interface Props {
 }
 
 export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
-    // const exercises = useMemo(() => {
-    //     return train.exercises.map((exercise) => {
-    //         const _exercise = getExerciseById(exercise.exercise);
+    const sets = useMemo(() => {
+        const exercises: Record<
+            string,
+            {
+                id: number;
+                exerciseId: number;
+                exerciseImageName: string;
+                exerciseName: string;
+                reps: number;
+                weight: number;
+            } & { sets: number }
+        > = {};
 
-    //         return {
-    //             ...exercise,
-    //             photo: _exercise ? _exercise.photo : null,
-    //         };
-    //     }) as {
-    //         exercise: number;
-    //         weight: number;
-    //         approach: number;
-    //         repeat: number;
-    //         photo: ImagePropsBase | null;
-    //     }[];
-    // }, [train.exercises]);
+        train.sets.forEach((set) => {
+            const key = `${set.exerciseId}_${set.reps}_${set.weight}`;
+
+            if (!exercises[set.exerciseId]) {
+                exercises[key] = {
+                    ...set,
+                    sets: 0,
+                };
+            }
+
+            exercises[key].sets += 1;
+        });
+
+        return Object.values(exercises);
+    }, [train.sets]);
 
     return (
         <View style={styles.card}>
             <Text style={styles.date}>{updateDateTime(train.date)}</Text>
 
-            {train.sets.map((set) => (
+            {sets.map((set) => (
                 <View style={styles.line} key={set.id}>
-                    {set.exerciseId && (
-                        <Image
-                            source={{
-                                uri: `http://localhost:8080/image/exercise/${set.exerciseImageName}`,
-                            }}
-                            style={styles.image}
-                        />
-                    )}
+                    <Image
+                        source={{
+                            uri: Api.getPhotoUrl(set.exerciseImageName),
+                        }}
+                        style={styles.image}
+                    />
 
                     {/* <Pressable
                         style={styles.exerciseNameWrapper}
@@ -52,7 +63,7 @@ export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
                     {/* </Pressable> */}
 
                     <Text style={styles.exerciseParams}>
-                        {set.weight}кг {set.reps}x set.repeat
+                        {set.weight}кг {set.reps}x{set.sets}
                     </Text>
                 </View>
             ))}
@@ -81,6 +92,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         borderWidth: 3,
         borderColor: Colors.light.i4,
+        backgroundColor: Colors.light.i2,
         borderRadius: 10,
         padding: 3,
         marginBottom: 6,
@@ -121,5 +133,6 @@ const styles = StyleSheet.create({
     image: {
         width: 30,
         height: 30,
+        borderRadius: 3,
     },
 });
