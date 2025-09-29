@@ -1,5 +1,4 @@
 import { Colors } from '@/constants/Theme';
-import { JSX, useMemo } from 'react';
 import {
     Image,
     Pressable,
@@ -11,31 +10,27 @@ import {
 } from 'react-native';
 
 type ExerciseCardProps = {
-    id: number
-    name: string
-    photo: { uri: string }
+    id: number;
+    name: string;
+    photo: { uri: string };
 } & {
     style?: StyleProp<ViewStyle>;
-    onPress?: (e: number) => void;
-    children?: JSX.Element | JSX.Element[];
+    onPress(e: number): void;
 };
 
 const style = StyleSheet.create({
-    wrapper: {
-        padding: 2,
-        flex: 1,
-        maxWidth: '100%',
-    },
+    wrapper: {},
     inner: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         backgroundColor: Colors.light.i2,
-        padding: 2,
         width: '100%',
+        borderRadius: 8,
     },
     image: {
         width: '100%',
+        maxWidth: 100,
         height: 100,
         marginBottom: 5,
     },
@@ -52,6 +47,7 @@ const style = StyleSheet.create({
         fontSize: 12,
         lineHeight: 12,
         textAlign: 'center',
+        width: '100%',
         color: Colors.dark.i7,
         height: 12 * 1.2 * 4,
         flexWrap: 'wrap',
@@ -59,27 +55,14 @@ const style = StyleSheet.create({
 });
 
 export function ExerciseCardVertical(props: ExerciseCardProps) {
-    const wrapperStyle = useMemo(() => {
-        if (props.style && typeof props.style === 'object') {
-            return {
-                ...props.style,
-                ...style.wrapper,
-            };
-        }
-
-        return style.wrapper;
-    }, [props.style]);
-
-    function pressHandler() {
-        if ('onPress' in props && typeof props.onPress === 'function') {
-            props.onPress(props.id);
-        }
-    }
-
     return (
-        <Pressable style={wrapperStyle} onPress={pressHandler}>
+        <Pressable
+            style={[props.style, style.wrapper]}
+            onPress={() => props.onPress(props.id)}
+        >
             <View style={style.inner}>
                 <Image source={props.photo} style={style.image} />
+
                 <View style={style.textWrap}>
                     <Text style={style.text} numberOfLines={4}>
                         {props.name}

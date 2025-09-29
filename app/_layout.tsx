@@ -1,72 +1,75 @@
-import HistoryPage from '@/app/history';
-import HomeScreen from '@/app/index';
-import { ICurrentApproach } from '@/assets/entity/ICurrentApproach';
-import { getExercises, IExercise } from '@/assets/entity/IExercise';
-import { RootLayout as RootLayoutBase } from '@/components/RootLayout';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { useExercises } from '@/hooks/useExercises';
-import { useTrains } from '@/hooks/useTrains';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { UserTokenForm } from '@/components/elements/UserTokenForm';
+import { CLoader } from '@/components/ui/CLoader';
+import { Api } from '@/helpers/Api';
+import { Storage } from '@/helpers/Storage';
+import {
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider,
+} from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { Alert, StatusBar, useColorScheme, View } from 'react-native';
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
-    const trains = useTrains();
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [page, setPage] = useState('home');
+    const [hasToken, setHasToken] = useState(false);
 
-    const [exercises, setExercises] = useState<IExercise[]>([]);
-    const [approaches, setApproaches] = useState<ICurrentApproach[]>([]);
+    const checkToken = async () => {
+        try {
+            setIsLoading(true);
+            setHasToken(false);
+            const lsToken = await Storage.getData<string>(Storage.token);
 
-    const ex = useExercises();
+            if (lsToken) {
+                const checkRes = await Api.checkToken(lsToken);
 
-    useEffect(() => {
-        setExercises(getExercises());
-        trains.load();
-    }, []);
-    const setApproachesProxy: React.Dispatch<React.SetStateAction<ICurrentApproach[]>> = (
-        approaches,
-    ) => {
-        setApproaches(approaches);
+                if (checkRes.isValid) {
+                    setHasToken(true);
+                }
+            }
+        } catch (error) {
+            Alert.alert('Ошибка при инициализации: ' + error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
+    useEffect(() => {
+        checkToken();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <View style={{ width: '100%', paddingTop: 200 }}>
+                <CLoader />
+            </View>
+        );
+    }
+
+    if (!hasToken) {
+        return <UserTokenForm onToken={() => setHasToken(true)} />;
+    }
+
     return (
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <RootLayoutBase
-                tabs={[
-                    {
-                        id: 'home',
-                        iconName: 'plus-circle',
-                        title: 'добавить',
-                        component: (
-                            <HomeScreen
-                                trainsList={trains.list}
-                                trainsIsLoading={trains.isLoading}
-                                exercisesIsLoading={ex.loading}
-                                exercises={ex.data}
-                                approaches={approaches}
-                                setApproaches={setApproachesProxy}
-                                saveTrains={trains.save}
-                                loadTrains={trains.load}
-                            />
-                        ),
-                    },
-                    {
-                        id: 'history',
-                        iconName: 'history',
-                        title: 'история',
-                        component: (
-                            <HistoryPage
-                                trainsList={trains.list}
-                                removeTrain={trains.remove}
-                                isLoading={trains.isLoading}
-                            />
-                        ),
-                    },
-                ]}
-                activeTabId={page}
-                onChangeActiveTabId={setPage}
-            />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider
+                value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+            >
+                {/* <View style={{ paddingTop: StatusBar.currentHeight }}> */}
+                <Stack>
+                    <Stack.Screen
+                        name="(tabs)"
+                        options={{ headerShown: false }}
+                    />
+                </Stack>
+                {/* </View> */}
+            </ThemeProvider>
+        </QueryClientProvider>
     );
 }

@@ -1,5 +1,5 @@
-import {ReactNode, useMemo} from 'react';
-import {StyleSheet, View, ViewStyle} from 'react-native';
+import { ReactNode, useMemo } from 'react';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 
 interface Props {
     padding?: 's' | 'm' | 'l';
@@ -12,10 +12,12 @@ export function CWrapper(props: Props) {
         if (props.padding === 's') {
             return 5;
         }
+
         if (props.padding === 'l') {
-            return 30;
+            return 15;
         }
-        return 15;
+
+        return 10;
     }, [props.padding]);
 
     const style = useMemo(

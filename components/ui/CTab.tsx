@@ -29,9 +29,10 @@ export function CTab(props: Props) {
                 borderStyle: 'solid',
                 borderColor: getAccentColor,
             }}
-            onPress={props.onClick}>
+            onPress={props.onClick}
+        >
             <AntDesign
-                style={{marginRight: 10}}
+                style={{ marginRight: 10 }}
                 name={props.icon}
                 size={24}
                 color={getAccentColor}
@@ -41,8 +42,9 @@ export function CTab(props: Props) {
                     color: getAccentColor,
                     fontSize: 20,
                     lineHeight: 20,
-                    marginBottom: 6
-                }}>
+                    marginBottom: 6,
+                }}
+            >
                 {props.children}
             </Text>
         </TouchableOpacity>

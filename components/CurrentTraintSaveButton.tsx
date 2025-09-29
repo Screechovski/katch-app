@@ -1,7 +1,7 @@
-import {StyleSheet} from 'react-native';
-import {useState} from 'react';
-import {CButton} from '@/components/ui/CButton';
-import {WeightInputModal} from '@/components/WeightInputModal';
+import { StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { CButton } from '@/components/ui/CButton';
+import { WeightInputModal } from '@/components/WeightInputModal';
 
 interface CurrentTraintSaveButtonProps {
     approaches: any[];
@@ -14,7 +14,7 @@ export function CurrentTraintSaveButton({
 }: CurrentTraintSaveButtonProps) {
     const [showWeightModal, setShowWeightModal] = useState(false);
 
-    if (approaches.length === 0) {
+    if (approaches?.length === 0) {
         return null;
     }
 
@@ -32,7 +32,11 @@ export function CurrentTraintSaveButton({
 
     return (
         <>
-            <CButton variant={'success'} style={styles.save} onPress={handleSavePress}>
+            <CButton
+                variant={'success'}
+                style={styles.save}
+                onPress={handleSavePress}
+            >
                 Сохранить
             </CButton>
 

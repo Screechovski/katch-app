@@ -1,11 +1,12 @@
 import { HorizontalButtons } from '@/components/ui/СHorizontalButtons';
+import { RepsWeight } from '@/store/currentTrainStore';
 import { useEffect, useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
     exercisePhoto: { uri: string };
-    onComplete: (params: {approach: number; repeat: number; weight: number}) => void;
+    onComplete: (params: RepsWeight[]) => void;
     weight: {
         last: number;
         top: number;
@@ -14,12 +15,14 @@ interface ExerciseParametersSelectorProps {
 
 const APPROACHES_VALUES = [1, 2, 3, 4, 5, 6];
 const WEIGHT_VALUES = [
-    4, 5, 6, 7, 8, 9, 10, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80,
-    85, 90, 95, 100,
+    4, 5, 6, 7, 8, 9, 10, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65,
+    70, 75, 80, 85, 90, 95, 100,
 ];
 const REPEATS_VALUES = [4, 5, 6, 8, 10, 12, 15];
 
-export function ExerciseParametersSelector(props: ExerciseParametersSelectorProps) {
+export function ExerciseParametersSelector(
+    props: ExerciseParametersSelectorProps,
+) {
     const [selectedApproach, setSelectedApproach] = useState<number>(0);
     const approachesValues = useMemo(
         () =>
@@ -39,7 +42,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 isSelected: selectedWeight === value,
                 isLast: props.weight.last === value,
             })),
-        [selectedWeight],
+        [selectedWeight, props.weight.top, props.weight.last],
     );
 
     const [selectedRepeats, setSelectedRepeats] = useState<number>(0);
@@ -66,11 +69,16 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
 
     useEffect(() => {
         if (selectedApproach && selectedWeight && selectedRepeats) {
-            props.onComplete({
-                approach: selectedApproach,
-                repeat: selectedRepeats,
-                weight: selectedWeight,
+            const result: RepsWeight[] = [];
+
+            Array.from({ length: selectedApproach }).forEach(() => {
+                result.push({
+                    reps: selectedRepeats,
+                    weight: selectedWeight,
+                });
             });
+
+            props.onComplete(result);
         }
     }, [selectedApproach, selectedWeight, selectedRepeats]);
 
@@ -89,11 +97,17 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             </View>
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Повторения</Text>
-                <HorizontalButtons options={repeatsValues} onSelect={onSelectRepeats} />
+                <HorizontalButtons
+                    options={repeatsValues}
+                    onSelect={onSelectRepeats}
+                />
             </View>
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Вес</Text>
-                <HorizontalButtons options={weightValues} onSelect={onSelectWeight} />
+                <HorizontalButtons
+                    options={weightValues}
+                    onSelect={onSelectWeight}
+                />
             </View>
         </View>
     );

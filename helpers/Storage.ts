@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class Storage {
+    static token = 'token';
+
     static async saveData(key: string, value: any) {
         await AsyncStorage.setItem(key, JSON.stringify(value));
     }

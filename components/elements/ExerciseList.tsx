@@ -1,102 +1,81 @@
-import { CLoader } from "@/components/ui/CLoader";
-import { ExercisesServer } from "@/hooks/useExercises";
-import { Train } from "@/hooks/useTrains";
-import { useMemo } from "react";
-import { FlatList, Text, useWindowDimensions } from "react-native";
-import { ExerciseCardVertical } from "./ExerciseCardVertical";
+import { CLoader } from '@/components/ui/CLoader';
+import {
+    FlatList,
+    StyleProp,
+    Text,
+    useWindowDimensions,
+    View,
+    ViewStyle,
+} from 'react-native';
+import { ExerciseCardVertical } from './ExerciseCardVertical';
+import { ExerciseServer } from '@/types/ExerciseServer';
+import { Api } from '@/helpers/Api';
+import { useMemo } from 'react';
 
 interface Props {
-  count: number;
-  exercises: ExercisesServer[];
-  onPress(item: ExercisesServer): void;
-  trainsList: Train[];
-  loading: boolean;
+    width?: number;
+    exercises: ExerciseServer[];
+    loading: boolean;
+    style?: StyleProp<ViewStyle>;
+    onPress(item: ExerciseServer): void;
+    onRefresh?: () => void;
 }
 
 export function ExerciseList(props: Props) {
-  const { width } = useWindowDimensions();
+    const count = 3;
+    const { width } = useWindowDimensions();
 
-  const count = useMemo(() => {
-    if (props.count) {
-      return props.count;
+    const itemWidth = useMemo(() => {
+        const parentWidth = props.width ?? width;
+
+        return parentWidth / count;
+    }, [width, props.width]);
+
+    if (props.loading) {
+        return (
+            <View style={{}}>
+                <CLoader />
+            </View>
+        );
     }
 
-    return 3;
-  }, [props.count]);
-
-  function pressHandler(item: ExercisesServer) {
-    if ("onPress" in props && typeof props.onPress === "function") {
-      props.onPress(item);
+    if (props.exercises.length === 0) {
+        return (
+            <Text
+                style={{
+                    width: '100%',
+                    textAlign: 'center',
+                }}
+            >
+                Пусто
+            </Text>
+        );
     }
-  }
 
-  function sortObjectsByOccurrences<T extends Record<"id", number>>(
-    objects: T[],
-    ids: number[]
-  ): T[] {
-    const idCounts = ids.reduce((counts: any, id) => {
-      counts[id] = (counts[id] || 0) + 1;
-      return counts;
-    }, {});
-
-    return objects.sort((a, b) => {
-      const countA = idCounts[a.id] || 0;
-      const countB = idCounts[b.id] || 0;
-      return countB - countA;
-    });
-  }
-
-  const sortedExercises = useMemo(
-    () =>
-      sortObjectsByOccurrences(
-        props.exercises,
-        props.trainsList
-          .map((item) => item.exercises.map((ex) => ex.exercise))
-          .flat()
-      ),
-    [props.exercises, props.trainsList]
-  );
-
-  const itemWidth = width / count; // Вычисляем ширину элемента
-
-  if (props.loading) {
-    return <CLoader />;
-  }
-
-  if (props.exercises.length === 0) {
     return (
-      <Text
-        style={{
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-        Пусто
-      </Text>
-    );
-  }
-
-  return (
-    <FlatList
-      data={sortedExercises}
-      renderItem={({ item }) => (
-        <ExerciseCardVertical
-          onPress={() => pressHandler(item)}
-          style={{ width: itemWidth }}
-          photo={{
-            uri: `http://localhost:8080/image/exercise/${item.imageName}`,
-          }}
-          name={item.name}
-          id={item.id}
+        <FlatList
+            style={props.style}
+            data={props.exercises}
+            renderItem={({ item }) => (
+                <View style={{ width: itemWidth, padding: 2, borderRadius: 6 }}>
+                    <ExerciseCardVertical
+                        onPress={() => props.onPress(item)}
+                        photo={{
+                            uri: Api.getPhotoUrl(item.imageName),
+                        }}
+                        name={item.name}
+                        id={item.id}
+                    />
+                </View>
+            )}
+            maxToRenderPerBatch={15}
+            numColumns={count}
+            keyExtractor={(item) => item.id.toString()}
+            columnWrapperStyle={{
+                justifyContent: 'space-between',
+            }}
+            showsVerticalScrollIndicator={false}
+            onRefresh={props.onRefresh}
         />
-      )}
-      numColumns={count}
-      keyExtractor={(item) => item.id.toString()}
-      columnWrapperStyle={{
-        justifyContent: "space-between",
-      }}
-      showsVerticalScrollIndicator={false}
-      style={{ flex: 1 }}
-    />
-  );
+    );
 }

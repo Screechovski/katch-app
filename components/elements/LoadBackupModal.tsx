@@ -1,9 +1,8 @@
-import {CInput} from "@/components/ui/CInput";
-import {CButton} from "@/components/ui/CButton";
-import {CModal} from "@/components/ui/CModal";
-import React, {useMemo, useState} from "react";
-import {Alert, StyleSheet} from "react-native";
-import {useTrains} from "@/hooks/useTrains";
+import { CInput } from '@/components/ui/CInput';
+import { CButton } from '@/components/ui/CButton';
+import { CModal } from '@/components/ui/CModal';
+import React, { useMemo, useState } from 'react';
+import { Alert, StyleSheet } from 'react-native';
 
 interface Props {
     visible: boolean;
@@ -11,10 +10,13 @@ interface Props {
 }
 
 export function LoadBackupModal(props: Props) {
-    const trains = useTrains();
-    const [backupValue, setBackupValue] = useState('')
+    // const trains = useTrains();
+    const [backupValue, setBackupValue] = useState('');
 
-    const disabled = useMemo(() => backupValue.trim().length === 0, [backupValue])
+    const disabled = useMemo(
+        () => backupValue.trim().length === 0,
+        [backupValue],
+    );
 
     async function load() {
         if (disabled) {
@@ -22,31 +24,40 @@ export function LoadBackupModal(props: Props) {
         }
 
         try {
-            await trains.loadBackup(JSON.parse(atob(backupValue)))
+            // await trains.loadBackup(JSON.parse(atob(backupValue)))
             props.onHide();
             setBackupValue('');
         } catch (error) {
-            Alert.alert("Ошибка", JSON.stringify(error));
+            Alert.alert('Ошибка', JSON.stringify(error));
         }
     }
 
     return (
-        <CModal style={modalStyle.modal} visible={props.visible} onHide={props.onHide}>
-            <CInput style={modalStyle.input} placeholder={'Вставьте бекап'} value={backupValue}
-                    onInput={setBackupValue}/>
+        <CModal
+            style={modalStyle.modal}
+            visible={props.visible}
+            onHide={props.onHide}
+        >
+            <CInput
+                style={modalStyle.input}
+                placeholder={'Вставьте бекап'}
+                value={backupValue}
+                onInput={setBackupValue}
+            />
 
-            <CButton disabled={disabled} onPress={load}>Загрузить</CButton>
+            <CButton disabled={disabled} onPress={load}>
+                Загрузить
+            </CButton>
         </CModal>
-    )
-
+    );
 }
 
 const modalStyle = StyleSheet.create({
     modal: {
-        flex: 0
+        flex: 0,
     },
     input: {
         width: '100%',
-        marginBottom: 10
-    }
-})
+        marginBottom: 10,
+    },
+});

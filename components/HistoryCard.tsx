@@ -1,66 +1,71 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, View, Text, Pressable, Image, ImagePropsBase} from 'react-native';
-import {CIconButton} from '@/components/ui/CIconButton';
-import {getExerciseById} from '@/assets/entity/IExercise';
-import {Colors} from '@/constants/Theme';
-import {Train} from '@/hooks/useTrains';
+import React from 'react';
+import { StyleSheet, View, Text, Image } from 'react-native';
+import { CIconButton } from '@/components/ui/CIconButton';
+import { Colors } from '@/constants/Theme';
+import { TrainServer } from '@/types/TrainsServer';
 
 interface Props {
-    train: Train;
+    train: TrainServer;
     updateDateTime: (dateString: string) => string;
     addFilter: (id: number) => void;
     removeLocal: (date: string) => void;
 }
 
-export function HistoryCard({train, updateDateTime, addFilter, removeLocal}: Props) {
-    const exercises = useMemo(() => {
-        return train.exercises.map((exercise) => {
-            const _exercise = getExerciseById(exercise.exercise);
+export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
+    // const exercises = useMemo(() => {
+    //     return train.exercises.map((exercise) => {
+    //         const _exercise = getExerciseById(exercise.exercise);
 
-            return {
-                ...exercise,
-                photo: _exercise ? _exercise.photo : null,
-            };
-        }) as {
-            exercise: number;
-            weight: number;
-            approach: number;
-            repeat: number;
-            photo: ImagePropsBase | null;
-        }[];
-    }, [train.exercises]);
+    //         return {
+    //             ...exercise,
+    //             photo: _exercise ? _exercise.photo : null,
+    //         };
+    //     }) as {
+    //         exercise: number;
+    //         weight: number;
+    //         approach: number;
+    //         repeat: number;
+    //         photo: ImagePropsBase | null;
+    //     }[];
+    // }, [train.exercises]);
 
     return (
         <View style={styles.card}>
             <Text style={styles.date}>{updateDateTime(train.date)}</Text>
 
-            {exercises.map((exercise, exerciseKey) => (
-                <View style={styles.line} key={exerciseKey}>
-                    {exercise.photo && (
-                        <Image source={exercise.photo} style={styles.image} />
+            {train.sets.map((set) => (
+                <View style={styles.line} key={set.id}>
+                    {set.exerciseId && (
+                        <Image
+                            source={{
+                                uri: `http://localhost:8080/image/exercise/${set.exerciseImageName}`,
+                            }}
+                            style={styles.image}
+                        />
                     )}
 
-                    <Pressable
+                    {/* <Pressable
                         style={styles.exerciseNameWrapper}
-                        onPress={() => addFilter(exercise.exercise)}>
-                        <Text style={styles.exerciseName}>
-                            {getExerciseById(exercise.exercise)?.name}
-                        </Text>
-                    </Pressable>
+                        onPress={() => addFilter(exercise.exercise)}
+                    > */}
+                    <Text style={styles.exerciseName}>{set.exerciseName}</Text>
+                    {/* </Pressable> */}
 
                     <Text style={styles.exerciseParams}>
-                        {exercise.weight}кг {exercise.approach}x{exercise.repeat}
+                        {set.weight}кг {set.reps}x set.repeat
                     </Text>
                 </View>
             ))}
 
             <View style={styles.footer}>
-                {train.weight && (
-                    <Text style={styles.weight}>{train.weight.toString()}кг</Text>
+                {train.userWeight && (
+                    <Text style={styles.weight}>
+                        {train.userWeight.toString()}кг
+                    </Text>
                 )}
 
                 <CIconButton
-                    style={{marginLeft: 'auto'}}
+                    style={{ marginLeft: 'auto' }}
                     size={'s'}
                     variant={'error'}
                     onPress={() => removeLocal(train.date)}

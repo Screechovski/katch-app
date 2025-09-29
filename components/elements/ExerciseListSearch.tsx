@@ -1,25 +1,24 @@
 import { CInput } from '@/components/ui/CInput';
-import { ExercisesServer } from '@/hooks/useExercises';
-import { Train } from '@/hooks/useTrains';
 import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
+import { ExerciseServer } from '@/types/ExerciseServer';
 
 interface Props {
-    count: number;
-    exercises: ExercisesServer[];
-    onSelect(item: ExercisesServer): void;
-    trainsList: Train[];
+    style?: StyleProp<ViewStyle>;
+    width?: number;
     loading: boolean;
+    exercises: ExerciseServer[];
+    onSelect(item: ExerciseServer): void;
 }
 
-const ExerciseListSearchStyle = StyleSheet.create({
+const style = StyleSheet.create({
     wrap: {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
     },
-    input: {marginBottom: 15},
+    input: { marginBottom: 15 },
     listContainer: {
         flex: 1,
         minHeight: 0, // Важно для правильной работы flex
@@ -27,9 +26,9 @@ const ExerciseListSearchStyle = StyleSheet.create({
 });
 
 export function ExerciseListSearch(props: Props) {
-    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchValue, setSearchValue] = useState('');
 
-    const filteredExercises = useMemo<ExercisesServer[]>(() => {
+    const filteredExercises = useMemo<ExerciseServer[]>(() => {
         const searchValueLower = searchValue.toLowerCase();
 
         return props.exercises.filter((ex) => {
@@ -44,20 +43,19 @@ export function ExerciseListSearch(props: Props) {
     }, [props.exercises, searchValue]);
 
     return (
-        <View style={ExerciseListSearchStyle.wrap}>
+        <View style={[props.style, style.wrap]}>
             <CInput
-                style={ExerciseListSearchStyle.input}
+                style={style.input}
                 value={searchValue}
                 onInput={setSearchValue}
                 placeholder="Поиск"
             />
 
-            <View style={[ExerciseListSearchStyle.listContainer]}>
+            <View style={style.listContainer}>
                 <ExerciseList
-                    trainsList={props.trainsList}
+                    width={props.width}
                     loading={props.loading}
                     exercises={filteredExercises}
-                    count={4}
                     onPress={props.onSelect}
                 />
             </View>

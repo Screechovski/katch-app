@@ -1,17 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
-import {IExercise} from '@/assets/entity/IExercise';
-import {CIconButton} from '@/components/ui/CIconButton';
-import {Colors} from '@/constants/Theme';
-
-interface Approach {
-    exercise: IExercise;
-    approach: number;
-    repeat: number;
-    weight: number;
-}
+import { StyleSheet, Text, View } from 'react-native';
+import { CIconButton } from '@/components/ui/CIconButton';
+import { Colors } from '@/constants/Theme';
+import { Set } from '@/store/currentTrainStore';
 
 interface CurrentTrainApproachesProps {
-    approaches: Approach[];
+    approaches: Set[];
     onDelete: (index: number) => void;
 }
 
@@ -29,11 +22,12 @@ export function CurrentTrainApproaches({
                 {approaches.map((approache, index) => (
                     <View key={index} style={styles.approach}>
                         <View style={styles.approachText}>
-                            <Text style={styles.counter}>{index + 1}</Text>
-                            <Text style={styles.name}>{approache.exercise.name}</Text>
+                            <Text style={styles.name}>
+                                {approache.exercises.name}
+                            </Text>
                             <Text style={styles.weight}>
-                                {approache.weight}кг {approache.approach}x
-                                {approache.repeat}
+                                {approache.sets[0].weight}кг{' '}
+                                {approache.sets.length}x{approache.sets[0].reps}
                             </Text>
                         </View>
                         <CIconButton
@@ -74,9 +68,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 5,
         flex: 1,
-    },
-    counter: {
-        fontSize: 14,
     },
     name: {
         fontSize: 14,
