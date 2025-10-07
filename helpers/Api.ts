@@ -1,7 +1,7 @@
 import { ExerciseServer } from '@/types/ExerciseServer';
 import { TrainServer } from '@/types/TrainsServer';
 
-const CLOUD_API_BASE_URL = process.env.API_PATH;
+const CLOUD_API_BASE_URL = process.env.API_URL;
 
 const withBase = (path: string) => `${CLOUD_API_BASE_URL}/${path}`;
 
