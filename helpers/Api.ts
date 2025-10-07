@@ -1,18 +1,7 @@
 import { ExerciseServer } from '@/types/ExerciseServer';
 import { TrainServer } from '@/types/TrainsServer';
-import { Platform } from 'react-native';
 
-const CLOUD_API_BASE_URL = (() => {
-    if (__DEV__) {
-        if (Platform.OS === 'android') {
-            return 'http://10.0.2.2:8080/';
-        } else {
-            return 'http://localhost:8080/';
-        }
-    }
-
-    return 'https://api-prod.yourdomain.com/';
-})();
+const CLOUD_API_BASE_URL = process.env.API_PATH;
 
 export class Api {
     private static _base = CLOUD_API_BASE_URL;

@@ -5,7 +5,7 @@ const style = StyleSheet.create({
     wrap: {
         padding: 10,
         borderRadius: 8,
-        backgroundColor: Colors.danger.i3,
+        backgroundColor: Colors.danger.i2,
     },
 
     text: {
