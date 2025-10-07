@@ -26,6 +26,8 @@ export function UserTokenForm(props: Props) {
                 if (res.isValid) {
                     Storage.saveData(Storage.token, token);
                     props.onToken();
+                } else {
+                    setError('Неверный токен');
                 }
             }
         } catch (error: any) {

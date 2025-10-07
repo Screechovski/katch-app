@@ -1,18 +1,36 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { Colors } from '@/constants/Theme';
 import { TrainServer } from '@/types/TrainsServer';
 import { Api } from '@/helpers/Api';
+import { ExerciseServer } from '@/types/ExerciseServer';
 
 interface Props {
     train: TrainServer;
     updateDateTime: (dateString: string) => string;
-    addFilter: (id: number) => void;
-    removeLocal: (date: string) => void;
+    remove: (date: string) => void;
+    filterExercises: ExerciseServer[];
+    setFilterExercises: (ex: ExerciseServer) => void;
 }
 
-export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
+export function HistoryCard({
+    train,
+    updateDateTime,
+    remove,
+    filterExercises,
+    setFilterExercises,
+}: Props) {
+    const filteredSets = useMemo(() => {
+        return train.sets.filter((set) => {
+            if (filterExercises.length) {
+                return !!filterExercises.find((ex) => ex.id === set.exerciseId);
+            }
+
+            return true;
+        });
+    }, [train.sets, filterExercises]);
+
     const sets = useMemo(() => {
         const exercises: Record<
             string,
@@ -26,10 +44,10 @@ export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
             } & { sets: number }
         > = {};
 
-        train.sets.forEach((set) => {
+        filteredSets.forEach((set) => {
             const key = `${set.exerciseId}_${set.reps}_${set.weight}`;
 
-            if (!exercises[set.exerciseId]) {
+            if (!exercises[key]) {
                 exercises[key] = {
                     ...set,
                     sets: 0,
@@ -40,7 +58,14 @@ export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
         });
 
         return Object.values(exercises);
-    }, [train.sets]);
+    }, [filteredSets]);
+
+    const removeLocal = (date: string) => {
+        // TODO сделать подтверждение операции,
+        // например попросить ввести вес или дату на тренировке,
+        // которую хотим удалить
+        // remove()
+    };
 
     return (
         <View style={styles.card}>
@@ -55,34 +80,44 @@ export function HistoryCard({ train, updateDateTime, removeLocal }: Props) {
                         style={styles.image}
                     />
 
-                    {/* <Pressable
+                    <Pressable
                         style={styles.exerciseNameWrapper}
-                        onPress={() => addFilter(exercise.exercise)}
-                    > */}
-                    <Text style={styles.exerciseName}>{set.exerciseName}</Text>
-                    {/* </Pressable> */}
+                        onPress={() =>
+                            setFilterExercises({
+                                id: set.exerciseId,
+                                name: set.exerciseName,
+                                imageName: set.exerciseImageName,
+                            })
+                        }
+                    >
+                        <Text style={styles.exerciseName}>
+                            {set.exerciseName}
+                        </Text>
+                    </Pressable>
 
                     <Text style={styles.exerciseParams}>
-                        {set.weight}кг {set.reps}x{set.sets}
+                        {set.weight}кг {set.sets}x{set.reps}
                     </Text>
                 </View>
             ))}
 
-            <View style={styles.footer}>
-                {train.userWeight && (
-                    <Text style={styles.weight}>
-                        {train.userWeight.toString()}кг
-                    </Text>
-                )}
+            {filterExercises.length === 0 && (
+                <View style={styles.footer}>
+                    {train.userWeight && (
+                        <Text style={styles.weight}>
+                            {train.userWeight.toString()}кг
+                        </Text>
+                    )}
 
-                <CIconButton
-                    style={{ marginLeft: 'auto' }}
-                    size={'s'}
-                    variant={'error'}
-                    onPress={() => removeLocal(train.date)}
-                    name={'delete'}
-                />
-            </View>
+                    <CIconButton
+                        style={{ marginLeft: 'auto' }}
+                        size={'s'}
+                        variant={'error'}
+                        onPress={() => removeLocal(train.date)}
+                        name={'delete'}
+                    />
+                </View>
+            )}
         </View>
     );
 }

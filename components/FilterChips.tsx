@@ -1,29 +1,39 @@
-import {StyleSheet, Text, View, Pressable} from 'react-native';
-import {getExerciseById} from '@/assets/entity/IExercise';
-import {Colors} from '@/constants/Theme';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { Colors } from '@/constants/Theme';
+import { MaterialIcons } from '@expo/vector-icons';
+import { ExerciseServer } from '@/types/ExerciseServer';
 
 interface FilterChipsProps {
-    filterExerciseIds: number[];
+    filterExercises: ExerciseServer[];
     onRemoveFilter: (exerciseId: number) => void;
 }
 
-export function FilterChips({filterExerciseIds, onRemoveFilter}: FilterChipsProps) {
-    if (filterExerciseIds.length === 0) {
+export function FilterChips({
+    filterExercises,
+    onRemoveFilter,
+}: FilterChipsProps) {
+    if (filterExercises.length === 0) {
         return null;
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.chipsContainer}>
-                {filterExerciseIds.map((exerciseId) => {
-                    const exercise = getExerciseById(exerciseId);
+                {filterExercises.map((ex) => {
                     return (
                         <Pressable
-                            key={exerciseId}
+                            key={ex.id}
                             style={styles.chip}
-                            onPress={() => onRemoveFilter(exerciseId)}>
-                            <Text style={styles.chipText}>{exercise?.name}</Text>
-                            <Text style={styles.removeIcon}>×</Text>
+                            onPress={() => onRemoveFilter(ex.id)}
+                        >
+                            <Text style={styles.chipText}>{ex.name}</Text>
+
+                            <MaterialIcons
+                                style={styles.removeIcon}
+                                name={'close'}
+                                size={14}
+                                color={styles.removeIcon.color}
+                            />
                         </Pressable>
                     );
                 })}
@@ -60,7 +70,6 @@ const styles = StyleSheet.create({
         color: Colors.light.i2,
     },
     removeIcon: {
-        fontSize: 17,
         fontWeight: 'bold',
         color: Colors.light.i2,
         marginLeft: 3,

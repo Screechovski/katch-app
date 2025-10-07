@@ -1,32 +1,55 @@
+import axios from 'axios';
 import { ExerciseServer } from '@/types/ExerciseServer';
 import { TrainServer } from '@/types/TrainsServer';
 
-const CLOUD_API_BASE_URL = process.env.API_URL || '';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL; //window?.origin;
 
-const withBase = (path: string) => `${CLOUD_API_BASE_URL}/${path}`;
+const instance = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+// instance.interceptors.response.use(
+//     (success) => success,
+//     (error) => {
+//         if (error?.status === 403) {
+//             Storage.removeData(Storage.token);
+//         }
+//     },
+// );
 
 export class Api {
     static getPhotoUrl(photoName: string) {
-        return withBase(`image/exercise/${photoName}`);
+        return `${API_BASE_URL}/image/exercise/${photoName}`;
     }
 
     static async exercises(): Promise<ExerciseServer[]> {
-        return fetch(withBase(`api/exercises`)).then((d) => d.json());
+        const response = await instance.get('/api/exercises');
+        return response.data;
     }
 
     static async trains(token: string): Promise<TrainServer[]> {
-        return fetch(withBase('api/train'), {
-            method: 'GET',
+        const response = await instance.get('/api/train', {
             headers: {
                 Authorization: token,
             },
-        }).then((d) => d.json());
+        });
+        return response.data;
+    }
+
+    static async saveTrain(token: string, train: any): Promise<TrainServer[]> {
+        const response = await instance.post('/api/train', train, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return response.data;
     }
 
     static async checkToken(token: string): Promise<{ isValid: boolean }> {
-        return fetch(withBase('api/check-token'), {
-            method: 'POST',
-            body: JSON.stringify({ token }),
-        }).then((d) => d.json());
+        const response = await instance.post('/api/check-token', { token });
+        return response.data;
     }
 }

@@ -8,10 +8,13 @@ import { HistoryCard } from '@/components/HistoryCard';
 import { Storage } from '@/helpers/Storage';
 import { Api } from '@/helpers/Api';
 import { useQuery } from '@tanstack/react-query';
+import { ExerciseServer } from '@/types/ExerciseServer';
 
 export default function HistoryPage() {
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
-    const [filterExerciseIds, setFilterExerciseIds] = useState<number[]>([]);
+    const [filterExercises, setFilterExercises] = useState<ExerciseServer[]>(
+        [],
+    );
 
     function updateDateTime(dateString: string) {
         const date = new Date(dateString);
@@ -32,21 +35,22 @@ export default function HistoryPage() {
         }
     }
 
-    function addFilter(id: number) {
-        if (filterExerciseIds.includes(id)) {
+    function addFilter(_ex: ExerciseServer) {
+        if (filterExercises.find((ex) => ex.id === _ex.id)) {
             return;
         }
 
-        setFilterExerciseIds((prev) => [...prev, id]);
+        setFilterExercises((prev) => [...prev, _ex]);
     }
 
     function removeFilter(exerciseId: number) {
-        setFilterExerciseIds((prev) => prev.filter((id) => id !== exerciseId));
+        setFilterExercises((prev) =>
+            prev.filter((_ex) => _ex.id !== exerciseId),
+        );
     }
 
     const loadTrains = async () => {
         const token = await Storage.getData<string>(Storage.token);
-        console.log('loadTrains', token);
 
         if (token) {
             return Api.trains(token);
@@ -68,7 +72,7 @@ export default function HistoryPage() {
             />
 
             <FilterChips
-                filterExerciseIds={filterExerciseIds}
+                filterExercises={filterExercises}
                 onRemoveFilter={removeFilter}
             />
 
@@ -81,7 +85,8 @@ export default function HistoryPage() {
                             key={train.id}
                             train={train}
                             updateDateTime={updateDateTime}
-                            addFilter={addFilter}
+                            setFilterExercises={addFilter}
+                            filterExercises={filterExercises}
                             removeLocal={removeLocal}
                         />
                     ))}

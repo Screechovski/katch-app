@@ -2,13 +2,14 @@ import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { Alert, useWindowDimensions } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
 import { ExerciseServer } from '@/types/ExerciseServer';
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
 import { RepsWeight, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
+import { Storage } from '@/helpers/Storage';
 
 export default function HomeScreen() {
     const STEP = {
@@ -45,8 +46,38 @@ export default function HomeScreen() {
         // TODO props.setApproaches((state) => state.filter((_, i) => i != index));
     }
 
-    function onSave(weight?: number) {
-        // TODO
+    function getSavePayload(weight: number) {
+        const sets: any[] = [];
+
+        store.sets.forEach((exercises) => {
+            exercises.sets.forEach((set) => {
+                sets.push({
+                    exerciseId: exercises.exercises.id,
+                    reps: set.reps,
+                    weight: set.weight,
+                });
+            });
+        });
+
+        return {
+            weight,
+            date: new Date(),
+            sets,
+        };
+    }
+
+    async function onSave(weight?: number) {
+        try {
+            const token = await Storage.getData<string>(Storage.token);
+
+            if (token) {
+                await Api.saveTrain(token, getSavePayload(weight ?? 0));
+                store.setSets([]);
+                Alert.alert('Тренировка сохранена');
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
