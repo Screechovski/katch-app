@@ -15,6 +15,8 @@ import { Alert, StatusBar, useColorScheme, View } from 'react-native';
 
 const queryClient = new QueryClient();
 
+// test deploy
+
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [isLoading, setIsLoading] = useState(true);
