@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ExerciseServer } from '@/types/ExerciseServer';
 import { TrainServer } from '@/types/TrainsServer';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL; //window?.origin;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
 const instance = axios.create({
     baseURL: API_BASE_URL,
