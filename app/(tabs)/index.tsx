@@ -43,7 +43,8 @@ export default function HomeScreen() {
     }
 
     function onDelete(index: number) {
-        // TODO props.setApproaches((state) => state.filter((_, i) => i != index));
+        // TODO реализовать удаление
+        // props.setApproaches((state) => state.filter((_, i) => i != index));
     }
 
     function getSavePayload(weight: number) {
@@ -87,6 +88,7 @@ export default function HomeScreen() {
                 onDelete={onDelete}
             />
 
+            {/* TODO кнопка выводится всегда */}
             {store.selectedExercise === null &&
                 step === STEP.selectExercises && (
                     <CurrentTraintSaveButton onSave={onSave} />
