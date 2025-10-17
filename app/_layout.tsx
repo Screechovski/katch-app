@@ -10,7 +10,7 @@ import {
 } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { StrictMode, useEffect, useState } from 'react';
 import { Alert, StatusBar, useColorScheme, View } from 'react-native';
 
 const queryClient = new QueryClient();
@@ -64,18 +64,20 @@ export default function RootLayout() {
     }
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <ThemeProvider
-                value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-            >
-                <View style={{ paddingTop: StatusBar.currentHeight }} />
-                <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                </Stack>
-            </ThemeProvider>
-        </QueryClientProvider>
+        <StrictMode>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider
+                    value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+                >
+                    <View style={{ paddingTop: StatusBar.currentHeight }} />
+                    <Stack>
+                        <Stack.Screen
+                            name="(tabs)"
+                            options={{ headerShown: false }}
+                        />
+                    </Stack>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </StrictMode>
     );
 }

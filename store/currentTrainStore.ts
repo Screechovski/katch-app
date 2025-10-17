@@ -14,6 +14,8 @@ type CounterState = {
 
     sets: Set[];
     setSets: (sets: RepsWeight[]) => void;
+    clearSets: () => void;
+    removeSet: (index: number) => void;
 };
 
 export const useCurrentTrainStore = create<CounterState>((set) => ({
@@ -40,4 +42,12 @@ export const useCurrentTrainStore = create<CounterState>((set) => ({
             return state;
         });
     },
+    clearSets: () =>
+        set(() => ({
+            sets: [],
+        })),
+    removeSet: (index: number) =>
+        set((state) => ({
+            sets: state.sets.filter((_, _index) => _index !== index),
+        })),
 }));

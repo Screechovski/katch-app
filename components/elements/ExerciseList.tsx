@@ -62,13 +62,13 @@ export function ExerciseList(props: Props) {
                             uri: Api.getPhotoUrl(item.imageName),
                         }}
                         name={item.name}
-                        id={item.id}
+                        id={item.ID}
                     />
                 </View>
             )}
             maxToRenderPerBatch={15}
             numColumns={count}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.ID.toString()}
             columnWrapperStyle={{
                 justifyContent: 'space-between',
             }}

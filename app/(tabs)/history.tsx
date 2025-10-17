@@ -9,8 +9,26 @@ import { Storage } from '@/helpers/Storage';
 import { Api } from '@/helpers/Api';
 import { useQuery } from '@tanstack/react-query';
 import { ExerciseServer } from '@/types/ExerciseServer';
+import { RemoveTrainApproveModal } from '@/components/RemoveTrainApproveModal';
+import { TrainServer } from '@/types/TrainsServer';
 
 export default function HistoryPage() {
+    const loadTrains = async () => {
+        const token = await Storage.getData<string>(Storage.token);
+
+        if (token) {
+            return Api.trains(token);
+        } else {
+            return null;
+        }
+    };
+
+    const trains = useQuery({
+        queryKey: ['trains'],
+        queryFn: loadTrains,
+        refetchOnMount: 'always',
+    });
+
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
     const [filterExercises, setFilterExercises] = useState<ExerciseServer[]>(
         [],
@@ -26,17 +44,27 @@ export default function HistoryPage() {
         return `${dayOfWeek} ${day}.${month}`;
     }
 
-    async function removeLocal(date: string) {
+    async function removeTrain() {
+        if (!trainForRemove) {
+            return;
+        }
+
         try {
-            // TODO await props.removeTrain(date);
-            Alert.alert('Успешно');
+            const token = await Storage.getData<string>(Storage.token);
+
+            if (token) {
+                await Api.removeTrain(token, trainForRemove.ID);
+                setTrainForRemove(null);
+                Alert.alert('Успешно');
+                trains.refetch();
+            }
         } catch (error) {
             Alert.alert('Ошибка', JSON.stringify(error));
         }
     }
 
     function addFilter(_ex: ExerciseServer) {
-        if (filterExercises.find((ex) => ex.id === _ex.id)) {
+        if (filterExercises.find((ex) => ex.ID === _ex.ID)) {
             return;
         }
 
@@ -45,24 +73,13 @@ export default function HistoryPage() {
 
     function removeFilter(exerciseId: number) {
         setFilterExercises((prev) =>
-            prev.filter((_ex) => _ex.id !== exerciseId),
+            prev.filter((_ex) => _ex.ID !== exerciseId),
         );
     }
 
-    const loadTrains = async () => {
-        const token = await Storage.getData<string>(Storage.token);
-
-        if (token) {
-            return Api.trains(token);
-        } else {
-            return null;
-        }
-    };
-
-    const trains = useQuery({
-        queryKey: ['trains'],
-        queryFn: loadTrains,
-    });
+    const [trainForRemove, setTrainForRemove] = useState<TrainServer | null>(
+        null,
+    );
 
     return (
         <CWrapper>
@@ -82,12 +99,12 @@ export default function HistoryPage() {
                 <ScrollView>
                     {trains.data.map((train) => (
                         <HistoryCard
-                            key={train.id}
+                            key={train.ID}
                             train={train}
                             updateDateTime={updateDateTime}
                             setFilterExercises={addFilter}
                             filterExercises={filterExercises}
-                            removeLocal={removeLocal}
+                            remove={setTrainForRemove}
                         />
                     ))}
                 </ScrollView>
@@ -96,6 +113,13 @@ export default function HistoryPage() {
             {!trains.isFetching && trains.data?.length === 0 && (
                 <Text>Пусто.</Text>
             )}
+
+            <RemoveTrainApproveModal
+                onClose={() => setTrainForRemove(null)}
+                onRemove={removeTrain}
+                trainWeight={trainForRemove?.UserWeight}
+                visible={trainForRemove !== null}
+            />
         </CWrapper>
     );
 }

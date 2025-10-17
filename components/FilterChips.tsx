@@ -22,9 +22,9 @@ export function FilterChips({
                 {filterExercises.map((ex) => {
                     return (
                         <Pressable
-                            key={ex.id}
+                            key={ex.ID}
                             style={styles.chip}
-                            onPress={() => onRemoveFilter(ex.id)}
+                            onPress={() => onRemoveFilter(ex.ID)}
                         >
                             <Text style={styles.chipText}>{ex.name}</Text>
 

@@ -42,9 +42,9 @@ export default function HomeScreen() {
         }
     }
 
-    function onDelete(index: number) {
-        // TODO реализовать удаление
-        // props.setApproaches((state) => state.filter((_, i) => i != index));
+    function onCancelSelection() {
+        setStep(STEP.selectExercises);
+        store.setSelectedExercise(null);
     }
 
     function getSavePayload(weight: number) {
@@ -53,7 +53,7 @@ export default function HomeScreen() {
         store.sets.forEach((exercises) => {
             exercises.sets.forEach((set) => {
                 sets.push({
-                    exerciseId: exercises.exercises.id,
+                    exerciseId: exercises.exercises.ID,
                     reps: set.reps,
                     weight: set.weight,
                 });
@@ -73,7 +73,7 @@ export default function HomeScreen() {
 
             if (token) {
                 await Api.saveTrain(token, getSavePayload(weight ?? 0));
-                store.setSets([]);
+                store.clearSets();
                 Alert.alert('Тренировка сохранена');
             }
         } catch (error) {
@@ -83,16 +83,16 @@ export default function HomeScreen() {
 
     return (
         <CWrapper style={{ flex: 1 }}>
-            <CurrentTrainApproaches
-                approaches={store.sets}
-                onDelete={onDelete}
-            />
+            {store.sets.length !== 0 && (
+                <CurrentTrainApproaches
+                    approaches={store.sets}
+                    onDelete={store.removeSet}
+                />
+            )}
 
-            {/* TODO кнопка выводится всегда */}
-            {store.selectedExercise === null &&
-                step === STEP.selectExercises && (
-                    <CurrentTraintSaveButton onSave={onSave} />
-                )}
+            {store.sets.length !== 0 && (
+                <CurrentTraintSaveButton onSave={onSave} />
+            )}
 
             {step === STEP.selectExercises &&
                 exercisesQuery.data &&
@@ -117,6 +117,7 @@ export default function HomeScreen() {
                         top: -1,
                     }}
                     onComplete={onParametersComplete}
+                    onCancel={onCancelSelection}
                 />
             )}
         </CWrapper>
