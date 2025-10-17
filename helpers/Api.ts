@@ -48,6 +48,16 @@ export class Api {
         return response.data;
     }
 
+    static async removeTrain(token: string, id: number): Promise<void> {
+        const response = await instance.delete('/api/train', {
+            params: { id },
+            headers: {
+                Authorization: token,
+            },
+        });
+        return response.data;
+    }
+
     static async checkToken(token: string): Promise<{ isValid: boolean }> {
         const response = await instance.post('/api/check-token', { token });
         return response.data;

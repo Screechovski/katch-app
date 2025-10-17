@@ -1,8 +1,8 @@
-import {StyleSheet, View} from 'react-native';
-import {useState} from 'react';
-import {CModal} from '@/components/ui/CModal';
-import {CInput} from '@/components/ui/CInput';
-import {CButton} from '@/components/ui/CButton';
+import { StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { CModal } from '@/components/ui/CModal';
+import { CInput } from '@/components/ui/CInput';
+import { CButton } from '@/components/ui/CButton';
 
 interface WeightInputModalProps {
     visible: boolean;
@@ -10,7 +10,11 @@ interface WeightInputModalProps {
     onSave: (weight: number) => void;
 }
 
-export function WeightInputModal({visible, onClose, onSave}: WeightInputModalProps) {
+export function WeightInputModal({
+    visible,
+    onClose,
+    onSave,
+}: WeightInputModalProps) {
     const [weight, setWeight] = useState<string>('');
 
     function handleSave() {

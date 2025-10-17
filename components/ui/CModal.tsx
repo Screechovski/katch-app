@@ -1,7 +1,7 @@
-import React, {ReactNode} from 'react';
-import {Modal, StyleSheet, View, ViewStyle} from 'react-native';
-import {CIconButton} from './CIconButton';
-import {Colors} from '@/constants/Theme';
+import React, { ReactNode } from 'react';
+import { Modal, StyleSheet, View, ViewStyle } from 'react-native';
+import { CIconButton } from './CIconButton';
+import { Colors } from '@/constants/Theme';
 
 interface Props {
     children: ReactNode;
@@ -10,22 +10,21 @@ interface Props {
     style?: ViewStyle;
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrap: {
         flexDirection: 'row',
         flex: 1,
     },
 });
 
-export function CModal(props: Props) {
-    if (!props.visible) return <></>;
-
+export function CModal({ children, visible, onHide, style }: Props) {
     return (
         <Modal
-            style={[style.wrap, props.style]}
-            visible={props.visible}
-            animationType="slide"
-            transparent={true}>
+            style={[styles.wrap, style]}
+            visible={visible}
+            animationType="fade"
+            transparent={true}
+        >
             <View
                 style={{
                     flex: 1,
@@ -33,18 +32,20 @@ export function CModal(props: Props) {
                     alignItems: 'center',
                     backgroundColor: 'rgba(0,0,0,0.5)',
                     paddingVertical: 20,
-                }}>
+                }}
+            >
                 <View
                     style={{
                         backgroundColor: Colors.light.i4,
                         padding: 15,
                         borderRadius: 10,
                         marginBottom: 15,
-                    }}>
-                    {props.children}
+                    }}
+                >
+                    {children}
                 </View>
 
-                <CIconButton onPress={props.onHide} name="close" />
+                <CIconButton onPress={onHide} name="close" />
             </View>
         </Modal>
     );

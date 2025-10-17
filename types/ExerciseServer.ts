@@ -1,5 +1,5 @@
 export interface ExerciseServer {
-    id: number;
+    ID: number;
     name: string;
     imageName: string;
 }

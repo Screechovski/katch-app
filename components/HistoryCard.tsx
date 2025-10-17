@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { Colors } from '@/constants/Theme';
-import { TrainServer } from '@/types/TrainsServer';
+import { TrainServer, TrainServerSet } from '@/types/TrainsServer';
 import { Api } from '@/helpers/Api';
 import { ExerciseServer } from '@/types/ExerciseServer';
+import { SchemeFront } from '@/components/Scheme/SchemeFront';
+import { SchemeBack } from '@/components/Scheme/SchemeBack';
 
 interface Props {
     train: TrainServer;
     updateDateTime: (dateString: string) => string;
-    remove: (date: string) => void;
+    remove: (train: TrainServer) => void;
     filterExercises: ExerciseServer[];
     setFilterExercises: (ex: ExerciseServer) => void;
 }
@@ -21,28 +23,19 @@ export function HistoryCard({
     filterExercises,
     setFilterExercises,
 }: Props) {
+    const [isSchemeVisible, setIsSchemeVisible] = useState(false);
     const filteredSets = useMemo(() => {
-        return train.sets.filter((set) => {
+        return train.Sets.filter((set) => {
             if (filterExercises.length) {
-                return !!filterExercises.find((ex) => ex.id === set.exerciseId);
+                return !!filterExercises.find((ex) => ex.ID === set.exerciseId);
             }
 
             return true;
         });
-    }, [train.sets, filterExercises]);
+    }, [train.Sets, filterExercises]);
 
-    const sets = useMemo(() => {
-        const exercises: Record<
-            string,
-            {
-                id: number;
-                exerciseId: number;
-                exerciseImageName: string;
-                exerciseName: string;
-                reps: number;
-                weight: number;
-            } & { sets: number }
-        > = {};
+    const sets = useMemo<(TrainServerSet & { sets: number })[]>(() => {
+        const exercises: any = {};
 
         filteredSets.forEach((set) => {
             const key = `${set.exerciseId}_${set.reps}_${set.weight}`;
@@ -60,22 +53,37 @@ export function HistoryCard({
         return Object.values(exercises);
     }, [filteredSets]);
 
-    const removeLocal = (date: string) => {
-        // TODO сделать подтверждение операции,
-        // например попросить ввести вес или дату на тренировке,
-        // которую хотим удалить
-        // remove()
-    };
+    const musclesIntense = useMemo(() => {
+        const sum: Record<number, number> = {};
+
+        train.Sets.forEach((set) => {
+            if (!sum[set.Exercise.MuscleGroupID]) {
+                sum[set.Exercise.MuscleGroupID] = 0;
+            }
+
+            sum[set.Exercise.MuscleGroupID] += 6;
+
+            set.Exercise.SecondaryMuscles.forEach((second) => {
+                if (!sum[second.muscleGroupId]) {
+                    sum[second.muscleGroupId] = 0;
+                }
+
+                sum[second.muscleGroupId] += second.engagementLevel;
+            });
+        });
+
+        return Object.entries(sum).map(([id, value]) => ({ id: +id, value }));
+    }, [train.Sets]);
 
     return (
         <View style={styles.card}>
-            <Text style={styles.date}>{updateDateTime(train.date)}</Text>
+            <Text style={styles.date}>{updateDateTime(train.Date)}</Text>
 
             {sets.map((set) => (
-                <View style={styles.line} key={set.id}>
+                <View style={styles.line} key={set.ID}>
                     <Image
                         source={{
-                            uri: Api.getPhotoUrl(set.exerciseImageName),
+                            uri: Api.getPhotoUrl(set.Exercise.imageName),
                         }}
                         style={styles.image}
                     />
@@ -84,14 +92,14 @@ export function HistoryCard({
                         style={styles.exerciseNameWrapper}
                         onPress={() =>
                             setFilterExercises({
-                                id: set.exerciseId,
-                                name: set.exerciseName,
-                                imageName: set.exerciseImageName,
+                                ID: set.exerciseId,
+                                name: set.Exercise.name,
+                                imageName: set.Exercise.imageName,
                             })
                         }
                     >
                         <Text style={styles.exerciseName}>
-                            {set.exerciseName}
+                            {set.Exercise.name}
                         </Text>
                     </Pressable>
 
@@ -103,19 +111,44 @@ export function HistoryCard({
 
             {filterExercises.length === 0 && (
                 <View style={styles.footer}>
-                    {train.userWeight && (
+                    {train.UserWeight && (
                         <Text style={styles.weight}>
-                            {train.userWeight.toString()}кг
+                            {train.UserWeight.toString()}кг
                         </Text>
                     )}
 
-                    <CIconButton
-                        style={{ marginLeft: 'auto' }}
-                        size={'s'}
-                        variant={'error'}
-                        onPress={() => removeLocal(train.date)}
-                        name={'delete'}
-                    />
+                    <View style={{ flexDirection: 'row', marginLeft: 'auto' }}>
+                        <CIconButton
+                            size={'s'}
+                            variant={'primary'}
+                            onPress={() =>
+                                setIsSchemeVisible(
+                                    (currentValue) => !currentValue,
+                                )
+                            }
+                            name={'schedule'}
+                        />
+
+                        <CIconButton
+                            style={{ marginLeft: 10 }}
+                            size={'s'}
+                            variant={'error'}
+                            onPress={() => remove(train)}
+                            name={'delete'}
+                        />
+                    </View>
+                </View>
+            )}
+
+            {filterExercises.length === 0 && isSchemeVisible && (
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <SchemeFront intence={musclesIntense} />
+                    <SchemeBack intence={musclesIntense} />
                 </View>
             )}
         </View>
@@ -166,8 +199,8 @@ const styles = StyleSheet.create({
         fontWeight: 600,
     },
     image: {
-        width: 30,
-        height: 30,
+        width: 40,
+        height: 40,
         borderRadius: 3,
     },
 });

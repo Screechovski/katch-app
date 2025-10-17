@@ -9,6 +9,8 @@ export default function TabLayout() {
             screenOptions={{
                 tabBarActiveTintColor: Colors.primary.i50,
                 headerShown: false,
+                tabBarStyle: { height: 60 },
+                tabBarLabelStyle: { fontSize: 16 },
             }}
         >
             <Tabs.Screen
@@ -17,7 +19,6 @@ export default function TabLayout() {
                     title: 'Добавить',
                     tabBarIcon: ({ color }) => (
                         <AntDesign
-                            style={{ marginRight: 10 }}
                             name={'plus-circle'}
                             size={24}
                             color={color}
@@ -30,12 +31,7 @@ export default function TabLayout() {
                 options={{
                     title: 'История',
                     tabBarIcon: ({ color }) => (
-                        <AntDesign
-                            style={{ marginRight: 10 }}
-                            name={'history'}
-                            size={24}
-                            color={color}
-                        />
+                        <AntDesign name={'history'} size={24} color={color} />
                     ),
                 }}
             />
@@ -44,12 +40,7 @@ export default function TabLayout() {
                 options={{
                     title: 'Профиль',
                     tabBarIcon: ({ color }) => (
-                        <AntDesign
-                            style={{ marginRight: 10 }}
-                            name={'profile'}
-                            size={24}
-                            color={color}
-                        />
+                        <AntDesign name={'profile'} size={24} color={color} />
                     ),
                 }}
             />

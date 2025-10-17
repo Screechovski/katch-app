@@ -15,6 +15,7 @@ export function UserTokenForm(props: Props) {
     const [token, setToken] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    // TODO добавить diabled для кнопки
 
     const checkToken = async () => {
         try {
@@ -27,6 +28,7 @@ export function UserTokenForm(props: Props) {
                     Storage.saveData(Storage.token, token);
                     props.onToken();
                 } else {
+                    // TODO создать кэш-список для некорректных токенов
                     setError('Неверный токен');
                 }
             }

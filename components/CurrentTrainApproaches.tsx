@@ -12,10 +12,6 @@ export function CurrentTrainApproaches({
     approaches,
     onDelete,
 }: CurrentTrainApproachesProps) {
-    if (approaches.length === 0) {
-        return null;
-    }
-
     return (
         <>
             <View style={styles.list}>

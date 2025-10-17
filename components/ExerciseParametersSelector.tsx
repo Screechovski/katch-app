@@ -1,3 +1,4 @@
+import { CIconButton } from '@/components/ui/CIconButton';
 import { HorizontalButtons } from '@/components/ui/СHorizontalButtons';
 import { RepsWeight } from '@/store/currentTrainStore';
 import { useEffect, useMemo, useState } from 'react';
@@ -6,11 +7,12 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
     exercisePhoto: { uri: string };
-    onComplete: (params: RepsWeight[]) => void;
     weight: {
         last: number;
         top: number;
     };
+    onComplete: (params: RepsWeight[]) => void;
+    onCancel: () => void;
 }
 
 const APPROACHES_VALUES = [1, 2, 3, 4, 5, 6];
@@ -85,6 +87,11 @@ export function ExerciseParametersSelector(
     return (
         <View>
             <View style={styles.header}>
+                <CIconButton
+                    variant="error"
+                    name="caret-left"
+                    onPress={props.onCancel}
+                />
                 <Image source={props.exercisePhoto} style={styles.image} />
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
@@ -119,6 +126,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
     },
+    back: {},
     image: {
         height: 40,
         width: 40,
