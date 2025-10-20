@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, Text, ScrollView } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Alert, Text, ScrollView, FlatList } from 'react-native';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { CLoader } from '@/components/ui/CLoader';
 import { LoadBackupModal } from '@/components/elements/LoadBackupModal';
@@ -30,9 +30,8 @@ export default function HistoryPage() {
     });
 
     const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
-    const [filterExercises, setFilterExercises] = useState<ExerciseServer[]>(
-        [],
-    );
+    const [filterExercises, setFilterExercises] =
+        useState<ExerciseServer | null>(null);
 
     function updateDateTime(dateString: string) {
         const date = new Date(dateString);
@@ -64,54 +63,60 @@ export default function HistoryPage() {
     }
 
     function addFilter(_ex: ExerciseServer) {
-        if (filterExercises.find((ex) => ex.ID === _ex.ID)) {
+        if (filterExercises?.ID === _ex.ID) {
             return;
         }
 
-        setFilterExercises((prev) => [...prev, _ex]);
-    }
-
-    function removeFilter(exerciseId: number) {
-        setFilterExercises((prev) =>
-            prev.filter((_ex) => _ex.ID !== exerciseId),
-        );
+        setFilterExercises(_ex);
     }
 
     const [trainForRemove, setTrainForRemove] = useState<TrainServer | null>(
         null,
     );
 
+    const filteredTrains = useMemo(() => {
+        if (filterExercises === null) {
+            return trains.data;
+        }
+
+        return (trains.data || [])
+            .map((train) => ({
+                ...train,
+                Sets: train.Sets.filter((set) => {
+                    return set.exerciseId === filterExercises.ID;
+                }),
+            }))
+            .filter((train) => {
+                return !!train.Sets.length;
+            });
+    }, [trains.data, filterExercises]);
+
     return (
         <CWrapper>
-            <LoadBackupModal
-                visible={loadBackupIsVisible}
-                onHide={() => setLoadBackupIsVisible(false)}
-            />
-
-            <FilterChips
-                filterExercises={filterExercises}
-                onRemoveFilter={removeFilter}
-            />
-
-            {trains.isFetching && <CLoader />}
-
-            {trains.data && (
-                <ScrollView>
-                    {trains.data.map((train) => (
-                        <HistoryCard
-                            key={train.ID}
-                            train={train}
-                            updateDateTime={updateDateTime}
-                            setFilterExercises={addFilter}
-                            filterExercises={filterExercises}
-                            remove={setTrainForRemove}
-                        />
-                    ))}
-                </ScrollView>
+            {filterExercises && (
+                <FilterChips
+                    name={filterExercises.name}
+                    onRemoveFilter={() => setFilterExercises(null)}
+                />
             )}
 
-            {!trains.isFetching && trains.data?.length === 0 && (
-                <Text>Пусто.</Text>
+            {trains.data && (
+                <FlatList
+                    refreshing={trains.isFetching}
+                    onRefresh={trains.refetch}
+                    data={filteredTrains}
+                    ListEmptyComponent={<Text>Пусто.</Text>}
+                    renderItem={({ item }) => (
+                        <HistoryCard
+                            key={item.ID}
+                            train={item}
+                            updateDateTime={updateDateTime}
+                            setFilterExercises={addFilter}
+                            isControlsVisible={filterExercises === null}
+                            remove={setTrainForRemove}
+                        />
+                    )}
+                />
             )}
 
             <RemoveTrainApproveModal
@@ -119,6 +124,11 @@ export default function HistoryPage() {
                 onRemove={removeTrain}
                 trainWeight={trainForRemove?.UserWeight}
                 visible={trainForRemove !== null}
+            />
+
+            <LoadBackupModal
+                visible={loadBackupIsVisible}
+                onHide={() => setLoadBackupIsVisible(false)}
             />
         </CWrapper>
     );

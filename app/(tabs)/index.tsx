@@ -109,7 +109,7 @@ export default function HomeScreen() {
             {store.selectedExercise && step === STEP.selectParameters && (
                 <ExerciseParametersSelector
                     exercisePhoto={{
-                        uri: `http://localhost:8080/image/exercise/${store.selectedExercise.imageName}`,
+                        uri: Api.getPhotoUrl(store.selectedExercise.imageName),
                     }}
                     exerciseName={store.selectedExercise.name}
                     weight={{

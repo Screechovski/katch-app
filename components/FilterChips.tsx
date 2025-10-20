@@ -1,42 +1,26 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { Colors } from '@/constants/Theme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ExerciseServer } from '@/types/ExerciseServer';
 
 interface FilterChipsProps {
-    filterExercises: ExerciseServer[];
-    onRemoveFilter: (exerciseId: number) => void;
+    name: string;
+    onRemoveFilter: () => void;
 }
 
-export function FilterChips({
-    filterExercises,
-    onRemoveFilter,
-}: FilterChipsProps) {
-    if (filterExercises.length === 0) {
-        return null;
-    }
-
+export function FilterChips({ name, onRemoveFilter }: FilterChipsProps) {
     return (
         <View style={styles.container}>
             <View style={styles.chipsContainer}>
-                {filterExercises.map((ex) => {
-                    return (
-                        <Pressable
-                            key={ex.ID}
-                            style={styles.chip}
-                            onPress={() => onRemoveFilter(ex.ID)}
-                        >
-                            <Text style={styles.chipText}>{ex.name}</Text>
+                <Pressable style={styles.chip} onPress={onRemoveFilter}>
+                    <Text style={styles.chipText}>{name}</Text>
 
-                            <MaterialIcons
-                                style={styles.removeIcon}
-                                name={'close'}
-                                size={14}
-                                color={styles.removeIcon.color}
-                            />
-                        </Pressable>
-                    );
-                })}
+                    <MaterialIcons
+                        style={styles.removeIcon}
+                        name={'close'}
+                        size={14}
+                        color={styles.removeIcon.color}
+                    />
+                </Pressable>
             </View>
         </View>
     );

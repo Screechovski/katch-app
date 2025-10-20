@@ -21,7 +21,6 @@ export function UserTokenForm(props: Props) {
         try {
             if (token.trim() !== '') {
                 setLoading(true);
-                console.log({ token });
                 const res = await Api.checkToken(token);
 
                 if (res.isValid) {
@@ -47,15 +46,14 @@ export function UserTokenForm(props: Props) {
                 gap: 10,
             }}
         >
-            <Text style={{ fontSize: 18 }}>Введите токен пользователя</Text>
-
             <CInput
-                placeholder="3e5tuwes54ruyhjwe547"
+                label="Введите токен пользователя"
+                placeholder="Введите токен"
                 value={token}
                 onInput={setToken}
             />
 
-            {error && <CInformerError message={error} />}
+            {!!error && <CInformerError message={error} />}
 
             {loading && <CLoader />}
 

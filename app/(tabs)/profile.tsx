@@ -2,11 +2,15 @@ import { CButton } from '@/components/ui/CButton';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { Colors } from '@/constants/Theme';
 import { Storage } from '@/helpers/Storage';
+import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 export default function ProfilePage() {
+    const router = useRouter();
+
     const logout = () => {
         Storage.removeData(Storage.token);
+        router.replace('/login');
     };
 
     return (

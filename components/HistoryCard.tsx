@@ -12,7 +12,7 @@ interface Props {
     train: TrainServer;
     updateDateTime: (dateString: string) => string;
     remove: (train: TrainServer) => void;
-    filterExercises: ExerciseServer[];
+    isControlsVisible: boolean;
     setFilterExercises: (ex: ExerciseServer) => void;
 }
 
@@ -20,24 +20,15 @@ export function HistoryCard({
     train,
     updateDateTime,
     remove,
-    filterExercises,
+    isControlsVisible,
     setFilterExercises,
 }: Props) {
     const [isSchemeVisible, setIsSchemeVisible] = useState(false);
-    const filteredSets = useMemo(() => {
-        return train.Sets.filter((set) => {
-            if (filterExercises.length) {
-                return !!filterExercises.find((ex) => ex.ID === set.exerciseId);
-            }
-
-            return true;
-        });
-    }, [train.Sets, filterExercises]);
 
     const sets = useMemo<(TrainServerSet & { sets: number })[]>(() => {
         const exercises: any = {};
 
-        filteredSets.forEach((set) => {
+        train.Sets.forEach((set) => {
             const key = `${set.exerciseId}_${set.reps}_${set.weight}`;
 
             if (!exercises[key]) {
@@ -51,7 +42,7 @@ export function HistoryCard({
         });
 
         return Object.values(exercises);
-    }, [filteredSets]);
+    }, [train.Sets]);
 
     const musclesIntense = useMemo(() => {
         const sum: Record<number, number> = {};
@@ -109,7 +100,7 @@ export function HistoryCard({
                 </View>
             ))}
 
-            {filterExercises.length === 0 && (
+            {isControlsVisible && (
                 <View style={styles.footer}>
                     {train.UserWeight && (
                         <Text style={styles.weight}>
@@ -140,7 +131,7 @@ export function HistoryCard({
                 </View>
             )}
 
-            {filterExercises.length === 0 && isSchemeVisible && (
+            {isControlsVisible && isSchemeVisible && (
                 <View
                     style={{
                         flexDirection: 'row',
