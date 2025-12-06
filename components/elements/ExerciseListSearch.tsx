@@ -2,7 +2,7 @@ import { CInput } from '@/components/ui/CInput';
 import { useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
-import { ExerciseServer } from '@/types/ExerciseServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
 
 interface Props {
     style?: StyleProp<ViewStyle>;

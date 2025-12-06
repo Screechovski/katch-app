@@ -8,9 +8,9 @@ import { HistoryCard } from '@/components/HistoryCard';
 import { Storage } from '@/helpers/Storage';
 import { Api } from '@/helpers/Api';
 import { useQuery } from '@tanstack/react-query';
-import { ExerciseServer } from '@/types/ExerciseServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
 import { RemoveTrainApproveModal } from '@/components/RemoveTrainApproveModal';
-import { TrainServer } from '@/types/TrainsServer';
+import { TrainServer } from '@/models/TrainsServer';
 
 export default function HistoryPage() {
     const loadTrains = async () => {

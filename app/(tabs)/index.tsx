@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Alert, useWindowDimensions } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
-import { ExerciseServer } from '@/types/ExerciseServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
 import { RepsWeight, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';

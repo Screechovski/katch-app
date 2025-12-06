@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { Colors } from '@/constants/Theme';
-import { TrainServer, TrainServerSet } from '@/types/TrainsServer';
+import { TrainServer, TrainServerSet } from '@/models/TrainsServer';
 import { Api } from '@/helpers/Api';
-import { ExerciseServer } from '@/types/ExerciseServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
 import { SchemeFront } from '@/components/Scheme/SchemeFront';
 import { SchemeBack } from '@/components/Scheme/SchemeBack';
 

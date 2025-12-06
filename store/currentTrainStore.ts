@@ -1,5 +1,5 @@
-import { ExerciseServer } from '@/types/ExerciseServer';
-import { TrainSetServer } from '@/types/TrainsServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
+import { TrainSetServer } from '@/models/TrainsServer';
 import { create } from 'zustand';
 
 export type RepsWeight = Pick<TrainSetServer, 'reps' | 'weight'>;

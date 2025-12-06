@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { ExerciseServer } from '@/types/ExerciseServer';
-import { TrainServer } from '@/types/TrainsServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
+import { TrainServer } from '@/models/TrainsServer';
+import { Model } from '@/models/Model';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
@@ -27,7 +28,7 @@ export class Api {
 
     static async exercises(): Promise<ExerciseServer[]> {
         const response = await instance.get('/api/exercises');
-        return response.data;
+        return Model.toTypedArray(response.data, ExerciseServer);
     }
 
     static async trains(token: string): Promise<TrainServer[]> {
