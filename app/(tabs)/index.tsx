@@ -23,15 +23,23 @@ export default function HomeScreen() {
     const [step, setStep] = useState<(typeof STEP)[keyof typeof STEP]>(
         STEP.selectExercises,
     );
-
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
-    const queryFn = systemStore.isOffline
-        ? () =>
-              Storage.getData<ExerciseServer[]>(Storage.exercises).then(
-                  (data) => (data === null ? [] : data),
-              )
-        : Api.exercises;
+
+    let queryFn;
+    if (systemStore.isOffline) {
+        queryFn = async () => {
+            const data = await Storage.getData<ExerciseServer[]>(
+                Storage.exercises,
+            );
+            return data ?? [];
+        };
+    } else {
+        queryFn = async () => {
+            const token = await Storage.getData<string>(Storage.token);
+            return Api.exercises(token ?? undefined);
+        };
+    }
 
     const exercisesQuery = useQuery({
         queryKey: ['exercises'],

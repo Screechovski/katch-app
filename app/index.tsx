@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 
 export default function Index() {
     const router = useRouter();
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const toastStore = useToastStore();
     const systemStore = useSystemStore();
 

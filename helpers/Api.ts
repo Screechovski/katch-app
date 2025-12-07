@@ -27,8 +27,14 @@ export class Api {
         return `${API_BASE_URL}/image/exercise/${photoName}`;
     }
 
-    static async exercises(): Promise<ExerciseServer[]> {
-        const response = await instance.get('/api/exercises');
+    static async exercises(token?: string): Promise<ExerciseServer[]> {
+        const response = await instance.get('/api/exercises', {
+            headers: token
+                ? {
+                      Authorization: token,
+                  }
+                : undefined,
+        });
         return Model.toTypedArray(response.data, ExerciseServer);
     }
 
