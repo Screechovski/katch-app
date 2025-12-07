@@ -3,6 +3,7 @@ import { CWrapper } from '@/components/ui/CWrapper';
 import { Colors } from '@/constants/Theme';
 import { Api } from '@/helpers/Api';
 import { Storage } from '@/helpers/Storage';
+import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
@@ -10,6 +11,7 @@ import { StyleSheet, View } from 'react-native';
 export default function ProfilePage() {
     const router = useRouter();
     const toastStore = useToastStore();
+    const systemStore = useSystemStore();
 
     const logout = () => {
         Storage.removeData(Storage.token);
@@ -44,9 +46,11 @@ export default function ProfilePage() {
     return (
         <CWrapper>
             <View style={style.userCard}>
-                <CButton onPress={saveLocalTrains}>
-                    Синхронизировать данные
-                </CButton>
+                {systemStore.isOffline && (
+                    <CButton onPress={saveLocalTrains}>
+                        Синхронизировать данные
+                    </CButton>
+                )}
                 <CButton onPress={logout}>Выход</CButton>
             </View>
         </CWrapper>
