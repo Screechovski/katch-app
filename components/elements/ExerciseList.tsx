@@ -8,7 +8,7 @@ import {
     ViewStyle,
 } from 'react-native';
 import { ExerciseCardVertical } from './ExerciseCardVertical';
-import { ExerciseServer } from '@/types/ExerciseServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
 import { Api } from '@/helpers/Api';
 import { useMemo } from 'react';
 

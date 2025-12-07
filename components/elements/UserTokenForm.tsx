@@ -1,27 +1,37 @@
 import { CButton } from '@/components/ui/CButton';
-import { CInformerError } from '@/components/ui/CInformerError';
+import { CInformer } from '@/components/ui/CInformer';
 import { CInput } from '@/components/ui/CInput';
 import { CLoader } from '@/components/ui/CLoader';
 import { Api } from '@/helpers/Api';
 import { Storage } from '@/helpers/Storage';
+import { useSystemStore } from '@/store/systemStore';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 interface Props {
     onToken(): void;
 }
 
+const styles = StyleSheet.create({
+    buttons: {
+        display: 'flex',
+        gap: 10,
+    },
+});
+
 export function UserTokenForm(props: Props) {
     const [token, setToken] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+    const systemStore = useSystemStore();
     // TODO добавить diabled для кнопки
 
     const checkToken = async () => {
         try {
             if (token.trim() !== '') {
                 setLoading(true);
-                console.log({ token });
                 const res = await Api.checkToken(token);
 
                 if (res.isValid) {
@@ -32,12 +42,17 @@ export function UserTokenForm(props: Props) {
                     setError('Неверный токен');
                 }
             }
-        } catch (error: any) {
-            setError(Error(error || 'Ошибка при проверке токена').message);
+        } catch (error) {
+            setError('Ошибка при проверке токена: ' + error);
             console.warn(error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const goOffline = () => {
+        systemStore.setOffline();
+        router.replace('/(tabs)');
     };
 
     return (
@@ -47,22 +62,30 @@ export function UserTokenForm(props: Props) {
                 gap: 10,
             }}
         >
-            <Text style={{ fontSize: 18 }}>Введите токен пользователя</Text>
-
             <CInput
-                placeholder="3e5tuwes54ruyhjwe547"
+                label="Введите токен пользователя"
+                placeholder="Введите токен"
                 value={token}
                 onInput={setToken}
             />
 
-            {error && <CInformerError message={error} />}
+            {!!error && <CInformer message={error} type="error" />}
 
             {loading && <CLoader />}
 
             {!loading && (
-                <CButton variant="primary" onPress={checkToken}>
-                    применить
-                </CButton>
+                <View style={styles.buttons}>
+                    <CButton
+                        disabled={token.trim() === ''}
+                        variant="primary"
+                        onPress={checkToken}
+                    >
+                        войти
+                    </CButton>
+                    <CButton variant="success" onPress={goOffline}>
+                        Оффлайн режим
+                    </CButton>
+                </View>
             )}
         </View>
     );

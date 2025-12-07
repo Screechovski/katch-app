@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { ExerciseServer } from '@/types/ExerciseServer';
-import { TrainServer } from '@/types/TrainsServer';
+import { ExerciseServer } from '@/models/ExerciseServer';
+import { TrainServer } from '@/models/TrainsServer';
+import { Model } from '@/models/Model';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
@@ -9,6 +10,7 @@ const instance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    timeout: 3000,
 });
 
 // instance.interceptors.response.use(
@@ -27,7 +29,7 @@ export class Api {
 
     static async exercises(): Promise<ExerciseServer[]> {
         const response = await instance.get('/api/exercises');
-        return response.data;
+        return Model.toTypedArray(response.data, ExerciseServer);
     }
 
     static async trains(token: string): Promise<TrainServer[]> {
@@ -58,8 +60,9 @@ export class Api {
         return response.data;
     }
 
-    static async checkToken(token: string): Promise<{ isValid: boolean }> {
-        const response = await instance.post('/api/check-token', { token });
-        return response.data;
+    static checkToken(token: string): Promise<{ isValid: boolean }> {
+        return instance
+            .post('/api/check-token', { token })
+            .then((response) => response.data);
     }
 }
