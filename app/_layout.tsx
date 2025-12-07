@@ -1,3 +1,4 @@
+import { Toast } from '@/components/Toast';
 import {
     DarkTheme,
     DefaultTheme,
@@ -21,6 +22,7 @@ export default function RootLayout() {
                 >
                     <View style={{ paddingTop: StatusBar.currentHeight }} />
                     <Stack screenOptions={{ headerShown: false }} />
+                    <Toast />
                 </ThemeProvider>
             </QueryClientProvider>
         </StrictMode>

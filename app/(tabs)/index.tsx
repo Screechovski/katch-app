@@ -1,8 +1,8 @@
 import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/components/ui/CWrapper';
-import { useState } from 'react';
-import { Alert, useWindowDimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
 import { ExerciseServer } from '@/models/ExerciseServer';
@@ -10,6 +10,8 @@ import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelec
 import { RepsWeight, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
 import { Storage } from '@/helpers/Storage';
+import { useSystemStore } from '@/store/systemStore';
+import { useToastStore } from '@/store/toastStore';
 
 export default function HomeScreen() {
     const STEP = {
@@ -22,10 +24,25 @@ export default function HomeScreen() {
         STEP.selectExercises,
     );
 
+    const systemStore = useSystemStore();
+    const toastStore = useToastStore();
+    const queryFn = systemStore.isOffline
+        ? () =>
+              Storage.getData<ExerciseServer[]>(Storage.exercises).then(
+                  (data) => (data === null ? [] : data),
+              )
+        : Api.exercises;
+
     const exercisesQuery = useQuery({
         queryKey: ['exercises'],
-        queryFn: Api.exercises,
+        queryFn,
     });
+
+    useEffect(() => {
+        if (!systemStore.isOffline && exercisesQuery.data) {
+            Storage.saveData(Storage.exercises, exercisesQuery.data);
+        }
+    }, [exercisesQuery.isFetched]);
 
     const store = useCurrentTrainStore();
 
@@ -67,17 +84,42 @@ export default function HomeScreen() {
         };
     }
 
-    async function onSave(weight?: number) {
+    const saveOffline = async (weight: number) => {
+        try {
+            let trains = await Storage.getData<unknown[]>(Storage.trains);
+            if (!trains) {
+                trains = [];
+            }
+            Storage.saveData(Storage.trains, [
+                ...trains,
+                getSavePayload(weight),
+            ]);
+            store.clearSets();
+            toastStore.setSuccess('Тренировка сохранена локально');
+        } catch (error) {
+            toastStore.setError('Ошибка при сохранении тренировки: ' + error);
+        }
+    };
+
+    const saveOnline = async (weight: number) => {
         try {
             const token = await Storage.getData<string>(Storage.token);
 
             if (token) {
-                await Api.saveTrain(token, getSavePayload(weight ?? 0));
+                await Api.saveTrain(token, getSavePayload(weight));
                 store.clearSets();
-                Alert.alert('Тренировка сохранена');
+                toastStore.setSuccess('Тренировка сохранена');
             }
         } catch (error) {
-            console.log(error);
+            toastStore.setError('Ошибка при сохранении тренировки: ' + error);
+        }
+    };
+
+    async function onSave(weight?: number) {
+        if (systemStore.isOffline) {
+            saveOffline(weight ?? 0);
+        } else {
+            saveOnline(weight ?? 0);
         }
     }
 

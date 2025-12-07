@@ -10,6 +10,7 @@ const instance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    timeout: 3000,
 });
 
 // instance.interceptors.response.use(
@@ -59,8 +60,9 @@ export class Api {
         return response.data;
     }
 
-    static async checkToken(token: string): Promise<{ isValid: boolean }> {
-        const response = await instance.post('/api/check-token', { token });
-        return response.data;
+    static checkToken(token: string): Promise<{ isValid: boolean }> {
+        return instance
+            .post('/api/check-token', { token })
+            .then((response) => response.data);
     }
 }

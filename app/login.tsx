@@ -1,4 +1,3 @@
-import { View } from 'react-native';
 import { UserTokenForm } from '@/components/elements/UserTokenForm';
 import { useRouter } from 'expo-router';
 import { CWrapper } from '@/components/ui/CWrapper';

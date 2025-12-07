@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { CButton } from '@/components/ui/CButton';
 import { WeightInputModal } from '@/components/WeightInputModal';
+import { useSystemStore } from '@/store/systemStore';
 
 interface CurrentTraintSaveButtonProps {
     onSave: (weight?: number) => void;
@@ -11,6 +12,7 @@ export function CurrentTraintSaveButton({
     onSave,
 }: CurrentTraintSaveButtonProps) {
     const [showWeightModal, setShowWeightModal] = useState(false);
+    const systemStore = useSystemStore();
 
     function handleSavePress() {
         setShowWeightModal(true);
@@ -31,7 +33,7 @@ export function CurrentTraintSaveButton({
                 style={styles.save}
                 onPress={handleSavePress}
             >
-                Сохранить
+                {systemStore.isOffline ? 'Сохранить в очередь' : 'Сохранить'}
             </CButton>
 
             <WeightInputModal

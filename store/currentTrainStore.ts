@@ -1,14 +1,14 @@
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { TrainSetServer } from '@/models/TrainsServer';
+import { TrainServerSet } from '@/models/TrainsServer';
 import { create } from 'zustand';
 
-export type RepsWeight = Pick<TrainSetServer, 'reps' | 'weight'>;
+export type RepsWeight = Pick<TrainServerSet, 'reps' | 'weight'>;
 export type Set = {
     sets: RepsWeight[];
     exercises: ExerciseServer;
 };
 
-type CounterState = {
+type CurrentTrainState = {
     selectedExercise: ExerciseServer | null;
     setSelectedExercise: (exercises: ExerciseServer | null) => void;
 
@@ -18,7 +18,7 @@ type CounterState = {
     removeSet: (index: number) => void;
 };
 
-export const useCurrentTrainStore = create<CounterState>((set) => ({
+export const useCurrentTrainStore = create<CurrentTrainState>((set) => ({
     selectedExercise: null,
     setSelectedExercise: (exercises: ExerciseServer | null) => {
         set(() => ({ selectedExercise: exercises }));
