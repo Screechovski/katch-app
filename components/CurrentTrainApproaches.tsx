@@ -2,6 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { Colors } from '@/constants/Theme';
 import { Set } from '@/store/currentTrainStore';
+import { useMemo } from 'react';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface CurrentTrainApproachesProps {
     approaches: Set[];
@@ -12,6 +14,49 @@ export function CurrentTrainApproaches({
     approaches,
     onDelete,
 }: CurrentTrainApproachesProps) {
+    const theme = useTheme();
+    const styles = useMemo(
+        () =>
+            StyleSheet.create({
+                list: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 5,
+                },
+                hr: {
+                    height: 3,
+                    marginBottom: 10,
+                    marginTop: 10,
+                    backgroundColor: theme?.colors.primary.i90,
+                },
+                approach: {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    gap: 5,
+                    width: '100%',
+                },
+                approachText: {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 5,
+                    flex: 1,
+                },
+                name: {
+                    color: theme?.colors.background.i8,
+                    fontSize: 14,
+                    lineHeight: 14 * 1.2,
+                    textAlign: 'left',
+                    flex: 1,
+                },
+                weight: {
+                    color: theme?.colors.background.i8,
+                    fontSize: 14,
+                    fontWeight: '600',
+                },
+            }),
+        [theme?.theme],
+    );
     return (
         <>
             <View style={styles.list}>
@@ -39,40 +84,3 @@ export function CurrentTrainApproaches({
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    list: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 5,
-    },
-    hr: {
-        height: 2,
-        marginBottom: 10,
-        marginTop: 10,
-        backgroundColor: Colors.primary.i80,
-    },
-    approach: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 5,
-        width: '100%',
-    },
-    approachText: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 5,
-        flex: 1,
-    },
-    name: {
-        fontSize: 14,
-        lineHeight: 14 * 1.2,
-        textAlign: 'left',
-        flex: 1,
-    },
-    weight: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-});

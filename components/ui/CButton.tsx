@@ -21,7 +21,7 @@ export function CButton(props: Props) {
             textTransform: 'lowercase',
             color:
                 props.variant !== 'primary-outline'
-                    ? Colors.light.i3
+                    ? Colors.light.i2
                     : Colors.primary.i90,
             paddingHorizontal: 20,
         },

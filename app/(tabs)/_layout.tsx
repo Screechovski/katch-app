@@ -1,15 +1,21 @@
-import { Colors } from '@/constants/Theme';
+import { useTheme } from '@/components/ThemeProvider';
 import { AntDesign } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabLayout() {
+    const theme = useTheme();
+
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: Colors.primary.i50,
+                tabBarActiveTintColor: theme?.colors.primary.i50,
                 headerShown: false,
-                tabBarStyle: { height: 60 },
+                tabBarStyle: {
+                    height: 60,
+                    backgroundColor: theme?.colors.background.i2,
+                    borderTopWidth: 0,
+                },
                 tabBarLabelStyle: { fontSize: 16 },
             }}
         >

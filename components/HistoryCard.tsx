@@ -7,6 +7,7 @@ import { Api } from '@/helpers/Api';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { SchemeFront } from '@/components/Scheme/SchemeFront';
 import { SchemeBack } from '@/components/Scheme/SchemeBack';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
     train: TrainServer;
@@ -23,6 +24,62 @@ export function HistoryCard({
     isControlsVisible,
     setFilterExercises,
 }: Props) {
+    const theme = useTheme();
+    const styles = useMemo(
+        () =>
+            StyleSheet.create({
+                card: {
+                    flexDirection: 'column',
+                    backgroundColor: theme?.colors.background.i3,
+                    borderRadius: 10,
+                    padding: 3,
+                    marginBottom: 6,
+                },
+                date: {
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: theme?.colors.background.i7,
+                    textAlign: 'center',
+                    marginBottom: 2,
+                },
+                line: {
+                    fontSize: 16,
+                    flexDirection: 'row',
+                    gap: 4,
+                    marginBottom: 3,
+                },
+                exerciseName: {
+                    fontSize: 16,
+                    color: theme?.colors.background.i7,
+                },
+                exerciseNameWrapper: {
+                    flex: 1,
+                },
+                exerciseParams: {
+                    fontSize: 14,
+                    marginLeft: 'auto',
+                    color: theme?.colors.background.i7,
+                },
+                footer: {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 8,
+                    paddingLeft: 34,
+                },
+                weight: {
+                    fontSize: 14,
+                    color: theme?.colors.background.i8,
+                    fontWeight: 600,
+                },
+                image: {
+                    width: 40,
+                    height: 40,
+                    borderRadius: 3,
+                },
+            }),
+        [theme?.theme],
+    );
+
     const [isSchemeVisible, setIsSchemeVisible] = useState(false);
 
     const sets = useMemo<(TrainServerSet & { sets: number })[]>(() => {
@@ -145,53 +202,3 @@ export function HistoryCard({
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    card: {
-        flexDirection: 'column',
-        borderWidth: 3,
-        borderColor: Colors.light.i4,
-        backgroundColor: Colors.light.i2,
-        borderRadius: 10,
-        padding: 3,
-        marginBottom: 6,
-    },
-    date: {
-        fontSize: 13,
-        fontWeight: 600,
-        color: Colors.light.i5,
-        textAlign: 'center',
-        marginBottom: 2,
-    },
-    line: {
-        fontSize: 16,
-        flexDirection: 'row',
-        gap: 4,
-        marginBottom: 3,
-    },
-    exerciseName: {
-        fontSize: 16,
-    },
-    exerciseNameWrapper: {
-        flex: 1,
-    },
-    exerciseParams: {
-        fontSize: 14,
-        marginLeft: 'auto',
-    },
-    footer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        paddingLeft: 34,
-    },
-    weight: {
-        fontSize: 14,
-        fontWeight: 600,
-    },
-    image: {
-        width: 40,
-        height: 40,
-        borderRadius: 3,
-    },
-});

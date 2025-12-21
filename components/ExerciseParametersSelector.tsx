@@ -1,3 +1,4 @@
+import { useTheme } from '@/components/ThemeProvider';
 import { CIconButton } from '@/components/ui/CIconButton';
 import { HorizontalButtons } from '@/components/ui/СHorizontalButtons';
 import { RepsWeight } from '@/store/currentTrainStore';
@@ -25,6 +26,39 @@ const REPEATS_VALUES = [4, 5, 6, 8, 10, 12, 15];
 export function ExerciseParametersSelector(
     props: ExerciseParametersSelectorProps,
 ) {
+    const theme = useTheme();
+    const styles = useMemo(
+        () =>
+            StyleSheet.create({
+                header: {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 10,
+                },
+                back: {},
+                image: {
+                    height: 40,
+                    width: 40,
+                    minWidth: 40,
+                    borderRadius: 5,
+                },
+                exercisesName: {
+                    fontSize: 20,
+                    marginBottom: 5,
+                    color: theme?.colors.background.i9,
+                    flex: 1,
+                },
+                line: {
+                    marginBottom: 5,
+                },
+                lineTitle: {
+                    fontSize: 16,
+                    color: theme?.colors.background.i9,
+                    marginBottom: 2,
+                },
+            }),
+        [theme?.theme],
+    );
     const [selectedApproach, setSelectedApproach] = useState<number>(0);
     const approachesValues = useMemo(
         () =>
@@ -119,29 +153,3 @@ export function ExerciseParametersSelector(
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-    },
-    back: {},
-    image: {
-        height: 40,
-        width: 40,
-        minWidth: 40,
-    },
-    exercisesName: {
-        fontSize: 20,
-        marginBottom: 5,
-        flex: 1,
-    },
-    line: {
-        marginBottom: 5,
-    },
-    lineTitle: {
-        fontSize: 16,
-        marginBottom: 2,
-    },
-});

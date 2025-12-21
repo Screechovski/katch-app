@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TextStyle, View } from 'react-native';
 import { useMemo } from 'react';
-import { Colors } from '@/constants/Theme';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
     placeholder: string;
@@ -9,11 +9,9 @@ interface Props {
     style?: TextStyle;
     type?: 'text' | 'number';
     label?: string;
-    disabled?: boolean;
 }
 
 export function CInput({
-    disabled,
     type,
     style,
     value,
@@ -21,7 +19,7 @@ export function CInput({
     label,
     onInput,
 }: Props) {
-    const isDisabled = useMemo(() => !!disabled, [disabled]);
+    const theme = useTheme();
 
     const styles = useMemo(
         () =>
@@ -29,26 +27,23 @@ export function CInput({
                 wrap: {},
                 label: {
                     fontSize: 16,
-                    color: Colors.dark.i4,
+                    color: theme?.colors.background.i4,
                     height: 16 * 1.5,
                 },
                 input: {
                     paddingHorizontal: 15,
                     borderRadius: 10,
                     borderWidth: 3,
-                    borderColor: isDisabled
-                        ? Colors.dark.i3
-                        : Colors.primary.i90,
-                    backgroundColor: isDisabled
-                        ? Colors.light.i4
-                        : Colors.light.i2,
-                    color: isDisabled ? Colors.dark.i4 : Colors.primary.i80,
+                    borderColor: theme?.colors.primary.i80,
+                    backgroundColor: theme?.colors.background.i2,
+                    color: theme?.colors.primary.i80,
                     fontSize: 16,
                     height: 50,
                     display: 'flex',
+                    outline: 'none',
                 },
             }),
-        [isDisabled],
+        [theme?.theme],
     );
 
     const keyboardType = useMemo(() => {
@@ -62,9 +57,7 @@ export function CInput({
                 keyboardType={keyboardType}
                 style={styles.input}
                 value={value}
-                editable={!disabled}
                 placeholder={placeholder}
-                selectTextOnFocus={!disabled}
                 onChangeText={onInput}
             />
         </View>
