@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Modal, StyleSheet, View, ViewStyle } from 'react-native';
 import { CIconButton } from './CIconButton';
-import { Colors } from '@/constants/Theme';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
     children: ReactNode;
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 });
 
 export function CModal({ children, visible, onHide, style }: Props) {
+    const theme = useTheme();
     return (
         <Modal
             style={[styles.wrap, style]}
@@ -36,7 +37,7 @@ export function CModal({ children, visible, onHide, style }: Props) {
             >
                 <View
                     style={{
-                        backgroundColor: Colors.light.i4,
+                        backgroundColor: theme?.colors.background.i2,
                         padding: 15,
                         borderRadius: 10,
                         marginBottom: 15,

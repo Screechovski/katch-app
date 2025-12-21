@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-        color: Colors.light.i3,
+        color: Colors.light.i2,
         textTransform: 'uppercase',
     },
     wrap: {
