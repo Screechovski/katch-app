@@ -31,12 +31,25 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
                     backgroundColor: theme?.colors.background.i3,
                     width: '100%',
                     borderRadius: 10,
+                    padding: 4,
+                },
+                imageWrap: {
+                    filter: theme?.theme === 'dark' ? 'invert(1)' : undefined,
+                    marginBottom: 5,
+                    width: '100%',
+                    height: 110,
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: 4,
+                    backgroundColor:
+                        theme?.theme === 'dark'
+                            ? theme?.colors.background.i9
+                            : theme?.colors.background.i2,
                 },
                 image: {
                     width: '100%',
-                    maxWidth: 100,
-                    height: 100,
-                    marginBottom: 5,
+                    height: '100%',
+                    maxWidth: 110,
                 },
                 text: {
                     display: 'flex',
@@ -55,7 +68,9 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
     return (
         <Pressable style={props.style} onPress={() => props.onPress(props.id)}>
             <View style={style.inner}>
-                <Image source={props.photo} style={style.image} />
+                <View style={style.imageWrap}>
+                    <Image source={props.photo} style={style.image} />
+                </View>
 
                 <Text style={style.text} numberOfLines={4}>
                     {props.name}
