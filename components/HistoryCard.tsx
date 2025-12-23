@@ -71,6 +71,9 @@ export function HistoryCard({
                     color: theme?.colors.background.i8,
                     fontWeight: 600,
                 },
+                imageWrapper: {
+                    filter: theme?.theme === 'dark' ? 'invert(1)' : undefined,
+                },
                 image: {
                     width: 40,
                     height: 40,
@@ -129,12 +132,14 @@ export function HistoryCard({
 
             {sets.map((set) => (
                 <View style={styles.line} key={set.ID}>
-                    <Image
-                        source={{
-                            uri: Api.getPhotoUrl(set.Exercise.imageName),
-                        }}
-                        style={styles.image}
-                    />
+                    <View style={styles.imageWrapper}>
+                        <Image
+                            source={{
+                                uri: Api.getPhotoUrl(set.Exercise.imageName),
+                            }}
+                            style={styles.image}
+                        />
+                    </View>
 
                     <Pressable
                         style={styles.exerciseNameWrapper}

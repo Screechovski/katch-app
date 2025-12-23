@@ -40,7 +40,6 @@ export function CInput({
                     fontSize: 16,
                     height: 50,
                     display: 'flex',
-                    outline: 'none',
                 },
             }),
         [theme?.theme],
