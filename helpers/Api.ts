@@ -13,15 +13,6 @@ const instance = axios.create({
     timeout: 3000,
 });
 
-// instance.interceptors.response.use(
-//     (success) => success,
-//     (error) => {
-//         if (error?.status === 403) {
-//             Storage.removeData(Storage.token);
-//         }
-//     },
-// );
-
 export class Api {
     static getPhotoUrl(photoName: string) {
         return `${API_BASE_URL}/image/exercise/${photoName}`;

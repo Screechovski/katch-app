@@ -2,6 +2,7 @@ import React, { ReactNode, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { CLoader } from './CLoader';
 import { Colors } from '@/constants/Theme';
+import { useTheme } from '@/components/ThemeProvider';
 
 export type CButtonBaseType =
     | 'primary'
@@ -20,20 +21,21 @@ interface Props {
 }
 
 export function CButtonBase(props: Props) {
+    const theme = useTheme();
     const colors = useMemo(() => {
         switch (props.variant) {
             case 'error':
-                return [Colors.danger.i6, Colors.danger.i7];
+                return [theme?.colors.danger.i6, theme?.colors.danger.i7];
             case 'success':
-                return [Colors.success.i7, Colors.success.i9];
+                return [theme?.colors.success.i7, theme?.colors.success.i9];
             case 'warning':
-                return [Colors.warning.i8, Colors.warning.i9];
+                return [theme?.colors.warning.i8, theme?.colors.warning.i9];
             case 'primary-outline':
-                return [Colors.light.i2, Colors.primary.i90];
+                return [theme?.colors.light.i2, theme?.colors.primary.i90];
             default:
-                return [Colors.primary.i80, Colors.primary.i90];
+                return [theme?.colors.primary.i80, theme?.colors.primary.i90];
         }
-    }, [props.variant]);
+    }, [props.variant, theme?.theme]);
 
     const style = useMemo(
         () =>

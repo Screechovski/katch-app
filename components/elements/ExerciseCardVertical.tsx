@@ -50,6 +50,7 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
                     width: '100%',
                     height: '100%',
                     maxWidth: 110,
+                    borderRadius: 4,
                 },
                 text: {
                     display: 'flex',
