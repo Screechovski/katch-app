@@ -63,6 +63,10 @@ export const ColorsDark = {
         i8: '#f5f5f5',
         i9: '#fff',
     },
+    primary: {
+        ...Colors.primary,
+        i80: 'rgba(96, 85, 248, 1)',
+    },
 };
 
 export type IColor = typeof Colors;

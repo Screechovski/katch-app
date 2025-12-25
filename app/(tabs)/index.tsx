@@ -1,7 +1,7 @@
 import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/components/ui/CWrapper';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
@@ -12,6 +12,7 @@ import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
+import { CModal } from '@/components/ui/CModal';
 
 export default function HomeScreen() {
     const STEP = {
@@ -131,6 +132,11 @@ export default function HomeScreen() {
         }
     }
 
+    const isParametersExerciseVisible = useMemo(
+        () => !!store.selectedExercise && step === STEP.selectParameters,
+        [store.selectedExercise, step],
+    );
+
     return (
         <CWrapper style={{ flex: 1 }}>
             {store.sets.length !== 0 && (
@@ -144,32 +150,37 @@ export default function HomeScreen() {
                 <CurrentTraintSaveButton onSave={onSave} />
             )}
 
-            {step === STEP.selectExercises &&
-                exercisesQuery.data &&
-                store.selectedExercise === null && (
-                    <ExerciseListSearch
-                        width={width - 20}
-                        loading={exercisesQuery.isFetching}
-                        onSelect={onSelectExercise}
-                        exercises={exercisesQuery.data}
-                        onRefresh={exercisesQuery.refetch}
-                    />
-                )}
-
-            {store.selectedExercise && step === STEP.selectParameters && (
-                <ExerciseParametersSelector
-                    exercisePhoto={{
-                        uri: Api.getPhotoUrl(store.selectedExercise.imageName),
-                    }}
-                    exerciseName={store.selectedExercise.name}
-                    weight={{
-                        last: -1,
-                        top: -1,
-                    }}
-                    onComplete={onParametersComplete}
-                    onCancel={onCancelSelection}
+            {exercisesQuery.data && (
+                <ExerciseListSearch
+                    width={width - 20}
+                    loading={exercisesQuery.isFetching}
+                    onSelect={onSelectExercise}
+                    exercises={exercisesQuery.data}
+                    onRefresh={exercisesQuery.refetch}
                 />
             )}
+
+            <CModal
+                visible={isParametersExerciseVisible}
+                onHide={onCancelSelection}
+            >
+                {isParametersExerciseVisible && (
+                    <ExerciseParametersSelector
+                        exercisePhoto={{
+                            uri: Api.getPhotoUrl(
+                                store.selectedExercise!.imageName,
+                            ),
+                        }}
+                        exerciseId={store.selectedExercise!.ID}
+                        exerciseName={store.selectedExercise!.name}
+                        weight={{
+                            last: -1,
+                            top: -1,
+                        }}
+                        onComplete={onParametersComplete}
+                    />
+                )}
+            </CModal>
         </CWrapper>
     );
 }
