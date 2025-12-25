@@ -36,7 +36,10 @@ export function CInput({
                     borderWidth: 3,
                     borderColor: theme?.colors.primary.i80,
                     backgroundColor: theme?.colors.background.i2,
-                    color: theme?.colors.primary.i80,
+                    color:
+                        theme?.theme === 'dark'
+                            ? theme?.colors.primary.i5
+                            : theme?.colors.primary.i80,
                     fontSize: 16,
                     height: 50,
                     display: 'flex',
