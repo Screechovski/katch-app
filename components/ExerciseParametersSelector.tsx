@@ -73,8 +73,8 @@ export function ExerciseParametersSelector(
 
     const weight = useMemo(
         () => ({
-            min: 4,
-            max: [66, 65].includes(props.exerciseId) ? 140 : 86,
+            min: [66, 65].includes(props.exerciseId) ? 40 : 4,
+            max: [66, 65].includes(props.exerciseId) ? 130 : 86,
         }),
         [props.exerciseId],
     );
@@ -98,7 +98,7 @@ export function ExerciseParametersSelector(
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
             <View style={styles.line}>
-                <Text style={styles.lineTitle}>Подходы</Text>
+                <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
                 <CSlider
                     value={approachesValue}
                     onChange={setApproachesValue}
@@ -108,7 +108,7 @@ export function ExerciseParametersSelector(
                 />
             </View>
             <View style={styles.line}>
-                <Text style={styles.lineTitle}>Повторения</Text>
+                <Text style={styles.lineTitle}>Повторения: {repeatsValue}</Text>
                 <CSlider
                     value={repeatsValue}
                     onChange={setRepeatsValue}
@@ -118,7 +118,7 @@ export function ExerciseParametersSelector(
                 />
             </View>
             <View style={styles.line}>
-                <Text style={styles.lineTitle}>Вес</Text>
+                <Text style={styles.lineTitle}>Вес: {weightValue}</Text>
                 <CSlider
                     value={weightValue}
                     step={2}
