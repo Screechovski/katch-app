@@ -25,7 +25,7 @@ export const CSlider = ({
         () =>
             StyleSheet.create({
                 currentWrapper: {
-                    padding: 3,
+                    width: 20,
                     height: 20,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -35,17 +35,21 @@ export const CSlider = ({
                 current: {
                     color: theme?.colors.background.i9,
                     fontSize: 14,
+                    lineHeight: 14,
                     fontWeight: 'bold',
                 },
                 stepWrapper: {
                     height: 10,
+                    width: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
                     bottom: -20,
+                    textAlign: 'center',
                 },
                 step: {
                     color: theme?.colors.background.i9,
                     fontSize: 10,
+                    lineHeight: 10,
                     fontWeight: 'bold',
                 },
             }),
@@ -55,14 +59,13 @@ export const CSlider = ({
         ({ currentValue, index }: MarkerProps) => {
             return (
                 <View>
-                    {currentValue === index && (
+                    {/* {currentValue === index && (
                         <View style={styles.currentWrapper}>
                             <Text style={styles.current}>{currentValue}</Text>
                         </View>
-                    )}
+                    )} */}
                     {renderStep !== undefined &&
-                        (index % renderStep === 0 || index === min) &&
-                        index !== currentValue && (
+                        (index % renderStep === 0 || index === min) && (
                             <View style={styles.stepWrapper}>
                                 <Text style={styles.step}>{index}</Text>
                             </View>
