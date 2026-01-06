@@ -61,6 +61,7 @@ export function ExerciseCardVertical(props: ExerciseCardProps) {
                     color: theme?.colors.background.i8,
                     height: 15 * 1.2 * 4,
                     flexWrap: 'wrap',
+                    fontFamily: 'Montserrat',
                 },
             }),
         [theme?.theme],

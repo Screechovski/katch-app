@@ -26,11 +26,13 @@ export function CInput({
             StyleSheet.create({
                 wrap: {},
                 label: {
+                    fontFamily: 'Montserrat',
                     fontSize: 16,
-                    color: theme?.colors.background.i4,
+                    color: theme?.colors.background.i8,
                     height: 16 * 1.5,
                 },
                 input: {
+                    fontFamily: 'Montserrat',
                     paddingHorizontal: 15,
                     borderRadius: 10,
                     borderWidth: 3,

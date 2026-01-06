@@ -16,7 +16,7 @@ export default function TabLayout() {
                     backgroundColor: theme?.colors.background.i2,
                     borderTopWidth: 0,
                 },
-                tabBarLabelStyle: { fontSize: 16 },
+                tabBarLabelStyle: { fontSize: 16, fontFamily: 'Montserrat' },
             }}
         >
             <Tabs.Screen

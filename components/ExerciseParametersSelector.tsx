@@ -4,6 +4,10 @@ import { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { CSlider } from '@/components/ui/CSlider';
 import { CButton } from '@/components/ui/CButton';
+import { useQuery } from '@tanstack/react-query';
+import { Api } from '@/helpers/Api';
+import { Storage } from '@/helpers/Storage';
+import { TopLastInfo } from '@/components/elements/TopLastInfo';
 
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
@@ -27,6 +31,7 @@ export function ExerciseParametersSelector(
                     flexDirection: 'row',
                     alignItems: 'flex-end',
                     gap: 10,
+                    marginBottom: 5,
                 },
                 imageWrapper: {
                     height: 90,
@@ -35,18 +40,18 @@ export function ExerciseParametersSelector(
                     borderRadius: 5,
                     filter: theme?.theme === 'dark' ? 'invert(1)' : undefined,
                 },
+
                 image: {
                     height: '100%',
                     width: '100%',
                 },
                 exercisesName: {
                     fontSize: 20,
-                    marginBottom: 5,
                     color: theme?.colors.background.i9,
                     flex: 1,
                 },
                 line: {
-                    marginBottom: 20,
+                    marginBottom: 5,
                 },
                 lineTitle: {
                     fontSize: 16,
@@ -55,9 +60,40 @@ export function ExerciseParametersSelector(
                 button: {
                     marginTop: 10,
                 },
+                info: {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 5,
+                    marginBottom: 5,
+                },
+                infoLine: {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+                infoCircle: {
+                    height: 10,
+                    width: 10,
+                    borderRadius: '50%',
+                },
+                infoText: {
+                    fontFamily: 'Montserrat',
+                },
             }),
         [theme?.theme],
     );
+
+    const { data: history } = useQuery({
+        queryKey: ['exerciseHistory', props.exerciseId],
+        queryFn: async () => {
+            const token = await Storage.getData<string>(Storage.token);
+            if (token) {
+                return Api.exerciseHistory(token, props.exerciseId);
+            }
+            return null;
+        },
+        refetchOnMount: false,
+    });
 
     const approaches = {
         min: 1,
@@ -73,8 +109,8 @@ export function ExerciseParametersSelector(
 
     const weight = useMemo(
         () => ({
-            min: [66, 65].includes(props.exerciseId) ? 40 : 4,
-            max: [66, 65].includes(props.exerciseId) ? 130 : 86,
+            min: [66, 65].includes(props.exerciseId) ? 40 : 5,
+            max: [66, 65].includes(props.exerciseId) ? 130 : 90,
         }),
         [props.exerciseId],
     );
@@ -97,6 +133,14 @@ export function ExerciseParametersSelector(
                 </View>
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
+
+            <TopLastInfo
+                lastReps={history?.last.reps}
+                lastWeight={history?.last.weight}
+                topRes={history?.top.reps}
+                topWeight={history?.top.weight}
+            />
+
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
                 <CSlider
@@ -104,7 +148,6 @@ export function ExerciseParametersSelector(
                     onChange={setApproachesValue}
                     min={approaches.min}
                     max={approaches.max}
-                    renderStep={2}
                 />
             </View>
             <View style={styles.line}>
@@ -114,18 +157,20 @@ export function ExerciseParametersSelector(
                     onChange={setRepeatsValue}
                     min={repeats.min}
                     max={repeats.max}
-                    renderStep={2}
+                    top={history?.top.reps}
+                    last={history?.last.reps}
                 />
             </View>
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Вес: {weightValue}</Text>
                 <CSlider
                     value={weightValue}
-                    step={2}
+                    step={2.5}
                     onChange={setWeightValue}
                     min={weight.min}
-                    renderStep={20}
                     max={weight.max}
+                    top={history?.top.weight}
+                    last={history?.last.weight}
                 />
             </View>
             <CButton

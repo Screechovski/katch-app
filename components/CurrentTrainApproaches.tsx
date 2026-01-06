@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { Colors } from '@/constants/Theme';
 import { Set } from '@/store/currentTrainStore';
 import { useMemo } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
