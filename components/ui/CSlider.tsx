@@ -27,6 +27,13 @@ export const CSlider = ({
     const styles = useMemo(
         () =>
             StyleSheet.create({
+                wrapper: {
+                    height: 34,
+                },
+                sliderWrapper: {
+                    height: 40,
+                    marginTop: -10,
+                },
                 stepWrapper: {
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -118,17 +125,21 @@ export const CSlider = ({
     );
 
     return (
-        <Slider
-            value={value}
-            minimumValue={min}
-            maximumValue={max}
-            step={validStep}
-            onSlidingComplete={onSlidingComplete}
-            thumbTintColor={theme?.colors.primary.i80}
-            maximumTrackTintColor={theme?.colors.primary.i50}
-            minimumTrackTintColor={theme?.colors.primary.i50}
-            trackMarks={trackMarks}
-            renderTrackMarkComponent={renderStepMarker}
-        />
+        <View style={styles.wrapper}>
+            <View style={styles.sliderWrapper}>
+                <Slider
+                    value={value}
+                    minimumValue={min}
+                    maximumValue={max}
+                    step={validStep}
+                    onSlidingComplete={onSlidingComplete}
+                    thumbTintColor={theme?.colors.primary.i80}
+                    maximumTrackTintColor={theme?.colors.primary.i50}
+                    minimumTrackTintColor={theme?.colors.primary.i50}
+                    trackMarks={trackMarks}
+                    renderTrackMarkComponent={renderStepMarker}
+                />
+            </View>
+        </View>
     );
 };

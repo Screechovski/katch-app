@@ -31,6 +31,7 @@ export const TopLastInfo = (props: Props) => {
                 },
                 infoText: {
                     fontFamily: 'Montserrat',
+                    color: theme?.colors.background.i9,
                 },
             }),
         [theme?.theme],
