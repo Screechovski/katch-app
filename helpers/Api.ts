@@ -29,6 +29,24 @@ export class Api {
         return Model.toTypedArray(response.data, ExerciseServer);
     }
 
+    static async exerciseHistory(
+        token: string,
+        exerciseId: number,
+    ): Promise<{
+        top: { weight: number; reps: number };
+        last: { weight: number; reps: number };
+    }> {
+        const response = await instance.get(
+            `/api/exercise/history/${exerciseId}`,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+        return response.data;
+    }
+
     static async trains(token: string): Promise<TrainServer[]> {
         const response = await instance.get('/api/train', {
             headers: {

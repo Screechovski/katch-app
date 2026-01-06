@@ -17,7 +17,7 @@ export function CButton(props: Props) {
         },
         text: {
             fontSize: 20,
-            fontFamily: 'sans-serif',
+            fontFamily: 'Montserrat',
             textTransform: 'lowercase',
             color:
                 props.variant !== 'primary-outline'

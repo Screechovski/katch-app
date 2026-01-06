@@ -1,5 +1,5 @@
 import { useTheme } from '@/components/ThemeProvider';
-import Slider, { MarkerProps } from '@react-native-community/slider';
+import { Slider } from '@miblanchard/react-native-slider';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -7,8 +7,9 @@ type Props = {
     value: number;
     min: number;
     max: number;
-    renderStep?: number;
     step?: number;
+    top?: number;
+    last?: number;
     onChange: (value: number) => void;
 };
 
@@ -18,76 +19,116 @@ export const CSlider = ({
     max,
     step,
     onChange,
-    renderStep,
+    top,
+    last,
 }: Props) => {
+    const validStep = useMemo(() => step ?? 1, [step]);
     const theme = useTheme();
     const styles = useMemo(
         () =>
             StyleSheet.create({
-                currentWrapper: {
-                    width: 20,
-                    height: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    top: -20,
-                    backgroundColor: theme?.colors.background.i2,
-                },
-                current: {
-                    color: theme?.colors.background.i9,
-                    fontSize: 14,
-                    lineHeight: 14,
-                    fontWeight: 'bold',
-                },
                 stepWrapper: {
-                    height: 10,
-                    width: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    bottom: -20,
-                    textAlign: 'center',
+                    bottom: -18,
+                    width: 20,
                 },
                 step: {
-                    color: theme?.colors.background.i9,
-                    fontSize: 10,
-                    lineHeight: 10,
+                    fontFamily: 'Montserrat',
+                    color: theme?.colors.primary.i50,
+                    fontSize: 14,
                     fontWeight: 'bold',
+                    textAlign: 'center',
+                },
+                top: {
+                    color: theme?.colors.danger.i5,
+                },
+                last: {
+                    color: theme?.colors.success.i7,
                 },
             }),
         [theme?.theme],
     );
+
+    const onSlidingComplete = (value: number[]) => onChange(value[0]);
+
+    const trackMarks = useMemo(() => {
+        const step = (max - min) / 5;
+        const _s = (max - min) / 20;
+        const res: { isStep: boolean; value: number }[] = [];
+        let current = min;
+        const _top = top ?? 999;
+        const _last = last ?? 999;
+
+        while (current < max) {
+            const prev = current;
+            current = Math.floor(current + step);
+
+            const isNeedAddTop = prev < _top && _top < current;
+            const isNeedAddLast = prev < _last && _last < current;
+
+            res.push({ isStep: true, value: prev });
+
+            if (isNeedAddTop) {
+                res.push({ isStep: false, value: _top });
+            } else if (isNeedAddLast) {
+                res.push({ isStep: false, value: _last });
+            }
+        }
+
+        res.push({ isStep: true, value: max });
+
+        for (let i = 0; i < res.length; i++) {
+            const item = res[i];
+
+            if (!item) continue;
+
+            if (!item.isStep) {
+                const next = res[i + 1];
+                const prev = res[i - 1];
+
+                if (prev && item.value - _s < prev.value) {
+                    delete res[i - 1];
+                }
+
+                if (next && item.value + _s > next.value) {
+                    delete res[i + 1];
+                }
+            }
+        }
+
+        return res.filter((i) => i).map((i) => i.value);
+    }, [max, min, top, last]);
+
     const renderStepMarker = useCallback(
-        ({ currentValue, index }: MarkerProps) => {
-            return (
-                <View>
-                    {/* {currentValue === index && (
-                        <View style={styles.currentWrapper}>
-                            <Text style={styles.current}>{currentValue}</Text>
-                        </View>
-                    )} */}
-                    {renderStep !== undefined &&
-                        (index % renderStep === 0 || index === min) && (
-                            <View style={styles.stepWrapper}>
-                                <Text style={styles.step}>{index}</Text>
-                            </View>
-                        )}
-                </View>
-            );
-        },
-        [],
+        (index: number) => (
+            <View style={styles.stepWrapper}>
+                <Text
+                    style={[
+                        styles.step,
+                        trackMarks[index] === top ? styles.top : null,
+                        trackMarks[index] === last ? styles.last : null,
+                    ]}
+                >
+                    {trackMarks[index]}
+                </Text>
+            </View>
+        ),
+        [trackMarks, top],
     );
 
     return (
         <Slider
-            style={{ width: '100%', height: 20 }}
             value={value}
-            onSlidingComplete={onChange}
             minimumValue={min}
             maximumValue={max}
-            step={step ?? 1}
-            minimumTrackTintColor={theme?.colors.primary.i50}
-            maximumTrackTintColor={theme?.colors.primary.i50}
+            step={validStep}
+            onSlidingComplete={onSlidingComplete}
             thumbTintColor={theme?.colors.primary.i80}
-            StepMarker={renderStepMarker}
+            maximumTrackTintColor={theme?.colors.primary.i50}
+            minimumTrackTintColor={theme?.colors.primary.i50}
+            trackMarks={trackMarks}
+            renderTrackMarkComponent={renderStepMarker}
         />
     );
 };
