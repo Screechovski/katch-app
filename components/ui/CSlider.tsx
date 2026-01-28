@@ -57,7 +57,7 @@ export const CSlider = ({
         [theme?.theme],
     );
 
-    const onSlidingComplete = (value: number[]) => onChange(value[0]);
+    const onSlidingComplete = ([value]: number[]) => onChange(value);
 
     const trackMarks = useMemo(() => {
         const step = (max - min) / 5;
@@ -132,7 +132,7 @@ export const CSlider = ({
                     minimumValue={min}
                     maximumValue={max}
                     step={validStep}
-                    onSlidingComplete={onSlidingComplete}
+                    onValueChange={onSlidingComplete}
                     thumbTintColor={theme?.colors.primary.i80}
                     maximumTrackTintColor={theme?.colors.primary.i50}
                     minimumTrackTintColor={theme?.colors.primary.i50}
