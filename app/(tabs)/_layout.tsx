@@ -42,11 +42,20 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="statistic"
+                options={{
+                    title: 'Статистика',
+                    tabBarIcon: ({ color }) => (
+                        <AntDesign name={'bar-chart'} size={24} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="profile"
                 options={{
                     title: 'Профиль',
                     tabBarIcon: ({ color }) => (
-                        <AntDesign name={'profile'} size={24} color={color} />
+                        <AntDesign name={'idcard'} size={24} color={color} />
                     ),
                 }}
             />

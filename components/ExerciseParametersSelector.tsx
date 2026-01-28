@@ -54,30 +54,12 @@ export function ExerciseParametersSelector(
                     marginBottom: 5,
                 },
                 lineTitle: {
-                    fontSize: 16,
+                    fontSize: 14,
+                    fontFamily: 'Montserrat',
                     color: theme?.colors.background.i9,
                 },
                 button: {
                     marginTop: 10,
-                },
-                info: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: 5,
-                    marginBottom: 5,
-                },
-                infoLine: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
-                infoCircle: {
-                    height: 10,
-                    width: 10,
-                    borderRadius: '50%',
-                },
-                infoText: {
-                    fontFamily: 'Montserrat',
                 },
             }),
         [theme?.theme],
