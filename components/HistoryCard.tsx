@@ -11,7 +11,6 @@ import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
     train: TrainServer;
-    updateDateTime: (dateString: string) => string;
     remove: (train: TrainServer) => void;
     isControlsVisible: boolean;
     setFilterExercises: (ex: ExerciseServer) => void;
@@ -19,7 +18,6 @@ interface Props {
 
 export function HistoryCard({
     train,
-    updateDateTime,
     remove,
     isControlsVisible,
     setFilterExercises,
@@ -126,9 +124,19 @@ export function HistoryCard({
         return Object.entries(sum).map(([id, value]) => ({ id: +id, value }));
     }, [train.Sets]);
 
+    function prettyDate(dateString: string) {
+        const date = new Date(dateString);
+        const daysOfWeek = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const dayOfWeek = daysOfWeek[date.getDay()];
+
+        return `${dayOfWeek} ${day}.${month}`;
+    }
+
     return (
         <View style={styles.card}>
-            <Text style={styles.date}>{updateDateTime(train.Date)}</Text>
+            <Text style={styles.date}>{prettyDate(train.Date)}</Text>
 
             {sets.map((set) => (
                 <View style={styles.line} key={set.ID}>
@@ -164,7 +172,7 @@ export function HistoryCard({
 
             {isControlsVisible && (
                 <View style={styles.footer}>
-                    {train.UserWeight && (
+                    {!!train.UserWeight && (
                         <Text style={styles.weight}>
                             {train.UserWeight.toString()}кг
                         </Text>

@@ -32,10 +32,17 @@ export class Api {
     static async exerciseHistory(
         token: string,
         exerciseId: number,
-    ): Promise<{
-        top: { weight: number; reps: number };
-        last: { weight: number; reps: number };
-    }> {
+    ): Promise<
+        {
+            trainDate: string;
+            trainId: number;
+            approaches: {
+                reps: number;
+                weight: number;
+                sets: number;
+            }[];
+        }[]
+    > {
         const response = await instance.get(
             `/api/exercise/history/${exerciseId}`,
             {

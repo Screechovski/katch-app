@@ -77,7 +77,6 @@ export function UserTokenForm(props: Props) {
                 <View style={styles.buttons}>
                     <CButton
                         disabled={token.trim() === ''}
-                        variant="primary"
                         onPress={checkToken}
                     >
                         войти

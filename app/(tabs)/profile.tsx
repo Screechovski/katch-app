@@ -4,17 +4,16 @@ import { CCheckbox } from '@/components/ui/CCheckbox';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { Api } from '@/helpers/Api';
 import { Storage } from '@/helpers/Storage';
-import { useSystemStore } from '@/store/systemStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { useToastStore } from '@/store/toastStore';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export default function ProfilePage() {
     const router = useRouter();
     const toastStore = useToastStore();
-    const systemStore = useSystemStore();
-
+    const settingsStore = useSettingsStore();
     const theme = useTheme();
 
     const style = useMemo(
@@ -54,6 +53,7 @@ export default function ProfilePage() {
                 }
 
                 await Storage.removeData(Storage.trains);
+                await checkLSTrains();
             } else {
                 router.replace('/login');
             }
@@ -61,6 +61,19 @@ export default function ProfilePage() {
             toastStore.setError(`Ошибка при сохранении тренировок: ` + error);
         }
     };
+
+    const [hasStorageTrains, setHasStorageTrains] = useState(false);
+    const checkLSTrains = async () => {
+        try {
+            const res = await Storage.getData(Storage.trains);
+            setHasStorageTrains(!!res);
+        } catch (error) {
+            toastStore.setError(`Ошибка при проверки тренировок: ` + error);
+        }
+    };
+    useEffect(() => {
+        checkLSTrains();
+    }, []);
 
     return (
         <CWrapper>
@@ -71,7 +84,21 @@ export default function ProfilePage() {
                 >
                     Темная тема
                 </CCheckbox>
-                {systemStore.isOffline && (
+                <CCheckbox
+                    checked={settingsStore.isWeightAfterTrain}
+                    onPress={() => settingsStore.toggle('isWeightAfterTrain')}
+                >
+                    Спрашивать вес в конце тренировки
+                </CCheckbox>
+                <CCheckbox
+                    checked={settingsStore.isHistoryInExerciseSelector}
+                    onPress={() =>
+                        settingsStore.toggle('isHistoryInExerciseSelector')
+                    }
+                >
+                    Показывать историю в выборе упражнения
+                </CCheckbox>
+                {hasStorageTrains && (
                     <CButton onPress={saveLocalTrains}>
                         Синхронизировать данные
                     </CButton>

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useMemo } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
+import { AntDesign } from '@expo/vector-icons';
 
 interface Props {
     checked: boolean;
@@ -29,8 +30,8 @@ export function CCheckbox(props: Props) {
                     width: 24,
                     height: 24,
                     borderWidth: 2,
-                    borderColor: theme?.colors.primary.i80,
-                    borderRadius: 4,
+                    borderColor: theme?.colors.primary.i95,
+                    borderRadius: 8,
                     backgroundColor: props.checked
                         ? theme?.colors.primary.i80
                         : 'transparent',
@@ -39,8 +40,8 @@ export function CCheckbox(props: Props) {
                     opacity: props.disabled ? 0.5 : 1,
                 },
                 checkmark: {
-                    color: theme?.colors.background.i7,
-                    fontSize: 16,
+                    color: theme?.colors.background.i2,
+                    fontSize: 14,
                     fontWeight: 'bold',
                 },
                 label: {
@@ -49,7 +50,7 @@ export function CCheckbox(props: Props) {
                     color: theme?.colors.background.i7,
                 },
             }),
-        [theme?.theme],
+        [theme?.theme, props.checked],
     );
 
     return (
@@ -57,10 +58,12 @@ export function CCheckbox(props: Props) {
             onPress={props.onPress}
             disabled={props.disabled}
             style={[style.container, props.style]}
-            activeOpacity={0.7}
+            activeOpacity={1}
         >
             <View style={style.wrap}>
-                {props.checked && <Text style={style.checkmark}>✓</Text>}
+                {props.checked && (
+                    <AntDesign style={style.checkmark} name="check"></AntDesign>
+                )}
             </View>
             <Text style={style.label}>{props.children}</Text>
         </TouchableOpacity>

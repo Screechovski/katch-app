@@ -35,10 +35,7 @@ export default function Index() {
             setLoading(true);
             const lsToken = await Storage.getData<string>(Storage.token);
             if (lsToken) {
-                console.log('checkRes', 'bef');
-
                 const checkRes = await Api.checkToken(lsToken);
-                console.log('checkRes', checkRes);
 
                 if (checkRes.isValid) {
                     router.replace('/(tabs)');

@@ -8,20 +8,10 @@ type Props = {
     min: number;
     max: number;
     step?: number;
-    top?: number;
-    last?: number;
     onChange: (value: number) => void;
 };
 
-export const CSlider = ({
-    value,
-    min,
-    max,
-    step,
-    onChange,
-    top,
-    last,
-}: Props) => {
+export const CSlider = ({ value, min, max, step, onChange }: Props) => {
     const validStep = useMemo(() => step ?? 1, [step]);
     const theme = useTheme();
     const styles = useMemo(
@@ -47,12 +37,6 @@ export const CSlider = ({
                     fontWeight: 'bold',
                     textAlign: 'center',
                 },
-                top: {
-                    color: theme?.colors.danger.i5,
-                },
-                last: {
-                    color: theme?.colors.success.i7,
-                },
             }),
         [theme?.theme],
     );
@@ -64,23 +48,12 @@ export const CSlider = ({
         const _s = (max - min) / 20;
         const res: { isStep: boolean; value: number }[] = [];
         let current = min;
-        const _top = top ?? 999;
-        const _last = last ?? 999;
 
         while (current < max) {
             const prev = current;
             current = Math.floor(current + step);
 
-            const isNeedAddTop = prev < _top && _top < current;
-            const isNeedAddLast = prev < _last && _last < current;
-
             res.push({ isStep: true, value: prev });
-
-            if (isNeedAddTop) {
-                res.push({ isStep: false, value: _top });
-            } else if (isNeedAddLast) {
-                res.push({ isStep: false, value: _last });
-            }
         }
 
         res.push({ isStep: true, value: max });
@@ -105,23 +78,15 @@ export const CSlider = ({
         }
 
         return res.filter((i) => i).map((i) => i.value);
-    }, [max, min, top, last]);
+    }, [max, min]);
 
     const renderStepMarker = useCallback(
         (index: number) => (
             <View style={styles.stepWrapper}>
-                <Text
-                    style={[
-                        styles.step,
-                        trackMarks[index] === top ? styles.top : null,
-                        trackMarks[index] === last ? styles.last : null,
-                    ]}
-                >
-                    {trackMarks[index]}
-                </Text>
+                <Text style={[styles.step]}>{trackMarks[index]}</Text>
             </View>
         ),
-        [trackMarks, top],
+        [trackMarks],
     );
 
     return (

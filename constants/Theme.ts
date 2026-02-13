@@ -7,9 +7,9 @@ export const Colors = {
         i95: '#1e1b4b',
     },
     success: {
-        i4: '#ABE14C',
-        i7: '#52940C',
-        i9: '#2D6204',
+        i4: '#d1e7dd',
+        i7: '#198754',
+        i9: '#157347',
     },
     info: {
         i5: '#02D0F4',
