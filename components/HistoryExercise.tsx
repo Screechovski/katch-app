@@ -40,7 +40,7 @@ export const HistoryExercises = (props: Props) => {
         item: {
             display: 'flex',
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             marginBottom: 5,
         },
         date: {
@@ -51,6 +51,7 @@ export const HistoryExercises = (props: Props) => {
             height: 6,
             width: 6,
             borderRadius: 3,
+            marginTop: 8,
             backgroundColor: theme?.colors.primary.i80,
         },
     });
