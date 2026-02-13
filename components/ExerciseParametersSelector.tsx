@@ -7,7 +7,11 @@ import { CButton } from '@/components/ui/CButton';
 import { useQuery } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
 import { Storage } from '@/helpers/Storage';
-import { TopLastInfo } from '@/components/elements/TopLastInfo';
+import { CHr } from '@/components/ui/CHr';
+import { useSettingsStore } from '@/store/settingsStore';
+import { HistoryExercises } from '@/components/HistoryExercise';
+import { CLoader } from '@/components/ui/CLoader';
+import { CInformer } from '@/components/ui/CInformer';
 
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
@@ -23,6 +27,7 @@ interface ExerciseParametersSelectorProps {
 export function ExerciseParametersSelector(
     props: ExerciseParametersSelectorProps,
 ) {
+    const settingsStore = useSettingsStore();
     const theme = useTheme();
     const styles = useMemo(
         () =>
@@ -65,7 +70,7 @@ export function ExerciseParametersSelector(
         [theme?.theme],
     );
 
-    const { data: history } = useQuery({
+    const history = useQuery({
         queryKey: ['exerciseHistory', props.exerciseId],
         queryFn: async () => {
             const token = await Storage.getData<string>(Storage.token);
@@ -75,6 +80,7 @@ export function ExerciseParametersSelector(
             return null;
         },
         refetchOnMount: false,
+        staleTime: 1000,
     });
 
     const approaches = {
@@ -116,13 +122,6 @@ export function ExerciseParametersSelector(
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
 
-            <TopLastInfo
-                lastReps={history?.last.reps}
-                lastWeight={history?.last.weight}
-                topRes={history?.top.reps}
-                topWeight={history?.top.weight}
-            />
-
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
                 <CSlider
@@ -139,8 +138,6 @@ export function ExerciseParametersSelector(
                     onChange={setRepeatsValue}
                     min={repeats.min}
                     max={repeats.max}
-                    top={history?.top.reps}
-                    last={history?.last.reps}
                 />
             </View>
             <View style={styles.line}>
@@ -151,8 +148,6 @@ export function ExerciseParametersSelector(
                     onChange={setWeightValue}
                     min={weight.min}
                     max={weight.max}
-                    top={history?.top.weight}
-                    last={history?.last.weight}
                 />
             </View>
             <CButton
@@ -162,6 +157,23 @@ export function ExerciseParametersSelector(
             >
                 сохранить
             </CButton>
+            {settingsStore.isHistoryInExerciseSelector && (
+                <View style={{ height: 205 }}>
+                    {history.data && (
+                        <>
+                            <CHr />
+                            <HistoryExercises trains={history.data} />
+                        </>
+                    )}
+                    {history.isFetching && <CLoader />}
+                    {history.error && (
+                        <CInformer
+                            message={history.error.message}
+                            type="error"
+                        />
+                    )}
+                </View>
+            )}
         </View>
     );
 }

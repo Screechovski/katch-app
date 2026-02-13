@@ -3,6 +3,7 @@ import { CIconButton } from '@/components/ui/CIconButton';
 import { Set } from '@/store/currentTrainStore';
 import { useMemo } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
+import { CHr } from '@/components/ui/CHr';
 
 interface CurrentTrainApproachesProps {
     approaches: Set[];
@@ -21,12 +22,6 @@ export function CurrentTrainApproaches({
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 5,
-                },
-                hr: {
-                    height: 3,
-                    marginBottom: 10,
-                    marginTop: 10,
-                    backgroundColor: theme?.colors.primary.i90,
                 },
                 approach: {
                     display: 'flex',
@@ -79,7 +74,7 @@ export function CurrentTrainApproaches({
                     </View>
                 ))}
             </View>
-            <View style={styles.hr} />
+            <CHr />
         </>
     );
 }

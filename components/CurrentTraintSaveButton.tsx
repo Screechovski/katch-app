@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CButton } from '@/components/ui/CButton';
 import { WeightInputModal } from '@/components/WeightInputModal';
 import { useSystemStore } from '@/store/systemStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 interface CurrentTraintSaveButtonProps {
     onSave: (weight?: number) => void;
@@ -13,9 +14,14 @@ export function CurrentTraintSaveButton({
 }: CurrentTraintSaveButtonProps) {
     const [showWeightModal, setShowWeightModal] = useState(false);
     const systemStore = useSystemStore();
+    const settingsStore = useSettingsStore();
 
     function handleSavePress() {
-        setShowWeightModal(true);
+        if (settingsStore.isWeightAfterTrain) {
+            setShowWeightModal(true);
+        } else {
+            onSave();
+        }
     }
 
     function handleWeightSave(weight: number) {
@@ -29,7 +35,7 @@ export function CurrentTraintSaveButton({
     return (
         <>
             <CButton
-                variant={'success'}
+                variant="success"
                 style={styles.save}
                 onPress={handleSavePress}
             >

@@ -33,16 +33,6 @@ export default function HistoryPage() {
     const [filterExercises, setFilterExercises] =
         useState<ExerciseServer | null>(null);
 
-    function updateDateTime(dateString: string) {
-        const date = new Date(dateString);
-        const daysOfWeek = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const dayOfWeek = daysOfWeek[date.getDay()];
-
-        return `${dayOfWeek} ${day}.${month}`;
-    }
-
     async function removeTrain() {
         if (!trainForRemove) {
             return;
@@ -110,7 +100,6 @@ export default function HistoryPage() {
                         <HistoryCard
                             key={item.ID}
                             train={item}
-                            updateDateTime={updateDateTime}
                             setFilterExercises={addFilter}
                             isControlsVisible={filterExercises === null}
                             remove={setTrainForRemove}
