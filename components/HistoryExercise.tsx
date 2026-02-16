@@ -33,6 +33,7 @@ export const HistoryExercises = (props: Props) => {
     const styles = StyleSheet.create({
         wrapper: {
             maxHeight: 200,
+            height: 200,
         },
         scrollView: {
             flex: 1,
