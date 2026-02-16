@@ -286,7 +286,7 @@ export function ExerciseParametersSelector(
                 сохранить
             </CButton>
             {settingsStore.isHistoryInExerciseSelector && (
-                <View style={{ height: 205 }}>
+                <View style={{ height: 223 }}>
                     {history.data && (
                         <>
                             <CHr />
