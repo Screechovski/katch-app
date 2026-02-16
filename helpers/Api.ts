@@ -6,7 +6,7 @@ import { Model } from '@/models/Model';
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
 const instance = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE_URL + '/api',
     headers: {
         'Content-Type': 'application/json',
     },
