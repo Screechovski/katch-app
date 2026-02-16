@@ -66,6 +66,11 @@ export function ExerciseParametersSelector(
                 button: {
                     marginTop: 10,
                 },
+                hardInfo: {
+                    fontSize: 14,
+                    lineHeight: 1.4 * 14,
+                    height: 1.4 * 14 * 2,
+                },
             }),
         [theme?.theme],
     );
@@ -113,6 +118,114 @@ export function ExerciseParametersSelector(
         );
     };
 
+    const exerciseEffectiveness = useMemo(() => {
+        const rm = history.data?.rm;
+        if (!rm) {
+            return null;
+        }
+
+        interface ExerciseInput {
+            rm: number; // Текущий 1RM пользователя из БД
+            weightValue: number; // Выбранный вес
+            repeatsValue: number; // Выбранные повторения
+            approachesValue: number; // Количество подходов
+        }
+
+        interface ExerciseAnalysis {
+            score: number; // Баллы сложности (объем * интенсивность)
+            intensityPercent: number; // % от старого максимума
+            label: string; // Заголовок для UI
+            color: string; // Цвет для индикации
+            description: string; // Текст подсказки
+            isNewRecord: boolean; // Флаг рекорда
+            suggestedNewRm?: number; // Рекомендация нового RM
+            growthPercent?: number; // На сколько % вырос результат
+        }
+
+        /**
+         * Рассчитывает сложность и эффективность тренировочного подхода
+         */
+        const analyzeExerciseLoad = ({
+            rm,
+            weightValue,
+            repeatsValue,
+            approachesValue,
+        }: ExerciseInput): ExerciseAnalysis => {
+            // 1. Считаем текущую интенсивность относительно старого RM
+            const intensity = weightValue / (rm || 1);
+            const intensityPercent = Math.round(intensity * 100);
+
+            // 2. Считаем потенциальный 1RM текущего подхода (по Бржицки)
+            // Формула: weight / (1.0278 - 0.0278 * reps)
+            // Ограничиваем reps до 36, чтобы знаменатель не стал <= 0
+            const safeReps = Math.min(repeatsValue, 36);
+            const currentPerformanceRm =
+                weightValue / (1.0278 - 0.0278 * safeReps);
+
+            // 3. Расчет баллов (Load Score)
+            const score = Math.round(
+                weightValue * repeatsValue * approachesValue * intensity,
+            );
+
+            // 4. Проверка на рекорд
+            const isNewRecord = currentPerformanceRm > rm;
+            const growthPercent = isNewRecord
+                ? ((currentPerformanceRm - rm) / rm) * 100
+                : 0;
+
+            // 5. Определение "сложности" через RIR (Reps in Reserve)
+            // Сколько МОГ БЫ сделать при старом RM
+            let maxPossibleReps = (1.0278 - Math.min(intensity, 1.02)) / 0.0278;
+            if (maxPossibleReps < 1) maxPossibleReps = 1;
+
+            const efficiencyRatio = repeatsValue / maxPossibleReps;
+
+            // Базовый объект результата
+            const result: ExerciseAnalysis = {
+                score,
+                intensityPercent,
+                isNewRecord,
+                label: 'Умеренно',
+                color: '#4CAF50',
+                description: 'Хорошая нагрузка для поддержания тонуса.',
+            };
+
+            if (isNewRecord) {
+                result.label = 'Личный рекорд!';
+                result.color = '#9C27B0';
+                result.description = `Ваш потенциал вырос на ${growthPercent.toFixed(
+                    1,
+                )}%! Рекомендуем обновить максимум.`;
+                result.suggestedNewRm =
+                    Math.round(currentPerformanceRm * 10) / 10;
+            } else if (efficiencyRatio >= 0.65 && efficiencyRatio <= 0.9) {
+                result.label = 'Оптимально';
+                result.color = '#FF9800';
+                result.description =
+                    'Идеальная зона для роста мышц и прогресса.';
+            } else if (efficiencyRatio > 0.9) {
+                result.label = 'Предельно';
+                result.color = '#F44336';
+                result.description =
+                    'Работа на грани отказа. Будьте осторожны!';
+            } else {
+                result.label = 'Легко';
+                result.color = '#A0A0A0';
+                result.description =
+                    'Нагрузка мала. Попробуйте увеличить вес или повторы.';
+            }
+
+            return result;
+        };
+
+        return analyzeExerciseLoad({
+            rm,
+            weightValue,
+            repeatsValue,
+            approachesValue,
+        });
+    }, [history.data?.rm, weightValue, repeatsValue, approachesValue]);
+
     return (
         <View style={{ width: 300 }}>
             <View style={styles.header}>
@@ -150,6 +263,21 @@ export function ExerciseParametersSelector(
                     max={weight.max}
                 />
             </View>
+            {history.data && exerciseEffectiveness && (
+                <View>
+                    <Text>
+                        RM {history.data.rm}/Score {exerciseEffectiveness.score}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.hardInfo,
+                            { color: exerciseEffectiveness.color },
+                        ]}
+                    >
+                        {exerciseEffectiveness.description}
+                    </Text>
+                </View>
+            )}
             <CButton
                 style={styles.button}
                 variant="success"
@@ -162,7 +290,7 @@ export function ExerciseParametersSelector(
                     {history.data && (
                         <>
                             <CHr />
-                            <HistoryExercises trains={history.data} />
+                            <HistoryExercises trains={history.data.trains} />
                         </>
                     )}
                     {history.isFetching && <CLoader />}

@@ -29,7 +29,6 @@ export default function HistoryPage() {
         refetchOnMount: 'always',
     });
 
-    const [loadBackupIsVisible, setLoadBackupIsVisible] = useState(false);
     const [filterExercises, setFilterExercises] =
         useState<ExerciseServer | null>(null);
 
@@ -113,11 +112,6 @@ export default function HistoryPage() {
                 onRemove={removeTrain}
                 trainWeight={trainForRemove?.UserWeight}
                 visible={trainForRemove !== null}
-            />
-
-            <LoadBackupModal
-                visible={loadBackupIsVisible}
-                onHide={() => setLoadBackupIsVisible(false)}
             />
         </CWrapper>
     );

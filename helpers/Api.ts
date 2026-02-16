@@ -19,7 +19,7 @@ export class Api {
     }
 
     static async exercises(token?: string): Promise<ExerciseServer[]> {
-        const response = await instance.get('/api/exercises', {
+        const response = await instance.get('/exercises', {
             headers: token
                 ? {
                       Authorization: token,
@@ -32,8 +32,8 @@ export class Api {
     static async exerciseHistory(
         token: string,
         exerciseId: number,
-    ): Promise<
-        {
+    ): Promise<{
+        trains: {
             trainDate: string;
             trainId: number;
             approaches: {
@@ -41,21 +41,19 @@ export class Api {
                 weight: number;
                 sets: number;
             }[];
-        }[]
-    > {
-        const response = await instance.get(
-            `/api/exercise/history/${exerciseId}`,
-            {
-                headers: {
-                    Authorization: token,
-                },
+        }[];
+        rm: number;
+    }> {
+        const response = await instance.get(`/exercise/history/${exerciseId}`, {
+            headers: {
+                Authorization: token,
             },
-        );
+        });
         return response.data;
     }
 
     static async trains(token: string): Promise<TrainServer[]> {
-        const response = await instance.get('/api/train', {
+        const response = await instance.get('/train', {
             headers: {
                 Authorization: token,
             },
@@ -64,7 +62,7 @@ export class Api {
     }
 
     static async saveTrain(token: string, train: any): Promise<TrainServer[]> {
-        const response = await instance.post('/api/train', train, {
+        const response = await instance.post('/train', train, {
             headers: {
                 Authorization: token,
             },
@@ -73,7 +71,7 @@ export class Api {
     }
 
     static async removeTrain(token: string, id: number): Promise<void> {
-        const response = await instance.delete('/api/train', {
+        const response = await instance.delete('/train', {
             params: { id },
             headers: {
                 Authorization: token,
@@ -84,7 +82,7 @@ export class Api {
 
     static checkToken(token: string): Promise<{ isValid: boolean }> {
         return instance
-            .post('/api/check-token', { token })
+            .post('/check-token', { token })
             .then((response) => response.data);
     }
 }

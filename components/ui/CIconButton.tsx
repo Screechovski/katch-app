@@ -1,60 +1,96 @@
-import {StyleSheet, ViewStyle} from 'react-native';
-import {CButtonBase, CButtonBaseType} from './CButtonBase';
-import {AntDesign} from '@expo/vector-icons';
-import {useMemo} from 'react';
-import {Colors} from '@/constants/Theme';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { useMemo } from 'react';
+import { CLoader } from '@/components/ui/CLoader';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
     onPress(): void;
     disabled?: boolean;
+    loading?: boolean;
     style?: ViewStyle;
+    variant?: 'error' | 'primary';
+    inline?: boolean;
     name: keyof typeof AntDesign.glyphMap;
-    variant?: CButtonBaseType;
-    size?: 's' | 'm' | 'l';
-    iconColor?: string;
 }
 
 export function CIconButton(props: Props) {
-    const size = useMemo(() => {
-        if (props.size === 's') {
-            return 25;
+    const theme = useTheme();
+    const style = useMemo(() => {
+        let backgroundColor;
+        let borderColor;
+        switch (props.variant) {
+            case 'error':
+                if (props.inline) {
+                    backgroundColor = 'transparent';
+                } else {
+                    borderColor = theme?.colors.danger.i7;
+                    backgroundColor = theme?.colors.danger.i6;
+                }
+                break;
+            case 'primary':
+            default:
+                if (props.inline) {
+                    backgroundColor = 'transparent';
+                } else {
+                    borderColor = theme?.colors.primary.i90;
+                    backgroundColor = theme?.colors.primary.i80;
+                }
+                break;
         }
-        if (props.size === 'm') {
-            return 30;
+        return StyleSheet.create({
+            wrap: {
+                height: props.inline ? 28 : 30,
+                width: props.inline ? 28 : 30,
+                backgroundColor,
+                borderWidth: props.inline ? 0 : 2,
+                borderColor,
+                borderRadius: 10,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            },
+        });
+    }, [theme?.theme, props.inline]);
+
+    const iconColor = useMemo(() => {
+        switch (props.variant) {
+            case 'error':
+                if (props.inline) {
+                    return theme?.colors.danger.i6;
+                }
+            case 'primary':
+            default:
+                if (props.inline) {
+                    return theme?.colors.primary.i80;
+                }
+                return theme?.colors.background.i2;
         }
-        return 40;
-    }, [props.size]);
-    const borderRadius = useMemo(() => {
-        if (props.size === 'l' || props.size === undefined) {
-            return 10;
+    }, []);
+
+    function pressHandler() {
+        if (props.disabled || props.loading) {
+            return;
         }
-        return 7;
-    }, [props.size]);
-    const style = useMemo(
-        () =>
-            StyleSheet.create({
-                wrap: {
-                    width: size,
-                    height: size,
-                    padding: 0,
-                    borderRadius,
-                },
-            }),
-        [size],
-    );
-    const iconSize = useMemo(() => size * 0.6, [size]);
-    const iconColor = useMemo(
-        () => props.iconColor ?? Colors.light.i2,
-        [props.iconColor],
-    );
+
+        props.onPress();
+    }
 
     return (
-        <CButtonBase
-            variant={props.variant}
-            style={[props.style, style.wrap]}
-            onPress={props.onPress}
-            disabled={props.disabled}>
-            <AntDesign name={props.name} size={iconSize} color={iconColor} />
-        </CButtonBase>
+        <TouchableOpacity
+            activeOpacity={1}
+            style={[style.wrap, props.style]}
+            onPress={pressHandler}
+            disabled={props.disabled}
+        >
+            {props.loading && <CLoader />}
+            {!props.loading && (
+                <AntDesign
+                    name={props.name}
+                    size={props.inline ? 18 : 16}
+                    color={iconColor}
+                />
+            )}
+        </TouchableOpacity>
     );
 }

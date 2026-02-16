@@ -180,22 +180,19 @@ export function HistoryCard({
 
                     <View style={{ flexDirection: 'row', marginLeft: 'auto' }}>
                         <CIconButton
-                            size={'s'}
-                            variant={'primary'}
                             onPress={() =>
                                 setIsSchemeVisible(
                                     (currentValue) => !currentValue,
                                 )
                             }
-                            name={'schedule'}
+                            name="schedule"
                         />
 
                         <CIconButton
                             style={{ marginLeft: 10 }}
-                            size={'s'}
-                            variant={'error'}
+                            variant="error"
                             onPress={() => remove(train)}
-                            name={'delete'}
+                            name="delete"
                         />
                     </View>
                 </View>

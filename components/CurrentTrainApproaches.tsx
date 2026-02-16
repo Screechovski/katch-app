@@ -66,10 +66,10 @@ export function CurrentTrainApproaches({
                             </Text>
                         </View>
                         <CIconButton
-                            size="m"
-                            variant={'error'}
                             onPress={() => onDelete(index)}
-                            name={'delete'}
+                            name="delete"
+                            inline
+                            variant="error"
                         />
                     </View>
                 ))}
