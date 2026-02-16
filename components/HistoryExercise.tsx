@@ -3,7 +3,7 @@ import { Api } from '@/helpers/Api';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
-    trains: Awaited<ReturnType<typeof Api.exerciseHistory>>;
+    trains: Awaited<ReturnType<typeof Api.exerciseHistory>>['trains'];
 };
 
 function prettyDate(dateString: string) {
