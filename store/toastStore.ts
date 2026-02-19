@@ -7,12 +7,12 @@ type ToastState = {
 };
 
 export const useToastStore = create<ToastState>((set) => {
-    const setToast = (message: Toast['message'], type: Toast['type']) => {
+    const setToast = (message: Toast['message'], type: Toast['type'], time: number) => {
         const id = setTimeout(() => {
             set((state) => ({
                 toasts: state.toasts.filter((t) => t.id !== id),
             }));
-        }, 3000);
+        }, time);
 
         set((state) => ({
             toasts: [...state.toasts, { message, id, type }],
@@ -22,10 +22,10 @@ export const useToastStore = create<ToastState>((set) => {
     return {
         toasts: [],
         setError: (message: string) => {
-            setToast(message, 'error');
+            setToast(message, 'error', 5000);
         },
         setSuccess: (message: string) => {
-            setToast(message, 'success');
+            setToast(message, 'success', 2000);
         },
     };
 });
