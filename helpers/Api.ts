@@ -33,15 +33,17 @@ export class Api {
         token: string,
         exerciseId: number,
     ): Promise<{
-        trains: {
-            trainDate: string;
-            trainId: number;
-            approaches: {
-                reps: number;
-                weight: number;
-                sets: number;
-            }[];
-        }[];
+        trains:
+            | {
+                  trainDate: string;
+                  trainId: number;
+                  approaches: {
+                      reps: number;
+                      weight: number;
+                      sets: number;
+                  }[];
+              }[]
+            | null;
         rm: number;
     }> {
         const response = await instance.get(`/exercise/history/${exerciseId}`, {
@@ -81,8 +83,6 @@ export class Api {
     }
 
     static checkToken(token: string): Promise<{ isValid: boolean }> {
-        return instance
-            .post('/check-token', { token })
-            .then((response) => response.data);
+        return instance.post('/check-token', { token }).then((response) => response.data);
     }
 }
