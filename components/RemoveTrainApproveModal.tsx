@@ -7,17 +7,12 @@ import { StyleSheet, Text, View } from 'react-native';
 
 interface Props {
     visible: boolean;
-    trainWeight?: number;
+    trainDate?: string;
     onClose: () => void;
     onRemove: () => void;
 }
 
-export function RemoveTrainApproveModal({
-    visible,
-    trainWeight,
-    onClose,
-    onRemove,
-}: Props) {
+export function RemoveTrainApproveModal({ visible, trainDate, onClose, onRemove }: Props) {
     const theme = useTheme();
     const styles = StyleSheet.create({
         container: {
@@ -33,10 +28,10 @@ export function RemoveTrainApproveModal({
             marginBottom: 10,
         },
     });
-    const [trainDate, setTrainDate] = useState('');
+    const [_trainDate, setTrainDate] = useState('');
 
     const removeHandle = () => {
-        if ((!trainWeight && trainDate === '') || trainWeight === +trainDate) {
+        if ((!trainDate && _trainDate === '') || trainDate === _trainDate) {
             onRemove();
         }
     };
@@ -48,13 +43,11 @@ export function RemoveTrainApproveModal({
     return (
         <CModal visible={visible} onHide={onClose}>
             <View style={styles.container}>
-                <Text style={styles.title}>
-                    Для подтверждения, введите дату тренировки
-                </Text>
+                <Text style={styles.title}>Для подтверждения, введите дату тренировки</Text>
                 <CInput
                     style={styles.input}
-                    placeholder=""
-                    value={trainDate}
+                    placeholder={trainDate || ''}
+                    value={_trainDate}
                     onInput={setTrainDate}
                 />
                 <CButton onPress={removeHandle} variant="error">

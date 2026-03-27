@@ -3,7 +3,7 @@ import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { useEffect, useMemo, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Api } from '@/helpers/Api';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
@@ -20,19 +20,16 @@ export default function HomeScreen() {
         selectParameters: 1,
     } as const;
 
+    const queryClient = useQueryClient();
     const { width } = useWindowDimensions();
-    const [step, setStep] = useState<(typeof STEP)[keyof typeof STEP]>(
-        STEP.selectExercises,
-    );
+    const [step, setStep] = useState<(typeof STEP)[keyof typeof STEP]>(STEP.selectExercises);
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
 
     let queryFn;
     if (systemStore.isOffline) {
         queryFn = async () => {
-            const data = await Storage.getData<ExerciseServer[]>(
-                Storage.exercises,
-            );
+            const data = await Storage.getData<ExerciseServer[]>(Storage.exercises);
             return data ?? [];
         };
     } else {
@@ -99,10 +96,7 @@ export default function HomeScreen() {
             if (!trains) {
                 trains = [];
             }
-            Storage.saveData(Storage.trains, [
-                ...trains,
-                getSavePayload(weight),
-            ]);
+            Storage.saveData(Storage.trains, [...trains, getSavePayload(weight)]);
             store.clearSets();
             toastStore.setSuccess('Тренировка сохранена локально');
         } catch (error) {
@@ -118,17 +112,18 @@ export default function HomeScreen() {
                 await Api.saveTrain(token, getSavePayload(weight));
                 store.clearSets();
                 toastStore.setSuccess('Тренировка сохранена');
+                queryClient.invalidateQueries({ queryKey: ['trains'] });
             }
         } catch (error) {
             toastStore.setError('Ошибка при сохранении тренировки: ' + error);
         }
     };
 
-    async function onSave(weight?: number) {
+    async function onSave(weight: number) {
         if (systemStore.isOffline) {
-            saveOffline(weight ?? 0);
+            saveOffline(weight);
         } else {
-            saveOnline(weight ?? 0);
+            saveOnline(weight);
         }
     }
 
@@ -140,15 +135,10 @@ export default function HomeScreen() {
     return (
         <CWrapper style={{ flex: 1 }}>
             {store.sets.length !== 0 && (
-                <CurrentTrainApproaches
-                    approaches={store.sets}
-                    onDelete={store.removeSet}
-                />
+                <CurrentTrainApproaches approaches={store.sets} onDelete={store.removeSet} />
             )}
 
-            {store.sets.length !== 0 && (
-                <CurrentTraintSaveButton onSave={onSave} />
-            )}
+            {store.sets.length !== 0 && <CurrentTraintSaveButton onSave={onSave} />}
 
             {exercisesQuery.data && (
                 <ExerciseListSearch
@@ -160,16 +150,11 @@ export default function HomeScreen() {
                 />
             )}
 
-            <CModal
-                visible={isParametersExerciseVisible}
-                onHide={onCancelSelection}
-            >
+            <CModal visible={isParametersExerciseVisible} onHide={onCancelSelection}>
                 {isParametersExerciseVisible && (
                     <ExerciseParametersSelector
                         exercisePhoto={{
-                            uri: Api.getPhotoUrl(
-                                store.selectedExercise!.imageName,
-                            ),
+                            uri: Api.getPhotoUrl(store.selectedExercise!.imageName),
                         }}
                         exerciseId={store.selectedExercise!.ID}
                         exerciseName={store.selectedExercise!.name}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { TrainServer } from '@/models/TrainsServer';
+import { TrainServer, TrainsFromServer } from '@/models/TrainsServer';
 import { Model } from '@/models/Model';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
@@ -54,7 +54,7 @@ export class Api {
         return response.data;
     }
 
-    static async trains(token: string): Promise<TrainServer[]> {
+    static async trains(token: string): Promise<TrainsFromServer> {
         const response = await instance.get('/train', {
             headers: {
                 Authorization: token,
