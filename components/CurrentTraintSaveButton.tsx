@@ -6,12 +6,10 @@ import { useSystemStore } from '@/store/systemStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
 interface CurrentTraintSaveButtonProps {
-    onSave: (weight?: number) => void;
+    onSave: (weight: number) => void;
 }
 
-export function CurrentTraintSaveButton({
-    onSave,
-}: CurrentTraintSaveButtonProps) {
+export function CurrentTraintSaveButton({ onSave }: CurrentTraintSaveButtonProps) {
     const [showWeightModal, setShowWeightModal] = useState(false);
     const systemStore = useSystemStore();
     const settingsStore = useSettingsStore();
@@ -20,7 +18,7 @@ export function CurrentTraintSaveButton({
         if (settingsStore.isWeightAfterTrain) {
             setShowWeightModal(true);
         } else {
-            onSave();
+            onSave(0);
         }
     }
 
@@ -34,11 +32,7 @@ export function CurrentTraintSaveButton({
 
     return (
         <>
-            <CButton
-                variant="success"
-                style={styles.save}
-                onPress={handleSavePress}
-            >
+            <CButton variant="success" style={styles.save} onPress={handleSavePress}>
                 {systemStore.isOffline ? 'Сохранить в очередь' : 'Сохранить'}
             </CButton>
 

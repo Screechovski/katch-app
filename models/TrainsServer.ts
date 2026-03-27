@@ -40,7 +40,12 @@ export interface TrainServerSet {
     exerciseId: number;
     Exercise: TrainServerSetExercise;
 }
-
+export interface TrainsFromServer {
+    items: TrainServer[];
+    limit: number;
+    page: number;
+    total: number;
+}
 export interface TrainServer {
     ID: number;
     CreatedAt: string;

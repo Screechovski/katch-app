@@ -1,14 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, Text, ScrollView, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Text, FlatList } from 'react-native';
 import { CWrapper } from '@/components/ui/CWrapper';
-import { CLoader } from '@/components/ui/CLoader';
-import { LoadBackupModal } from '@/components/elements/LoadBackupModal';
-import { FilterChips } from '@/components/FilterChips';
 import { HistoryCard } from '@/components/HistoryCard';
 import { Storage } from '@/helpers/Storage';
 import { Api } from '@/helpers/Api';
 import { useQuery } from '@tanstack/react-query';
-import { ExerciseServer } from '@/models/ExerciseServer';
 import { RemoveTrainApproveModal } from '@/components/RemoveTrainApproveModal';
 import { TrainServer } from '@/models/TrainsServer';
 
@@ -29,9 +25,6 @@ export default function HistoryPage() {
         refetchOnMount: 'always',
     });
 
-    const [filterExercises, setFilterExercises] =
-        useState<ExerciseServer | null>(null);
-
     async function removeTrain() {
         if (!trainForRemove) {
             return;
@@ -51,58 +44,18 @@ export default function HistoryPage() {
         }
     }
 
-    function addFilter(_ex: ExerciseServer) {
-        if (filterExercises?.ID === _ex.ID) {
-            return;
-        }
-
-        setFilterExercises(_ex);
-    }
-
-    const [trainForRemove, setTrainForRemove] = useState<TrainServer | null>(
-        null,
-    );
-
-    const filteredTrains = useMemo(() => {
-        if (filterExercises === null) {
-            return trains.data;
-        }
-
-        return (trains.data || [])
-            .map((train) => ({
-                ...train,
-                Sets: train.Sets.filter((set) => {
-                    return set.exerciseId === filterExercises.ID;
-                }),
-            }))
-            .filter((train) => {
-                return !!train.Sets.length;
-            });
-    }, [trains.data, filterExercises]);
+    const [trainForRemove, setTrainForRemove] = useState<TrainServer | null>(null);
 
     return (
         <CWrapper>
-            {filterExercises && (
-                <FilterChips
-                    name={filterExercises.name}
-                    onRemoveFilter={() => setFilterExercises(null)}
-                />
-            )}
-
             {trains.data && (
                 <FlatList
                     refreshing={trains.isFetching}
                     onRefresh={trains.refetch}
-                    data={filteredTrains}
+                    data={trains.data?.items || []}
                     ListEmptyComponent={<Text>Пусто.</Text>}
                     renderItem={({ item }) => (
-                        <HistoryCard
-                            key={item.ID}
-                            train={item}
-                            setFilterExercises={addFilter}
-                            isControlsVisible={filterExercises === null}
-                            remove={setTrainForRemove}
-                        />
+                        <HistoryCard key={item.ID} train={item} remove={setTrainForRemove} />
                     )}
                 />
             )}
@@ -110,7 +63,7 @@ export default function HistoryPage() {
             <RemoveTrainApproveModal
                 onClose={() => setTrainForRemove(null)}
                 onRemove={removeTrain}
-                trainWeight={trainForRemove?.UserWeight}
+                trainDate={trainForRemove?.Date}
                 visible={trainForRemove !== null}
             />
         </CWrapper>

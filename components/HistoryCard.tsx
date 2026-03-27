@@ -1,27 +1,19 @@
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { Colors } from '@/constants/Theme';
 import { TrainServer, TrainServerSet } from '@/models/TrainsServer';
 import { Api } from '@/helpers/Api';
-import { ExerciseServer } from '@/models/ExerciseServer';
 import { SchemeFront } from '@/components/Scheme/SchemeFront';
 import { SchemeBack } from '@/components/Scheme/SchemeBack';
 import { useTheme } from '@/components/ThemeProvider';
+import { prettyDate } from '@/helpers/PrettyDate';
 
 interface Props {
     train: TrainServer;
     remove: (train: TrainServer) => void;
-    isControlsVisible: boolean;
-    setFilterExercises: (ex: ExerciseServer) => void;
 }
 
-export function HistoryCard({
-    train,
-    remove,
-    isControlsVisible,
-    setFilterExercises,
-}: Props) {
+export function HistoryCard({ train, remove }: Props) {
     const theme = useTheme();
     const styles = useMemo(
         () =>
@@ -50,9 +42,6 @@ export function HistoryCard({
                     fontSize: 16,
                     color: theme?.colors.background.i7,
                 },
-                exerciseNameWrapper: {
-                    flex: 1,
-                },
                 exerciseParams: {
                     fontSize: 14,
                     marginLeft: 'auto',
@@ -60,9 +49,8 @@ export function HistoryCard({
                 },
                 footer: {
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    alignItems: 'flex-end',
                     gap: 8,
-                    paddingLeft: 34,
                 },
                 weight: {
                     fontSize: 14,
@@ -112,7 +100,7 @@ export function HistoryCard({
 
             sum[set.Exercise.MuscleGroupID] += 6;
 
-            set.Exercise.SecondaryMuscles.forEach((second) => {
+            set.Exercise.SecondaryMuscles?.forEach((second) => {
                 if (!sum[second.muscleGroupId]) {
                     sum[second.muscleGroupId] = 0;
                 }
@@ -123,16 +111,6 @@ export function HistoryCard({
 
         return Object.entries(sum).map(([id, value]) => ({ id: +id, value }));
     }, [train.Sets]);
-
-    function prettyDate(dateString: string) {
-        const date = new Date(dateString);
-        const daysOfWeek = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const dayOfWeek = daysOfWeek[date.getDay()];
-
-        return `${dayOfWeek} ${day}.${month}`;
-    }
 
     return (
         <View style={styles.card}>
@@ -148,57 +126,35 @@ export function HistoryCard({
                             style={styles.image}
                         />
                     </View>
-
-                    <Pressable
-                        style={styles.exerciseNameWrapper}
-                        onPress={() =>
-                            setFilterExercises({
-                                ID: set.exerciseId,
-                                name: set.Exercise.name,
-                                imageName: set.Exercise.imageName,
-                            })
-                        }
-                    >
-                        <Text style={styles.exerciseName}>
-                            {set.Exercise.name}
-                        </Text>
-                    </Pressable>
+                    <Text style={styles.exerciseName}>{set.Exercise.name}</Text>
 
                     <Text style={styles.exerciseParams}>
-                        {set.weight}кг {set.sets}x{set.reps}
+                        {`${set.weight}кг ${set.sets}x${set.reps}`}
                     </Text>
                 </View>
             ))}
 
-            {isControlsVisible && (
-                <View style={styles.footer}>
-                    {!!train.UserWeight && (
-                        <Text style={styles.weight}>
-                            {train.UserWeight.toString()}кг
-                        </Text>
-                    )}
+            <View style={styles.footer}>
+                {!!train.UserWeight && (
+                    <Text style={styles.weight}>Вес: {train.UserWeight.toString()}кг</Text>
+                )}
 
-                    <View style={{ flexDirection: 'row', marginLeft: 'auto' }}>
-                        <CIconButton
-                            onPress={() =>
-                                setIsSchemeVisible(
-                                    (currentValue) => !currentValue,
-                                )
-                            }
-                            name="schedule"
-                        />
+                <View style={{ flexDirection: 'row', marginLeft: 'auto' }}>
+                    <CIconButton
+                        onPress={() => setIsSchemeVisible((currentValue) => !currentValue)}
+                        name="schedule"
+                    />
 
-                        <CIconButton
-                            style={{ marginLeft: 10 }}
-                            variant="error"
-                            onPress={() => remove(train)}
-                            name="delete"
-                        />
-                    </View>
+                    <CIconButton
+                        style={{ marginLeft: 10 }}
+                        variant="error"
+                        onPress={() => remove(train)}
+                        name="delete"
+                    />
                 </View>
-            )}
+            </View>
 
-            {isControlsVisible && isSchemeVisible && (
+            {isSchemeVisible && (
                 <View
                     style={{
                         flexDirection: 'row',

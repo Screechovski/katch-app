@@ -232,14 +232,17 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                     max={weight.max}
                 />
             </View>
-            {exerciseEffectiveness && (
-                <View>
-                    <Text>RM {exerciseEffectiveness.rm}</Text>
+
+            <View style={{ height: 60 }}>
+                {history.isFetching && <CLoader />}
+                {exerciseEffectiveness && <Text>RM {exerciseEffectiveness.rm}</Text>}
+                {exerciseEffectiveness && (
                     <Text style={[styles.hardInfo, { color: exerciseEffectiveness.color }]}>
                         {exerciseEffectiveness.description}
                     </Text>
-                </View>
-            )}
+                )}
+            </View>
+
             <CButton style={styles.button} variant="success" onPress={onComplete}>
                 сохранить
             </CButton>

@@ -10,18 +10,14 @@ interface WeightInputModalProps {
     onSave: (weight: number) => void;
 }
 
-export function WeightInputModal({
-    visible,
-    onClose,
-    onSave,
-}: WeightInputModalProps) {
+export function WeightInputModal({ visible, onClose, onSave }: WeightInputModalProps) {
     const [weight, setWeight] = useState<string>('');
 
     function handleSave() {
-        const weightNumber = parseFloat(weight);
+        const weightNumber = parseFloat(weight.replace(/,/gi, '.'));
 
-        if (!isNaN(weightNumber) && weightNumber > 0) {
-            onSave(weightNumber);
+        if (weight === '' || weightNumber > 0) {
+            onSave(weight === '' ? 0 : weightNumber);
             setWeight('');
             onClose();
         }
