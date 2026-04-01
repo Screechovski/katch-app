@@ -54,8 +54,8 @@ export class Api {
         return response.data;
     }
 
-    static async trains(token: string): Promise<TrainsFromServer> {
-        const response = await instance.get('/train', {
+    static async trains(token: string, page: number): Promise<TrainsFromServer> {
+        const response = await instance.get(`/train?page=${page}`, {
             headers: {
                 Authorization: token,
             },
