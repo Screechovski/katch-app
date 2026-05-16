@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { CLoader } from '@/components/ui/CLoader';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { CButton } from '@/components/ui/CButton';
 import { useToastStore } from '@/store/toastStore';

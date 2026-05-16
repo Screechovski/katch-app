@@ -33,11 +33,7 @@ type Props = {
 export function CInformer({ message, type }: Props) {
     return (
         <View style={type === 'error' ? style.wrap : style.successWrap}>
-            <Text
-                style={type === 'error' ? style.errorText : style.successText}
-            >
-                {message}
-            </Text>
+            <Text style={type === 'error' ? style.errorText : style.successText}>{message}</Text>
         </View>
     );
 }

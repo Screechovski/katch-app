@@ -1,19 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { Set } from '@/store/currentTrainStore';
 import { useMemo } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { CHr } from '@/components/ui/CHr';
+import { CurrentTrainExercise } from '@/store/currentTrainStore';
 
 interface CurrentTrainApproachesProps {
-    approaches: Set[];
+    exercises: CurrentTrainExercise[];
     onDelete: (index: number) => void;
 }
 
-export function CurrentTrainApproaches({
-    approaches,
-    onDelete,
-}: CurrentTrainApproachesProps) {
+export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainApproachesProps) {
     const theme = useTheme();
     const styles = useMemo(
         () =>
@@ -54,15 +51,12 @@ export function CurrentTrainApproaches({
     return (
         <>
             <View style={styles.list}>
-                {approaches.map((approache, index) => (
+                {exercises.map((exercise, index) => (
                     <View key={index} style={styles.approach}>
                         <View style={styles.approachText}>
-                            <Text style={styles.name}>
-                                {approache.exercises.name}
-                            </Text>
+                            <Text style={styles.name}>{exercise.name}</Text>
                             <Text style={styles.weight}>
-                                {approache.sets[0].weight}кг{' '}
-                                {approache.sets.length}x{approache.sets[0].reps}
+                                {exercise.weight}кг {exercise.sets}x{exercise.reps}
                             </Text>
                         </View>
                         <CIconButton

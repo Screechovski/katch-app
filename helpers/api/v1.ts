@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { TrainServer, TrainsFromServer } from '@/models/TrainsServer';
 import { Model } from '@/models/Model';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
-const instance = axios.create({
+export const instance = axios.create({
     baseURL: API_BASE_URL + '/api',
     headers: {
         'Content-Type': 'application/json',
@@ -19,13 +19,11 @@ export class Api {
     }
 
     static async exercises(token?: string): Promise<ExerciseServer[]> {
-        const response = await instance.get('/exercises', {
-            headers: token
-                ? {
-                      Authorization: token,
-                  }
-                : undefined,
-        });
+        let config: AxiosRequestConfig = {};
+        if (token) {
+            config.headers = { Authorization: token };
+        }
+        const response = await instance.get('/exercises', config);
         return Model.toTypedArray(response.data, ExerciseServer);
     }
 

@@ -3,6 +3,8 @@ import { useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
 import { ExerciseServer } from '@/models/ExerciseServer';
+import { CIconButton } from '@/components/ui/CIconButton';
+import { useToastStore } from '@/store/toastStore';
 
 interface Props {
     style?: StyleProp<ViewStyle>;
@@ -19,7 +21,19 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
     },
-    input: { marginBottom: 10 },
+    input: {
+        flex: 1,
+    },
+    header: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 10,
+        gap: 10,
+    },
+    settingsIcon: {
+        height: 50,
+        width: 50,
+    },
     listContainer: {
         flex: 1,
         minHeight: 0,
@@ -43,14 +57,22 @@ export function ExerciseListSearch(props: Props) {
         });
     }, [props.exercises, searchValue]);
 
+    const toastStore = useToastStore();
+    const openSettings = () => {
+        toastStore.setSuccess('В разработке, тут будут настройки отображения упражнений');
+    };
+
     return (
         <View style={[props.style, style.wrap]}>
-            <CInput
-                style={style.input}
-                value={searchValue}
-                onInput={setSearchValue}
-                placeholder="Поиск"
-            />
+            <View style={style.header}>
+                <CInput
+                    style={style.input}
+                    value={searchValue}
+                    onInput={setSearchValue}
+                    placeholder="Поиск"
+                />
+                <CIconButton style={style.settingsIcon} name="setting" onPress={openSettings} />
+            </View>
 
             <View style={style.listContainer}>
                 <ExerciseList

@@ -11,7 +11,7 @@ export function useGetSchemeWidth() {
     const padding = 40;
 
     return {
-        width: useMemo(() => (width - padding) / 2, [width]),
-        height: useMemo(() => (width - padding) / 2 / diff, [width]),
+        width: useMemo(() => (width * 0.7 - padding) / 2, [width]),
+        height: useMemo(() => (width * 0.7 - padding) / 2 / diff, [width]),
     };
 }

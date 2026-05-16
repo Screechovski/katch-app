@@ -1,6 +1,6 @@
 import { CInformer } from '@/components/ui/CInformer';
 import { useToastStore } from '@/store/toastStore';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const styles = StyleSheet.create({
     toasts: {
@@ -18,11 +18,9 @@ export const Toast = () => {
     return (
         <View style={styles.toasts}>
             {store.toasts.map((toast) => (
-                <CInformer
-                    message={toast.message}
-                    type={toast.type}
-                    key={toast.id}
-                />
+                <TouchableOpacity onPress={() => store.remove(toast.id)} key={toast.id}>
+                    <CInformer message={toast.message} type={toast.type} />
+                </TouchableOpacity>
             ))}
         </View>
     );

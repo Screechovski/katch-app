@@ -1,11 +1,11 @@
 import { useTheme } from '@/components/ThemeProvider';
-import { RepsWeight } from '@/store/currentTrainStore';
+import { CurrentTrainExerciseSet } from '@/store/currentTrainStore';
 import { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { CSlider } from '@/components/ui/CSlider';
 import { CButton } from '@/components/ui/CButton';
 import { useQuery } from '@tanstack/react-query';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { CHr } from '@/components/ui/CHr';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -22,7 +22,7 @@ interface ExerciseParametersSelectorProps {
         last: number;
         top: number;
     };
-    onComplete: (params: RepsWeight[]) => void;
+    onComplete: (params: CurrentTrainExerciseSet) => void;
 }
 
 export function ExerciseParametersSelector(props: ExerciseParametersSelectorProps) {
@@ -100,22 +100,59 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
     };
     const [repeatsValue, setRepeatsValue] = useState(repeats.min);
 
-    const weight = useMemo(
-        () => ({
-            min: [66, 65].includes(props.exerciseId) ? 40 : 5,
-            max: [66, 65].includes(props.exerciseId) ? 130 : 90,
-        }),
-        [props.exerciseId],
-    );
+    const weight = useMemo(() => {
+        let base = {
+            min: 5,
+            max: 90,
+        };
+
+        switch (props.exerciseId) {
+            case 72: // Румынский подъем
+                base.min = 40;
+                base.max = 120;
+                break;
+            case 66: // Жим ногами
+                base.min = 50;
+                base.max = 150;
+                break;
+            case 65: // Гак-приседания
+                base.min = 90;
+                base.max = 200;
+                break;
+            case 6: // Жим гантелей сидя
+                base.min = 4;
+                base.max = 60;
+                break;
+            case 34: // Жим гантелей лежа
+            case 40: // Сведения рук в тренажере
+            case 95: // Подъем EZ-штанги на бицепс на скамье Скотта
+            case 19: // Подъем штанги на бицепс обратным хватом
+                base.min = 5;
+                base.max = 60;
+                break;
+            case 51: // Подтягивания на перекладине
+                base.min = -45;
+                base.max = 30;
+                break;
+            case 14: // Молоток
+            case 7: // Жим Арнольда
+            case 81: // Сгибания рук в запястьях
+                base.min = 5;
+                base.max = 40;
+            default:
+                break;
+        }
+
+        return base;
+    }, [props.exerciseId]);
     const [weightValue, setWeightValue] = useState(weight.min);
 
     const onComplete = () => {
-        props.onComplete(
-            Array.from({ length: approachesValue }).map(() => ({
-                reps: repeatsValue,
-                weight: weightValue,
-            })),
-        );
+        props.onComplete({
+            sets: approachesValue,
+            reps: repeatsValue,
+            weight: weightValue,
+        });
     };
 
     const exerciseEffectiveness = useMemo(() => {
@@ -246,6 +283,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             <CButton style={styles.button} variant="success" onPress={onComplete}>
                 сохранить
             </CButton>
+
             {settingsStore.isHistoryInExerciseSelector && (
                 <View style={{ height: 223 }}>
                     {isHrVisible && (

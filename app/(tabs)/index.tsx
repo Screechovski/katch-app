@@ -4,15 +4,16 @@ import { CWrapper } from '@/components/ui/CWrapper';
 import { useEffect, useMemo, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
-import { RepsWeight, useCurrentTrainStore } from '@/store/currentTrainStore';
+import { CurrentTrainExerciseSet, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
 import { CModal } from '@/components/ui/CModal';
+import { ApiV2 } from '@/helpers/api/v2';
 
 export default function HomeScreen() {
     const STEP = {
@@ -57,9 +58,9 @@ export default function HomeScreen() {
         store.setSelectedExercise(exercise);
     }
 
-    function onParametersComplete(params: RepsWeight[]) {
+    function onParametersComplete(params: CurrentTrainExerciseSet) {
         if (store.selectedExercise) {
-            store.setSets(params);
+            store.appendExercise(params);
             setStep(STEP.selectExercises);
             store.setSelectedExercise(null);
         }
@@ -70,23 +71,32 @@ export default function HomeScreen() {
         store.setSelectedExercise(null);
     }
 
-    function getSavePayload(weight: number) {
-        const sets: any[] = [];
+    type Payload = {
+        weight: number;
+        date: string;
+        exercises: {
+            id: number;
+            reps: number;
+            weight: number;
+            sets: number;
+        }[];
+    };
+    function getSavePayload(weight: number): Payload {
+        const exercises: Payload['exercises'] = [];
 
-        store.sets.forEach((exercises) => {
-            exercises.sets.forEach((set) => {
-                sets.push({
-                    exerciseId: exercises.exercises.ID,
-                    reps: set.reps,
-                    weight: set.weight,
-                });
+        store.train.exercises.forEach((_exercises) => {
+            exercises.push({
+                id: _exercises.exerciseId,
+                reps: _exercises.reps,
+                weight: _exercises.weight,
+                sets: _exercises.sets,
             });
         });
 
         return {
             weight,
-            date: new Date(),
-            sets,
+            date: new Date().toISOString(),
+            exercises,
         };
     }
 
@@ -97,7 +107,7 @@ export default function HomeScreen() {
                 trains = [];
             }
             Storage.saveData(Storage.trains, [...trains, getSavePayload(weight)]);
-            store.clearSets();
+            store.clearExercises();
             toastStore.setSuccess('Тренировка сохранена локально');
         } catch (error) {
             toastStore.setError('Ошибка при сохранении тренировки: ' + error);
@@ -109,8 +119,8 @@ export default function HomeScreen() {
             const token = await Storage.getData<string>(Storage.token);
 
             if (token) {
-                await Api.saveTrain(token, getSavePayload(weight));
-                store.clearSets();
+                await ApiV2.saveTrain(token, getSavePayload(weight));
+                store.clearExercises();
                 toastStore.setSuccess('Тренировка сохранена');
                 queryClient.invalidateQueries({ queryKey: ['trains'] });
             }
@@ -134,11 +144,14 @@ export default function HomeScreen() {
 
     return (
         <CWrapper style={{ flex: 1 }}>
-            {store.sets.length !== 0 && (
-                <CurrentTrainApproaches approaches={store.sets} onDelete={store.removeSet} />
+            {store.train.exercises.length !== 0 && (
+                <CurrentTrainApproaches
+                    exercises={store.train.exercises}
+                    onDelete={store.removeExercise}
+                />
             )}
 
-            {store.sets.length !== 0 && <CurrentTraintSaveButton onSave={onSave} />}
+            {store.train.exercises.length !== 0 && <CurrentTraintSaveButton onSave={onSave} />}
 
             {exercisesQuery.data && (
                 <ExerciseListSearch
