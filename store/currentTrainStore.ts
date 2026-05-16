@@ -1,53 +1,90 @@
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { TrainServerSet } from '@/models/TrainsServer';
+import { persist, createJSONStorage, devtools } from 'zustand/middleware';
 import { create } from 'zustand';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export type RepsWeight = Pick<TrainServerSet, 'reps' | 'weight'>;
-export type Set = {
-    sets: RepsWeight[];
-    exercises: ExerciseServer;
+export type CurrentTrainExerciseSet = {
+    reps: number;
+    sets: number;
+    weight: number;
 };
+
+export type CurrentTrainExercise = {
+    name: string;
+    exerciseId: number;
+} & CurrentTrainExerciseSet;
 
 type CurrentTrainState = {
     selectedExercise: ExerciseServer | null;
     setSelectedExercise: (exercises: ExerciseServer | null) => void;
 
-    sets: Set[];
-    setSets: (sets: RepsWeight[]) => void;
-    clearSets: () => void;
-    removeSet: (index: number) => void;
+    train: {
+        weight: number;
+        exercises: CurrentTrainExercise[];
+    };
+    appendExercise: (exercise: CurrentTrainExerciseSet) => void;
+    clearExercises: () => void;
+    removeExercise: (index: number) => void;
 };
 
-export const useCurrentTrainStore = create<CurrentTrainState>((set) => ({
-    selectedExercise: null,
-    setSelectedExercise: (exercises: ExerciseServer | null) => {
-        set(() => ({ selectedExercise: exercises }));
-    },
+export const useCurrentTrainStore = create<CurrentTrainState>()(
+    devtools(
+        persist(
+            (set) => ({
+                selectedExercise: null,
+                setSelectedExercise: (exercises: ExerciseServer | null) => {
+                    set(() => ({ selectedExercise: exercises }));
+                },
 
-    sets: [],
-    setSets: (sets: RepsWeight[]) => {
-        set((state) => {
-            if (state.selectedExercise) {
-                return {
-                    sets: [
-                        ...state.sets,
-                        {
-                            sets,
-                            exercises: state.selectedExercise,
+                train: {
+                    weight: 0,
+                    exercises: [],
+                },
+                appendExercise: (exerciseSet: CurrentTrainExerciseSet) => {
+                    set((state) => {
+                        if (!state.selectedExercise) {
+                            return state;
+                        }
+
+                        return {
+                            train: {
+                                ...state.train,
+                                exercises: [
+                                    ...state.train.exercises,
+                                    {
+                                        image: state.selectedExercise.imageName,
+                                        name: state.selectedExercise.name,
+                                        exerciseId: state.selectedExercise.ID,
+                                        ...exerciseSet,
+                                    },
+                                ],
+                            },
+                        };
+                    });
+                },
+                clearExercises: () => {
+                    set(() => ({
+                        train: {
+                            weight: 0,
+                            exercises: [],
                         },
-                    ],
-                };
-            }
-
-            return state;
-        });
-    },
-    clearSets: () =>
-        set(() => ({
-            sets: [],
-        })),
-    removeSet: (index: number) =>
-        set((state) => ({
-            sets: state.sets.filter((_, _index) => _index !== index),
-        })),
-}));
+                    }));
+                },
+                removeExercise: (index: number) => {
+                    set((state) => ({
+                        train: {
+                            ...state.train,
+                            exercises: state.train.exercises.filter(
+                                (_, _index) => _index !== index,
+                            ),
+                        },
+                    }));
+                },
+            }),
+            {
+                name: 'current-train',
+                storage: createJSONStorage(() => AsyncStorage),
+            },
+        ),
+    ),
+);

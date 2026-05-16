@@ -2,7 +2,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { CButton } from '@/components/ui/CButton';
 import { CCheckbox } from '@/components/ui/CCheckbox';
 import { CWrapper } from '@/components/ui/CWrapper';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useToastStore } from '@/store/toastStore';
@@ -78,10 +78,7 @@ export default function ProfilePage() {
     return (
         <CWrapper>
             <View style={style.userCard}>
-                <CCheckbox
-                    checked={theme?.theme === 'dark'}
-                    onPress={() => theme?.toggleTheme()}
-                >
+                <CCheckbox checked={theme?.theme === 'dark'} onPress={() => theme?.toggleTheme()}>
                     Темная тема
                 </CCheckbox>
                 <CCheckbox
@@ -92,16 +89,12 @@ export default function ProfilePage() {
                 </CCheckbox>
                 <CCheckbox
                     checked={settingsStore.isHistoryInExerciseSelector}
-                    onPress={() =>
-                        settingsStore.toggle('isHistoryInExerciseSelector')
-                    }
+                    onPress={() => settingsStore.toggle('isHistoryInExerciseSelector')}
                 >
                     Показывать историю в выборе упражнения
                 </CCheckbox>
                 {hasStorageTrains && (
-                    <CButton onPress={saveLocalTrains}>
-                        Синхронизировать данные
-                    </CButton>
+                    <CButton onPress={saveLocalTrains}>Синхронизировать данные</CButton>
                 )}
                 <CButton onPress={logout}>Выход</CButton>
             </View>

@@ -1,15 +1,8 @@
 import { CLoader } from '@/components/ui/CLoader';
-import {
-    FlatList,
-    StyleProp,
-    Text,
-    useWindowDimensions,
-    View,
-    ViewStyle,
-} from 'react-native';
+import { FlatList, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { ExerciseCardVertical } from './ExerciseCardVertical';
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { useMemo } from 'react';
 
 interface Props {

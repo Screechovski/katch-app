@@ -2,7 +2,7 @@ import { CButton } from '@/components/ui/CButton';
 import { CInformer } from '@/components/ui/CInformer';
 import { CInput } from '@/components/ui/CInput';
 import { CLoader } from '@/components/ui/CLoader';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useRouter } from 'expo-router';
@@ -75,10 +75,7 @@ export function UserTokenForm(props: Props) {
 
             {!loading && (
                 <View style={styles.buttons}>
-                    <CButton
-                        disabled={token.trim() === ''}
-                        onPress={checkToken}
-                    >
+                    <CButton disabled={token.trim() === ''} onPress={checkToken}>
                         войти
                     </CButton>
                     <CButton variant="success" onPress={goOffline}>

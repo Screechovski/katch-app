@@ -1,16 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { TrainServer, TrainServerSet } from '@/models/TrainsServer';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { SchemeFront } from '@/components/Scheme/SchemeFront';
 import { SchemeBack } from '@/components/Scheme/SchemeBack';
 import { useTheme } from '@/components/ThemeProvider';
 import { prettyDate } from '@/helpers/PrettyDate';
+import { TrainV2 } from '@/helpers/api/v2';
 
 interface Props {
-    train: TrainServer;
-    remove: (train: TrainServer) => void;
+    train: TrainV2;
+    remove: (train: TrainV2) => void;
 }
 
 export function HistoryCard({ train, remove }: Props) {
@@ -46,6 +46,8 @@ export function HistoryCard({ train, remove }: Props) {
                     fontSize: 14,
                     marginLeft: 'auto',
                     color: theme?.colors.background.i7,
+                    minWidth: 80,
+                    textAlign: 'right',
                 },
                 footer: {
                     flexDirection: 'row',
@@ -71,72 +73,49 @@ export function HistoryCard({ train, remove }: Props) {
 
     const [isSchemeVisible, setIsSchemeVisible] = useState(false);
 
-    const sets = useMemo<(TrainServerSet & { sets: number })[]>(() => {
-        const exercises: any = {};
-
-        train.Sets.forEach((set) => {
-            const key = `${set.exerciseId}_${set.reps}_${set.weight}`;
-
-            if (!exercises[key]) {
-                exercises[key] = {
-                    ...set,
-                    sets: 0,
-                };
-            }
-
-            exercises[key].sets += 1;
-        });
-
-        return Object.values(exercises);
-    }, [train.Sets]);
-
     const musclesIntense = useMemo(() => {
         const sum: Record<number, number> = {};
 
-        train.Sets.forEach((set) => {
-            if (!sum[set.Exercise.MuscleGroupID]) {
-                sum[set.Exercise.MuscleGroupID] = 0;
-            }
-
-            sum[set.Exercise.MuscleGroupID] += 6;
-
-            set.Exercise.SecondaryMuscles?.forEach((second) => {
-                if (!sum[second.muscleGroupId]) {
-                    sum[second.muscleGroupId] = 0;
+        train.exercises.forEach((ex) => {
+            ex.groups.forEach((group) => {
+                if (!sum[group.id]) {
+                    sum[group.id] = 0;
                 }
-
-                sum[second.muscleGroupId] += second.engagementLevel;
+                sum[group.id] += group.level;
             });
         });
 
         return Object.entries(sum).map(([id, value]) => ({ id: +id, value }));
-    }, [train.Sets]);
+    }, [train]);
 
     return (
         <View style={styles.card}>
-            <Text style={styles.date}>{prettyDate(train.Date)}</Text>
+            <Text style={styles.date}>{prettyDate(train.date)}</Text>
 
-            {sets.map((set) => (
-                <View style={styles.line} key={set.ID}>
+            {train.exercises.map((exercise) => (
+                <View
+                    style={styles.line}
+                    key={`${exercise.id}_${exercise.weight}_${exercise.reps}_${exercise.sets}`}
+                >
                     <View style={styles.imageWrapper}>
                         <Image
                             source={{
-                                uri: Api.getPhotoUrl(set.Exercise.imageName),
+                                uri: Api.getPhotoUrl(exercise.imageName),
                             }}
                             style={styles.image}
                         />
                     </View>
-                    <Text style={styles.exerciseName}>{set.Exercise.name}</Text>
+                    <Text style={styles.exerciseName}>{exercise.name}</Text>
 
                     <Text style={styles.exerciseParams}>
-                        {`${set.weight}кг ${set.sets}x${set.reps}`}
+                        {`${exercise.weight}кг ${exercise.sets}x${exercise.reps}`}
                     </Text>
                 </View>
             ))}
 
             <View style={styles.footer}>
-                {!!train.UserWeight && (
-                    <Text style={styles.weight}>Вес: {train.UserWeight.toString()}кг</Text>
+                {!!train.userWeight && (
+                    <Text style={styles.weight}>Вес: {train.userWeight.toString()}кг</Text>
                 )}
 
                 <View style={{ flexDirection: 'row', marginLeft: 'auto' }}>
@@ -158,7 +137,7 @@ export function HistoryCard({ train, remove }: Props) {
                 <View
                     style={{
                         flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        justifyContent: 'center',
                     }}
                 >
                     <SchemeFront intence={musclesIntense} />

@@ -4,6 +4,7 @@ type ToastState = {
     toasts: Toast[];
     setError: (message: string) => void;
     setSuccess: (message: string) => void;
+    remove: (id: Toast['id']) => void;
 };
 
 export const useToastStore = create<ToastState>((set) => {
@@ -26,6 +27,11 @@ export const useToastStore = create<ToastState>((set) => {
         },
         setSuccess: (message: string) => {
             setToast(message, 'success', 2000);
+        },
+        remove: (id: Toast['id']) => {
+            set((state) => ({
+                toasts: state.toasts.filter((t) => t.id !== id),
+            }));
         },
     };
 });

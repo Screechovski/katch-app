@@ -1,5 +1,5 @@
 import { useTheme } from '@/components/ThemeProvider';
-import { Api } from '@/helpers/Api';
+import { Api } from '@/helpers/api/v1';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -69,7 +69,7 @@ export const HistoryExercises = (props: Props) => {
                                     <Text
                                         style={{
                                             fontWeight: 'bold',
-                                            width: 51,
+                                            width: 55,
                                             textAlign: 'left',
                                         }}
                                     >
