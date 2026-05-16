@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { CLoader } from '@/components/ui/CLoader';
-import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { CButton } from '@/components/ui/CButton';
 import { useToastStore } from '@/store/toastStore';
 import { useSystemStore } from '@/store/systemStore';
+import { ApiV2 } from '@/helpers/api/v2';
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -35,7 +35,7 @@ export default function Index() {
             setLoading(true);
             const lsToken = await Storage.getData<string>(Storage.token);
             if (lsToken) {
-                const checkRes = await Api.checkToken(lsToken);
+                const checkRes = await ApiV2.checkToken(lsToken);
 
                 if (checkRes.isValid) {
                     router.replace('/(tabs)');

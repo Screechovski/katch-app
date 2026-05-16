@@ -71,12 +71,19 @@ export class ApiV2 {
         return response.data;
     }
 
-    static async exercises(token?: string): Promise<ExerciseServer[]> {
+    static async exercises(token?: string, excludeIds?: number[]): Promise<ExerciseServer[]> {
         let config: AxiosRequestConfig = {};
         if (token) {
             config.headers = { Authorization: token };
         }
+        if (excludeIds) {
+            config.params = { excludeIds };
+        }
         const response = await instance.get('/v2/exercises', config);
         return ExerciseServer.fromArray(response.data);
+    }
+
+    static checkToken(token: string): Promise<{ isValid: boolean }> {
+        return instance.post('/v2/check-token', { token }).then((response) => response.data);
     }
 }

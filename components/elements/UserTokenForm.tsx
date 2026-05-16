@@ -2,7 +2,7 @@ import { CButton } from '@/components/ui/CButton';
 import { CInformer } from '@/components/ui/CInformer';
 import { CInput } from '@/components/ui/CInput';
 import { CLoader } from '@/components/ui/CLoader';
-import { Api } from '@/helpers/api/v1';
+import { ApiV2 } from '@/helpers/api/v2';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useRouter } from 'expo-router';
@@ -32,7 +32,7 @@ export function UserTokenForm(props: Props) {
         try {
             if (token.trim() !== '') {
                 setLoading(true);
-                const res = await Api.checkToken(token);
+                const res = await ApiV2.checkToken(token);
 
                 if (res.isValid) {
                     Storage.saveData(Storage.token, token);

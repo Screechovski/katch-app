@@ -5,6 +5,7 @@ export class Storage {
     static trains = 'PostTrains';
     static exercises = 'GetExercises';
     static theme = '@app:theme';
+    static settingsHiddenExercises = 'settings:hiddenExercises';
 
     static async saveData(key: string, value: any) {
         await AsyncStorage.setItem(key, JSON.stringify(value));

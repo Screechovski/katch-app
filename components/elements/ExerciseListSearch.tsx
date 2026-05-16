@@ -4,7 +4,7 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { useToastStore } from '@/store/toastStore';
+import { SettingsHideExercisesModal } from '@/components/SettingsHideExercisesModal';
 
 interface Props {
     style?: StyleProp<ViewStyle>;
@@ -57,10 +57,7 @@ export function ExerciseListSearch(props: Props) {
         });
     }, [props.exercises, searchValue]);
 
-    const toastStore = useToastStore();
-    const openSettings = () => {
-        toastStore.setSuccess('В разработке, тут будут настройки отображения упражнений');
-    };
+    const [isSettingsOpened, setIsSettingsOpened] = useState(false);
 
     return (
         <View style={[props.style, style.wrap]}>
@@ -71,7 +68,11 @@ export function ExerciseListSearch(props: Props) {
                     onInput={setSearchValue}
                     placeholder="Поиск"
                 />
-                <CIconButton style={style.settingsIcon} name="setting" onPress={openSettings} />
+                <CIconButton
+                    style={style.settingsIcon}
+                    name="setting"
+                    onPress={() => setIsSettingsOpened(true)}
+                />
             </View>
 
             <View style={style.listContainer}>
@@ -83,6 +84,12 @@ export function ExerciseListSearch(props: Props) {
                     onRefresh={props.onRefresh}
                 />
             </View>
+
+            {/* <SettingsModal visible={isSettingsOpened} onClose={() => setIsSettingsOpened(false)} /> */}
+            <SettingsHideExercisesModal
+                visible={isSettingsOpened}
+                onClose={() => setIsSettingsOpened(false)}
+            />
         </View>
     );
 }

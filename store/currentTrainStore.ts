@@ -54,7 +54,7 @@ export const useCurrentTrainStore = create<CurrentTrainState>()(
                                     {
                                         image: state.selectedExercise.imageName,
                                         name: state.selectedExercise.name,
-                                        exerciseId: state.selectedExercise.ID,
+                                        exerciseId: state.selectedExercise.id,
                                         ...exerciseSet,
                                     },
                                 ],

@@ -28,14 +28,17 @@ export default function HomeScreen() {
     const toastStore = useToastStore();
 
     const exercisesQuery = useQuery({
-        queryKey: ['exercises'],
+        queryKey: ['excluded_exercises'],
         queryFn: async () => {
             if (systemStore.isOffline) {
                 const data = await Storage.getData<ExerciseServer[]>(Storage.exercises);
                 return data ?? [];
             } else {
                 const token = await Storage.getData<string>(Storage.token);
-                return ApiV2.exercises(token ?? undefined);
+                const excludedIds = await Storage.getData<number[]>(
+                    Storage.settingsHiddenExercises,
+                );
+                return ApiV2.exercises(token ?? undefined, excludedIds ?? undefined);
             }
         },
     });
