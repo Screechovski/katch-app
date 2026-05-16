@@ -27,22 +27,17 @@ export default function HomeScreen() {
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
 
-    let queryFn;
-    if (systemStore.isOffline) {
-        queryFn = async () => {
-            const data = await Storage.getData<ExerciseServer[]>(Storage.exercises);
-            return data ?? [];
-        };
-    } else {
-        queryFn = async () => {
-            const token = await Storage.getData<string>(Storage.token);
-            return Api.exercises(token ?? undefined);
-        };
-    }
-
     const exercisesQuery = useQuery({
         queryKey: ['exercises'],
-        queryFn,
+        queryFn: async () => {
+            if (systemStore.isOffline) {
+                const data = await Storage.getData<ExerciseServer[]>(Storage.exercises);
+                return data ?? [];
+            } else {
+                const token = await Storage.getData<string>(Storage.token);
+                return ApiV2.exercises(token ?? undefined);
+            }
+        },
     });
 
     useEffect(() => {
@@ -169,7 +164,7 @@ export default function HomeScreen() {
                         exercisePhoto={{
                             uri: Api.getPhotoUrl(store.selectedExercise!.imageName),
                         }}
-                        exerciseId={store.selectedExercise!.ID}
+                        exerciseId={store.selectedExercise!.id}
                         exerciseName={store.selectedExercise!.name}
                         weight={{
                             last: -1,

@@ -1,7 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { ExerciseServer } from '@/models/ExerciseServer';
+import axios from 'axios';
 import { TrainServer, TrainsFromServer } from '@/models/TrainsServer';
-import { Model } from '@/models/Model';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
@@ -16,15 +14,6 @@ export const instance = axios.create({
 export class Api {
     static getPhotoUrl(photoName: string) {
         return `${API_BASE_URL}/image/exercise/${photoName}`;
-    }
-
-    static async exercises(token?: string): Promise<ExerciseServer[]> {
-        let config: AxiosRequestConfig = {};
-        if (token) {
-            config.headers = { Authorization: token };
-        }
-        const response = await instance.get('/exercises', config);
-        return Model.toTypedArray(response.data, ExerciseServer);
     }
 
     static async exerciseHistory(

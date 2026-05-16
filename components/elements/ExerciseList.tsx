@@ -1,4 +1,3 @@
-import { CLoader } from '@/components/ui/CLoader';
 import { FlatList, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { ExerciseCardVertical } from './ExerciseCardVertical';
 import { ExerciseServer } from '@/models/ExerciseServer';
@@ -55,13 +54,13 @@ export function ExerciseList(props: Props) {
                             uri: Api.getPhotoUrl(item.imageName),
                         }}
                         name={item.name}
-                        id={item.ID}
+                        id={item.id}
                     />
                 </View>
             )}
             maxToRenderPerBatch={15}
             numColumns={count}
-            keyExtractor={(item) => item.ID.toString()}
+            keyExtractor={(item) => item.id.toString()}
             columnWrapperStyle={{
                 justifyContent: 'space-between',
             }}

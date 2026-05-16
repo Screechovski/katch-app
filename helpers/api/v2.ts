@@ -1,4 +1,6 @@
 import { instance } from '@/helpers/api/v1';
+import { ExerciseServer } from '@/models/ExerciseServer';
+import { AxiosRequestConfig } from 'axios';
 
 type TrainV2Exercise = {
     id: number;
@@ -67,5 +69,14 @@ export class ApiV2 {
             },
         });
         return response.data;
+    }
+
+    static async exercises(token?: string): Promise<ExerciseServer[]> {
+        let config: AxiosRequestConfig = {};
+        if (token) {
+            config.headers = { Authorization: token };
+        }
+        const response = await instance.get('/v2/exercises', config);
+        return ExerciseServer.fromArray(response.data);
     }
 }
