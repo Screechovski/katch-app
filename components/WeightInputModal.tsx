@@ -1,8 +1,11 @@
 import { StyleSheet, View } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CModal } from '@/components/ui/CModal';
 import { CInput } from '@/components/ui/CInput';
 import { CButton } from '@/components/ui/CButton';
+import { CText } from '@/components/ui/CText';
+import { Storage } from '@/helpers/Storage';
+import { ApiV2 } from '@/helpers/api/v2';
 
 interface WeightInputModalProps {
     visible: boolean;
@@ -28,6 +31,25 @@ export function WeightInputModal({ visible, onClose, onSave }: WeightInputModalP
         onClose();
     }
 
+    const [userWeight, setUserWeight] = useState(0);
+    const getWeights = async () => {
+        try {
+            const token = await Storage.getData<string>(Storage.token);
+
+            if (token) {
+                const res = await ApiV2.getUserWeight(token);
+                setUserWeight(res[0].weight);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        if (visible) {
+            getWeights();
+        }
+    }, [visible]);
+
     return (
         <CModal visible={visible} onHide={handleCancel}>
             <View style={styles.container}>
@@ -38,7 +60,10 @@ export function WeightInputModal({ visible, onClose, onSave }: WeightInputModalP
                     placeholder="Вес после тренировки (кг)"
                     type="number"
                 />
-                <CButton variant="success" onPress={handleSave}>
+                {userWeight && (
+                    <CText variant="text-small">{`Последний вес: ${userWeight}кг`}</CText>
+                )}
+                <CButton style={styles.button} variant="success" onPress={handleSave}>
                     Сохранить
                 </CButton>
             </View>
@@ -58,6 +83,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input: {
-        marginBottom: 20,
+        marginBottom: 2,
+    },
+    button: {
+        marginTop: 8,
     },
 });

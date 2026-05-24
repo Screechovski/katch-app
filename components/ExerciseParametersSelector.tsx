@@ -18,10 +18,6 @@ interface ExerciseParametersSelectorProps {
     exerciseName: string;
     exerciseId: number;
     exercisePhoto: { uri: string };
-    weight: {
-        last: number;
-        top: number;
-    };
     onComplete: (params: CurrentTrainExerciseSet) => void;
 }
 

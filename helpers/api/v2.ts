@@ -86,4 +86,10 @@ export class ApiV2 {
     static checkToken(token: string): Promise<{ isValid: boolean }> {
         return instance.post('/v2/check-token', { token }).then((response) => response.data);
     }
+
+    static getUserWeight(token: string): Promise<{ weight: number }[]> {
+        return instance
+            .get('/v2/user/weight', { headers: { authorization: token } })
+            .then((response) => response.data);
+    }
 }

@@ -169,10 +169,6 @@ export default function HomeScreen() {
                         }}
                         exerciseId={store.selectedExercise!.id}
                         exerciseName={store.selectedExercise!.name}
-                        weight={{
-                            last: -1,
-                            top: -1,
-                        }}
                         onComplete={onParametersComplete}
                     />
                 )}
