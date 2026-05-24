@@ -5,7 +5,6 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { CSlider } from '@/components/ui/CSlider';
 import { CButton } from '@/components/ui/CButton';
 import { useQuery } from '@tanstack/react-query';
-import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { CHr } from '@/components/ui/CHr';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -13,6 +12,7 @@ import { HistoryExercises } from '@/components/HistoryExercise';
 import { CLoader } from '@/components/ui/CLoader';
 import { CInformer } from '@/components/ui/CInformer';
 import { useToastStore } from '@/store/toastStore';
+import { ApiV2 } from '@/helpers/api/v2';
 
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
@@ -76,7 +76,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
         queryFn: async () => {
             const token = await Storage.getData<string>(Storage.token);
             if (token) {
-                return Api.exerciseHistory(token, props.exerciseId);
+                return ApiV2.exerciseHistory(token, props.exerciseId);
             }
             return null;
         },
@@ -152,7 +152,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
     };
 
     const exerciseEffectiveness = useMemo(() => {
-        const rm = history.data?.rm;
+        const rm = history.data?.oneRepMax;
 
         if (!rm) {
             return null;
@@ -217,16 +217,16 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             toastStore.setError(error?.message || 'ошибка при расчетах');
             return null;
         }
-    }, [history.data?.rm, weightValue, repeatsValue]);
+    }, [history.data?.oneRepMax, weightValue, repeatsValue]);
 
     const isHrVisible = useMemo(() => {
         return (
-            history.data?.trains ||
-            history.data?.trains === null ||
+            history.data?.history ||
+            history.data?.history === null ||
             history.isFetching ||
             history.error
         );
-    }, [history.data?.trains, history.error, history.isFetching]);
+    }, [history.data?.history, history.error, history.isFetching]);
 
     return (
         <View style={{ width: 300 }}>
@@ -236,6 +236,36 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 </View>
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
+
+            <View style={{ height: 60 }}>
+                {history.isFetching && <CLoader />}
+                {exerciseEffectiveness && <Text>RM {exerciseEffectiveness.rm}</Text>}
+                {exerciseEffectiveness && (
+                    <Text style={[styles.hardInfo, { color: exerciseEffectiveness.color }]}>
+                        {exerciseEffectiveness.description}
+                    </Text>
+                )}
+            </View>
+
+            {settingsStore.isHistoryInExerciseSelector && (
+                <View style={{ height: 190 }}>
+                    {isHrVisible && (
+                        <>
+                            <CHr />
+                            {history.data?.history && (
+                                <HistoryExercises trains={history.data.history} />
+                            )}
+                            {history.data?.history === null && (
+                                <Text style={{ textAlign: 'center' }}>пусто</Text>
+                            )}
+                            {history.isFetching && <CLoader />}
+                            {history.error && (
+                                <CInformer message={history.error.message} type="error" />
+                            )}
+                        </>
+                    )}
+                </View>
+            )}
 
             <View style={styles.line}>
                 <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
@@ -266,39 +296,9 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 />
             </View>
 
-            <View style={{ height: 60 }}>
-                {history.isFetching && <CLoader />}
-                {exerciseEffectiveness && <Text>RM {exerciseEffectiveness.rm}</Text>}
-                {exerciseEffectiveness && (
-                    <Text style={[styles.hardInfo, { color: exerciseEffectiveness.color }]}>
-                        {exerciseEffectiveness.description}
-                    </Text>
-                )}
-            </View>
-
             <CButton style={styles.button} variant="success" onPress={onComplete}>
                 сохранить
             </CButton>
-
-            {settingsStore.isHistoryInExerciseSelector && (
-                <View style={{ height: 223 }}>
-                    {isHrVisible && (
-                        <>
-                            <CHr />
-                            {history.data?.trains && (
-                                <HistoryExercises trains={history.data.trains} />
-                            )}
-                            {history.data?.trains === null && (
-                                <Text style={{ textAlign: 'center' }}>пусто</Text>
-                            )}
-                            {history.isFetching && <CLoader />}
-                            {history.error && (
-                                <CInformer message={history.error.message} type="error" />
-                            )}
-                        </>
-                    )}
-                </View>
-            )}
         </View>
     );
 }

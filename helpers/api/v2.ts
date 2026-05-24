@@ -92,4 +92,24 @@ export class ApiV2 {
             .get('/v2/user/weight', { headers: { authorization: token } })
             .then((response) => response.data);
     }
+
+    static exerciseHistory(
+        token: string,
+        exerciseId: number,
+    ): Promise<{
+        history: {
+            id: number;
+            date: string;
+            approaches: {
+                reps: number;
+                weight: number;
+                sets: number;
+            }[];
+        }[];
+        oneRepMax: number | null;
+    }> {
+        return instance
+            .get(`/v2/user/exercises/${exerciseId}/history`, { headers: { authorization: token } })
+            .then((response) => response.data);
+    }
 }

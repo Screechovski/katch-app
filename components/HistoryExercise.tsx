@@ -1,10 +1,10 @@
 import { useTheme } from '@/components/ThemeProvider';
-import { Api } from '@/helpers/api/v1';
+import { ApiV2 } from '@/helpers/api/v2';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
-    trains: Awaited<ReturnType<typeof Api.exerciseHistory>>['trains'];
+    trains: Awaited<ReturnType<typeof ApiV2.exerciseHistory>>['history'];
 };
 
 export const HistoryExercises = (props: Props) => {
@@ -40,14 +40,14 @@ export const HistoryExercises = (props: Props) => {
         <View style={styles.wrapper}>
             <ScrollView style={styles.scrollView}>
                 {(props.trains || []).map((train) => (
-                    <View style={styles.item} key={train.trainId}>
+                    <View style={styles.item} key={train.id}>
                         <View style={styles.dot}></View>
-                        <Text style={styles.date}>{prettyDate(train.trainDate)}</Text>
+                        <Text style={styles.date}>{prettyDate(train.date)}</Text>
                         <View>
                             {train.approaches.map((set) => (
                                 <Text
                                     style={{ display: 'flex' }}
-                                    key={`${train.trainId} ${set.weight} ${set.sets} ${set.reps}`}
+                                    key={`${train.id} ${set.weight} ${set.sets} ${set.reps}`}
                                 >
                                     <Text
                                         style={{
