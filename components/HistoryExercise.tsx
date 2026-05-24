@@ -11,8 +11,8 @@ export const HistoryExercises = (props: Props) => {
     const theme = useTheme();
     const styles = StyleSheet.create({
         wrapper: {
-            maxHeight: 200,
-            height: 200,
+            maxHeight: 167,
+            height: 167,
         },
         scrollView: {
             flex: 1,
