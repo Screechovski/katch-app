@@ -5,6 +5,9 @@ import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import React, { StrictMode } from 'react';
 import { StatusBar, View } from 'react-native';
+import { SettingsHideExercisesModal } from '@/components/modal/SettingsHideExercisesModal';
+import { WeightInputModal } from '@/components/modal/WeightInputModal';
+import { ExerciseParametersSelectorModal } from '@/components/modal/ExerciseParametersSelectorModal';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +22,9 @@ export default function RootLayout() {
                 <ThemeProvider>
                     <View style={{ paddingTop: StatusBar.currentHeight }} />
                     <Stack screenOptions={{ headerShown: false }} />
+                    <SettingsHideExercisesModal />
+                    <WeightInputModal />
+                    <ExerciseParametersSelectorModal />
                     <Toast />
                 </ThemeProvider>
             </QueryClientProvider>

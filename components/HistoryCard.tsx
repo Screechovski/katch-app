@@ -7,6 +7,7 @@ import { SchemeBack } from '@/components/Scheme/SchemeBack';
 import { useTheme } from '@/components/ThemeProvider';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { TrainV2 } from '@/helpers/api/v2';
+import { prettySetParams } from '@/helpers/PrettySetParams';
 
 interface Props {
     train: TrainV2;
@@ -88,15 +89,22 @@ export function HistoryCard({ train, remove }: Props) {
         return Object.entries(sum).map(([id, value]) => ({ id: +id, value }));
     }, [train]);
 
+    const formatedExercises = useMemo(() => {
+        return train.exercises.map((exercise, i) => {
+            return {
+                ...exercise,
+                key: `${train.id}_${exercise.id}_${i}`,
+                params: prettySetParams(exercise),
+            };
+        });
+    }, [train]);
+
     return (
         <View style={styles.card}>
             <Text style={styles.date}>{prettyDate(train.date)}</Text>
 
-            {train.exercises.map((exercise) => (
-                <View
-                    style={styles.line}
-                    key={`${exercise.id}_${exercise.weight}_${exercise.reps}_${exercise.sets}`}
-                >
+            {formatedExercises.map((exercise) => (
+                <View style={styles.line} key={exercise.key}>
                     <View style={styles.imageWrapper}>
                         <Image
                             source={{
@@ -106,10 +114,7 @@ export function HistoryCard({ train, remove }: Props) {
                         />
                     </View>
                     <Text style={styles.exerciseName}>{exercise.name}</Text>
-
-                    <Text style={styles.exerciseParams}>
-                        {`${exercise.weight}кг ${exercise.sets}x${exercise.reps}`}
-                    </Text>
+                    <Text style={styles.exerciseParams}>{exercise.params}</Text>
                 </View>
             ))}
 

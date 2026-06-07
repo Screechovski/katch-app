@@ -1,31 +1,25 @@
 import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/components/ui/CWrapper';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Api } from '@/helpers/api/v1';
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
-import { CurrentTrainExerciseSet, useCurrentTrainStore } from '@/store/currentTrainStore';
+import { CurrentTrainExercise, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
-import { CModal } from '@/components/ui/CModal';
 import { ApiV2 } from '@/helpers/api/v2';
+import { useModal } from '@/hooks/useModal';
 
 export default function HomeScreen() {
-    const STEP = {
-        selectExercises: 0,
-        selectParameters: 1,
-    } as const;
-
     const queryClient = useQueryClient();
     const { width } = useWindowDimensions();
-    const [step, setStep] = useState<(typeof STEP)[keyof typeof STEP]>(STEP.selectExercises);
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
+    const weightInputModal = useModal('weightInput');
+    const exerciseParametersSelectorModal = useModal('exerciseParametersSelector');
 
     const exercisesQuery = useQuery({
         queryKey: ['excluded_exercises'],
@@ -49,45 +43,42 @@ export default function HomeScreen() {
         }
     }, [exercisesQuery.isFetched]);
 
-    const store = useCurrentTrainStore();
-
+    const currentTrainStore = useCurrentTrainStore();
     function onSelectExercise(exercise: ExerciseServer) {
-        setStep(STEP.selectParameters);
-        store.setSelectedExercise(exercise);
+        exerciseParametersSelectorModal.open({
+            imageName: exercise.imageName,
+            exerciseId: exercise.id,
+            exerciseName: exercise.name,
+            onComplete: onParametersComplete,
+        });
     }
 
-    function onParametersComplete(params: CurrentTrainExerciseSet) {
-        if (store.selectedExercise) {
-            store.appendExercise(params);
-            setStep(STEP.selectExercises);
-            store.setSelectedExercise(null);
-        }
-    }
-
-    function onCancelSelection() {
-        setStep(STEP.selectExercises);
-        store.setSelectedExercise(null);
+    function onParametersComplete(params: CurrentTrainExercise) {
+        currentTrainStore.appendExercise(params);
+        exerciseParametersSelectorModal.close();
     }
 
     type Payload = {
         weight: number;
         date: string;
-        exercises: {
+        exercises: ({
             id: number;
+        } & Partial<{
+            speed: number;
+            time: number;
+            incline: number;
+            sets: number;
             reps: number;
             weight: number;
-            sets: number;
-        }[];
+        }>)[];
     };
     function getSavePayload(weight: number): Payload {
         const exercises: Payload['exercises'] = [];
 
-        store.train.exercises.forEach((_exercises) => {
+        currentTrainStore.train.exercises.forEach((_exercises) => {
             exercises.push({
+                ..._exercises,
                 id: _exercises.exerciseId,
-                reps: _exercises.reps,
-                weight: _exercises.weight,
-                sets: _exercises.sets,
             });
         });
 
@@ -97,59 +88,53 @@ export default function HomeScreen() {
             exercises,
         };
     }
-
     const saveOffline = async (weight: number) => {
-        try {
-            let trains = await Storage.getData<unknown[]>(Storage.trains);
-            if (!trains) {
-                trains = [];
-            }
-            Storage.saveData(Storage.trains, [...trains, getSavePayload(weight)]);
-            store.clearExercises();
-            toastStore.setSuccess('Тренировка сохранена локально');
-        } catch (error) {
-            toastStore.setError('Ошибка при сохранении тренировки: ' + error);
+        let trains = await Storage.getData<unknown[]>(Storage.trains);
+        if (!trains) {
+            trains = [];
         }
+        Storage.saveData(Storage.trains, [...trains, getSavePayload(weight)]);
+        currentTrainStore.clearExercises();
+        toastStore.setSuccess('Тренировка сохранена локально');
     };
 
     const saveOnline = async (weight: number) => {
-        try {
-            const token = await Storage.getData<string>(Storage.token);
+        const token = await Storage.getData<string>(Storage.token);
 
-            if (token) {
-                await ApiV2.saveTrain(token, getSavePayload(weight));
-                store.clearExercises();
-                toastStore.setSuccess('Тренировка сохранена');
-                queryClient.invalidateQueries({ queryKey: ['trains'] });
-            }
-        } catch (error) {
-            toastStore.setError('Ошибка при сохранении тренировки: ' + error);
+        if (token) {
+            await ApiV2.saveTrain(token, getSavePayload(weight));
+            currentTrainStore.clearExercises();
+            toastStore.setSuccess('Тренировка сохранена');
+            queryClient.invalidateQueries({ queryKey: ['trains'] });
         }
     };
 
     async function onSave(weight: number) {
-        if (systemStore.isOffline) {
-            saveOffline(weight);
-        } else {
-            saveOnline(weight);
+        try {
+            if (systemStore.isOffline) {
+                await saveOffline(weight);
+                weightInputModal.close();
+                return;
+            }
+            await saveOnline(weight);
+            weightInputModal.close();
+        } catch (error) {
+            toastStore.setError('Ошибка при сохранении тренировки: ' + error);
         }
     }
 
-    const isParametersExerciseVisible = useMemo(
-        () => !!store.selectedExercise && step === STEP.selectParameters,
-        [store.selectedExercise, step],
-    );
-
     return (
         <CWrapper style={{ flex: 1 }}>
-            {store.train.exercises.length !== 0 && (
+            {currentTrainStore.train.exercises.length !== 0 && (
                 <CurrentTrainApproaches
-                    exercises={store.train.exercises}
-                    onDelete={store.removeExercise}
+                    exercises={currentTrainStore.train.exercises}
+                    onDelete={currentTrainStore.removeExercise}
                 />
             )}
 
-            {store.train.exercises.length !== 0 && <CurrentTraintSaveButton onSave={onSave} />}
+            {currentTrainStore.train.exercises.length !== 0 && (
+                <CurrentTraintSaveButton onSave={onSave} />
+            )}
 
             {exercisesQuery.data && (
                 <ExerciseListSearch
@@ -160,19 +145,6 @@ export default function HomeScreen() {
                     onRefresh={exercisesQuery.refetch}
                 />
             )}
-
-            <CModal visible={isParametersExerciseVisible} onHide={onCancelSelection}>
-                {isParametersExerciseVisible && (
-                    <ExerciseParametersSelector
-                        exercisePhoto={{
-                            uri: Api.getPhotoUrl(store.selectedExercise!.imageName),
-                        }}
-                        exerciseId={store.selectedExercise!.id}
-                        exerciseName={store.selectedExercise!.name}
-                        onComplete={onParametersComplete}
-                    />
-                )}
-            </CModal>
         </CWrapper>
     );
 }

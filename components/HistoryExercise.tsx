@@ -1,7 +1,8 @@
 import { useTheme } from '@/components/ThemeProvider';
 import { ApiV2 } from '@/helpers/api/v2';
 import { prettyDate } from '@/helpers/PrettyDate';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { prettySetParams } from '@/helpers/PrettySetParams';
+import { StyleSheet, Text, View } from 'react-native';
 
 type Props = {
     trains: Awaited<ReturnType<typeof ApiV2.exerciseHistory>>['history'];
@@ -10,18 +11,13 @@ type Props = {
 export const HistoryExercises = (props: Props) => {
     const theme = useTheme();
     const styles = StyleSheet.create({
-        wrapper: {
-            maxHeight: 167,
-            height: 167,
-        },
-        scrollView: {
-            flex: 1,
+        list: {
+            gap: 5,
         },
         item: {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'flex-start',
-            marginBottom: 5,
         },
         date: {
             marginRight: 'auto',
@@ -37,50 +33,20 @@ export const HistoryExercises = (props: Props) => {
     });
 
     return (
-        <View style={styles.wrapper}>
-            <ScrollView style={styles.scrollView}>
-                {(props.trains || []).map((train) => (
-                    <View style={styles.item} key={train.id}>
-                        <View style={styles.dot}></View>
-                        <Text style={styles.date}>{prettyDate(train.date)}</Text>
-                        <View>
-                            {train.approaches.map((set) => (
-                                <Text
-                                    style={{ display: 'flex' }}
-                                    key={`${train.id} ${set.weight} ${set.sets} ${set.reps}`}
-                                >
-                                    <Text
-                                        style={{
-                                            width: 20,
-                                            textAlign: 'right',
-                                        }}
-                                    >
-                                        {set.sets}
-                                    </Text>
-                                    {' подх. по '}
-                                    <Text
-                                        style={{
-                                            width: 20,
-                                            textAlign: 'center',
-                                        }}
-                                    >
-                                        {set.reps}
-                                    </Text>{' '}
-                                    <Text
-                                        style={{
-                                            fontWeight: 'bold',
-                                            width: 55,
-                                            textAlign: 'left',
-                                        }}
-                                    >
-                                        {' ' + set.weight}кг
-                                    </Text>
-                                </Text>
-                            ))}
-                        </View>
+        <View style={styles.list}>
+            {(props.trains || []).map((train) => (
+                <View style={styles.item} key={train.id}>
+                    <View style={styles.dot}></View>
+                    <Text style={styles.date}>{prettyDate(train.date)}</Text>
+                    <View>
+                        {train.approaches.map((set, i) => (
+                            <Text style={{ display: 'flex' }} key={i}>
+                                {prettySetParams(set)}
+                            </Text>
+                        ))}
                     </View>
-                ))}
-            </ScrollView>
+                </View>
+            ))}
         </View>
     );
 };

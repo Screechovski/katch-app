@@ -6,29 +6,23 @@ import { CButton } from '@/components/ui/CButton';
 import { CText } from '@/components/ui/CText';
 import { Storage } from '@/helpers/Storage';
 import { ApiV2 } from '@/helpers/api/v2';
+import { useModal } from '@/hooks/useModal';
 
-interface WeightInputModalProps {
-    visible: boolean;
-    onClose: () => void;
-    onSave: (weight: number) => void;
-}
-
-export function WeightInputModal({ visible, onClose, onSave }: WeightInputModalProps) {
+export function WeightInputModal() {
     const [weight, setWeight] = useState<string>('');
+    const modal = useModal('weightInput');
 
     function handleSave() {
         const weightNumber = parseFloat(weight.replace(/,/gi, '.'));
 
         if (weight === '' || weightNumber > 0) {
-            onSave(weight === '' ? 0 : weightNumber);
-            setWeight('');
-            onClose();
+            modal.payload?.setWeight(weight === '' ? 0 : weightNumber);
         }
     }
 
     function handleCancel() {
         setWeight('');
-        onClose();
+        modal.close();
     }
 
     const [userWeight, setUserWeight] = useState(0);
@@ -45,13 +39,13 @@ export function WeightInputModal({ visible, onClose, onSave }: WeightInputModalP
         }
     };
     useEffect(() => {
-        if (visible) {
+        if (modal.visible) {
             getWeights();
         }
-    }, [visible]);
+    }, [modal.visible]);
 
     return (
-        <CModal visible={visible} onHide={handleCancel}>
+        <CModal visible={modal.visible} onHide={handleCancel}>
             <View style={styles.container}>
                 <CInput
                     style={styles.input}

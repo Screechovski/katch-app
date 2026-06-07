@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { CHr } from '@/components/ui/CHr';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
+import { prettySetParams } from '@/helpers/PrettySetParams';
 
 interface CurrentTrainApproachesProps {
     exercises: CurrentTrainExercise[];
@@ -30,6 +31,7 @@ export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainAppr
                 approachText: {
                     display: 'flex',
                     flexDirection: 'row',
+                    alignItems: 'center',
                     gap: 5,
                     flex: 1,
                 },
@@ -48,6 +50,7 @@ export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainAppr
             }),
         [theme?.theme],
     );
+
     return (
         <>
             <View style={styles.list}>
@@ -55,9 +58,7 @@ export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainAppr
                     <View key={index} style={styles.approach}>
                         <View style={styles.approachText}>
                             <Text style={styles.name}>{exercise.name}</Text>
-                            <Text style={styles.weight}>
-                                {exercise.weight}кг {exercise.sets}x{exercise.reps}
-                            </Text>
+                            <Text style={styles.weight}>{prettySetParams(exercise)}</Text>
                         </View>
                         <CIconButton
                             onPress={() => onDelete(index)}

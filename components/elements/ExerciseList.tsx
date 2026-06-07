@@ -47,7 +47,7 @@ export function ExerciseList(props: Props) {
             style={props.style}
             data={props.exercises}
             renderItem={({ item }) => (
-                <View style={{ width: itemWidth, padding: 2, borderRadius: 6 }}>
+                <View style={{ width: itemWidth, paddingVertical: 2, borderRadius: 6 }}>
                     <ExerciseCardVertical
                         onPress={() => props.onPress(item)}
                         photo={{

@@ -2,18 +2,32 @@ import { instance } from '@/helpers/api/v1';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { AxiosRequestConfig } from 'axios';
 
-type TrainV2Exercise = {
-    id: number;
+export type SetParams = {
     sets: number;
     weight: number;
     reps: number;
+    calories: number;
+    distance: number;
+    duration: number;
+    incline: number;
+    speed: number;
+    time: number;
+};
+
+export type TrainV2Exercise = {
+    id: number;
     groups: {
         level: number;
         id: number;
     }[];
     imageName: string;
     name: string;
-};
+} & Partial<SetParams>;
+
+export type CurrentTrainExercise = {
+    name: string;
+    exerciseId: number;
+} & Partial<SetParams>;
 
 export type TrainV2 = {
     id: number;
@@ -31,10 +45,7 @@ type TrainsV2 = {
 
 type SaveTrainExercise = {
     id: number;
-    sets: number;
-    reps: number;
-    weight: number;
-};
+} & Partial<SetParams>;
 
 type SaveTrain = {
     date: string;
@@ -100,11 +111,7 @@ export class ApiV2 {
         history: {
             id: number;
             date: string;
-            approaches: {
-                reps: number;
-                weight: number;
-                sets: number;
-            }[];
+            approaches: SetParams[];
         }[];
         oneRepMax: number | null;
     }> {

@@ -4,7 +4,7 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
 import { ExerciseServer } from '@/models/ExerciseServer';
 import { CIconButton } from '@/components/ui/CIconButton';
-import { SettingsHideExercisesModal } from '@/components/SettingsHideExercisesModal';
+import { useModal } from '@/hooks/useModal';
 
 interface Props {
     style?: StyleProp<ViewStyle>;
@@ -57,7 +57,7 @@ export function ExerciseListSearch(props: Props) {
         });
     }, [props.exercises, searchValue]);
 
-    const [isSettingsOpened, setIsSettingsOpened] = useState(false);
+    const modal = useModal('settingsHideExercises');
 
     return (
         <View style={[props.style, style.wrap]}>
@@ -71,7 +71,7 @@ export function ExerciseListSearch(props: Props) {
                 <CIconButton
                     style={style.settingsIcon}
                     name="setting"
-                    onPress={() => setIsSettingsOpened(true)}
+                    onPress={() => modal.open({})}
                 />
             </View>
 
@@ -84,12 +84,6 @@ export function ExerciseListSearch(props: Props) {
                     onRefresh={props.onRefresh}
                 />
             </View>
-
-            {/* <SettingsModal visible={isSettingsOpened} onClose={() => setIsSettingsOpened(false)} /> */}
-            <SettingsHideExercisesModal
-                visible={isSettingsOpened}
-                onClose={() => setIsSettingsOpened(false)}
-            />
         </View>
     );
 }

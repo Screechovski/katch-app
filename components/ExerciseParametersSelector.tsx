@@ -1,5 +1,5 @@
 import { useTheme } from '@/components/ThemeProvider';
-import { CurrentTrainExerciseSet } from '@/store/currentTrainStore';
+import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { CSlider } from '@/components/ui/CSlider';
@@ -18,8 +18,11 @@ interface ExerciseParametersSelectorProps {
     exerciseName: string;
     exerciseId: number;
     exercisePhoto: { uri: string };
-    onComplete: (params: CurrentTrainExerciseSet) => void;
+    onComplete: (params: CurrentTrainExercise) => void;
 }
+
+const CARDIO_WITH_SPEED_TIME = [91, 92, 98];
+const CARDIO_WITH_INCLINE = [91];
 
 export function ExerciseParametersSelector(props: ExerciseParametersSelectorProps) {
     const settingsStore = useSettingsStore();
@@ -90,11 +93,23 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
     };
     const [approachesValue, setApproachesValue] = useState(approaches.min);
 
-    const repeats = {
-        min: 4,
-        max: 16,
+    const incline = {
+        min: 0,
+        max: 20,
     };
-    const [repeatsValue, setRepeatsValue] = useState(repeats.min);
+    const [inclineValue, setInclineValue] = useState(incline.min);
+
+    const speed = {
+        min: 0,
+        max: 12,
+    };
+    const [speedValue, setSpeedValue] = useState(speed.min);
+
+    const time = {
+        min: 4,
+        max: 40,
+    };
+    const [timeValue, setTimeValue] = useState(time.min);
 
     const weight = useMemo(() => {
         let base = {
@@ -112,8 +127,8 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 base.max = 150;
                 break;
             case 65: // Гак-приседания
-                base.min = 90;
-                base.max = 200;
+                base.min = 10;
+                base.max = 220;
                 break;
             case 6: // Жим гантелей сидя
                 base.min = 4;
@@ -143,11 +158,37 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
     }, [props.exerciseId]);
     const [weightValue, setWeightValue] = useState(weight.min);
 
+    const repeats = {
+        min: 4,
+        max: 16,
+    };
+    const [repeatsValue, setRepeatsValue] = useState(repeats.min);
+
     const onComplete = () => {
+        const res: Partial<{
+            speed: number;
+            time: number;
+            incline: number;
+            sets: number;
+            reps: number;
+            weight: number;
+        }> = {};
+        if (CARDIO_WITH_SPEED_TIME.includes(props.exerciseId)) {
+            res.speed = speedValue;
+            res.time = timeValue;
+        }
+        if (CARDIO_WITH_INCLINE.includes(props.exerciseId)) {
+            res.incline = inclineValue;
+        }
+        if (!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId)) {
+            res.sets = approachesValue;
+            res.reps = repeatsValue;
+            res.weight = weightValue;
+        }
         props.onComplete({
-            sets: approachesValue,
-            reps: repeatsValue,
-            weight: weightValue,
+            ...res,
+            exerciseId: props.exerciseId,
+            name: props.exerciseName,
         });
     };
 
@@ -237,7 +278,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 <Text style={styles.exercisesName}>{props.exerciseName}</Text>
             </View>
 
-            <View style={{ height: 60 }}>
+            <View>
                 {history.isFetching && <CLoader />}
                 {exerciseEffectiveness && <Text>RM {exerciseEffectiveness.rm}</Text>}
                 {exerciseEffectiveness && (
@@ -248,7 +289,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             </View>
 
             {settingsStore.isHistoryInExerciseSelector && (
-                <View style={{ height: 190 }}>
+                <View>
                     {isHrVisible && (
                         <>
                             <CHr />
@@ -262,39 +303,80 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                             {history.error && (
                                 <CInformer message={history.error.message} type="error" />
                             )}
+                            <CHr />
                         </>
                     )}
                 </View>
             )}
 
-            <View style={styles.line}>
-                <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
-                <CSlider
-                    value={approachesValue}
-                    onChange={setApproachesValue}
-                    min={approaches.min}
-                    max={approaches.max}
-                />
-            </View>
-            <View style={styles.line}>
-                <Text style={styles.lineTitle}>Повторения: {repeatsValue}</Text>
-                <CSlider
-                    value={repeatsValue}
-                    onChange={setRepeatsValue}
-                    min={repeats.min}
-                    max={repeats.max}
-                />
-            </View>
-            <View style={styles.line}>
-                <Text style={styles.lineTitle}>Вес: {weightValue}</Text>
-                <CSlider
-                    value={weightValue}
-                    step={2.5}
-                    onChange={setWeightValue}
-                    min={weight.min}
-                    max={weight.max}
-                />
-            </View>
+            {!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
+                <>
+                    <View style={styles.line}>
+                        <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
+                        <CSlider
+                            value={approachesValue}
+                            onChange={setApproachesValue}
+                            min={approaches.min}
+                            max={approaches.max}
+                        />
+                    </View>
+                    <View style={styles.line}>
+                        <Text style={styles.lineTitle}>Повторения: {repeatsValue}</Text>
+                        <CSlider
+                            value={repeatsValue}
+                            onChange={setRepeatsValue}
+                            min={repeats.min}
+                            max={repeats.max}
+                        />
+                    </View>
+                    <View style={styles.line}>
+                        <Text style={styles.lineTitle}>Вес: {weightValue}</Text>
+                        <CSlider
+                            value={weightValue}
+                            step={2.5}
+                            onChange={setWeightValue}
+                            min={weight.min}
+                            max={weight.max}
+                        />
+                    </View>
+                </>
+            )}
+            {CARDIO_WITH_INCLINE.includes(props.exerciseId) && (
+                <View style={styles.line}>
+                    <Text style={styles.lineTitle}>Уклон: {inclineValue}°</Text>
+                    <CSlider
+                        value={inclineValue}
+                        step={1}
+                        onChange={setInclineValue}
+                        min={incline.min}
+                        max={incline.max}
+                    />
+                </View>
+            )}
+            {CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
+                <View style={styles.line}>
+                    <Text style={styles.lineTitle}>Скорость: {speedValue}км/ч</Text>
+                    <CSlider
+                        value={speedValue}
+                        step={0.5}
+                        onChange={setSpeedValue}
+                        min={speed.min}
+                        max={speed.max}
+                    />
+                </View>
+            )}
+            {CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
+                <View style={styles.line}>
+                    <Text style={styles.lineTitle}>Время: {timeValue}мин</Text>
+                    <CSlider
+                        value={timeValue}
+                        step={1}
+                        onChange={setTimeValue}
+                        min={time.min}
+                        max={time.max}
+                    />
+                </View>
+            )}
 
             <CButton style={styles.button} variant="success" onPress={onComplete}>
                 сохранить

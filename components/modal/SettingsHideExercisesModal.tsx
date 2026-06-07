@@ -17,11 +17,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Ionicons } from '@expo/vector-icons';
 import { CButton } from '@/components/ui/CButton';
 import { useToastStore } from '@/store/toastStore';
-
-interface Props {
-    visible: boolean;
-    onClose: () => void;
-}
+import { useModal } from '@/hooks/useModal';
 
 const styles = StyleSheet.create({
     overlay: {
@@ -36,7 +32,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export function SettingsHideExercisesModal(props: Props) {
+export function SettingsHideExercisesModal() {
     const { height } = useWindowDimensions();
     const exercisesQuery = useQuery({
         queryKey: ['exercises'],
@@ -72,10 +68,11 @@ export function SettingsHideExercisesModal(props: Props) {
     };
     const queryClient = useQueryClient();
     const toast = useToastStore();
+    const modal = useModal('settingsHideExercises');
     const saveHidden = async () => {
         try {
             await Storage.saveData(Storage.settingsHiddenExercises, tmpHiddens);
-            props.onClose();
+            modal.close();
             queryClient.invalidateQueries({ queryKey: ['excluded_exercises'] });
         } catch (error) {
             // @ts-ignore
@@ -91,7 +88,7 @@ export function SettingsHideExercisesModal(props: Props) {
     }, [exercisesQuery.data, tmpHiddens]);
 
     return (
-        <CModal visible={props.visible} onHide={props.onClose}>
+        <CModal visible={modal.visible} onHide={modal.close}>
             <View style={{ width: 300, maxHeight: height - 115 }}>
                 <CText variant="h3">Выберете упражнения которые хотите скрыть</CText>
                 {exercisesQuery.data && (

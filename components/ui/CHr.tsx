@@ -6,8 +6,8 @@ export const CHr = () => {
     const styles = StyleSheet.create({
         hr: {
             height: 3,
-            marginBottom: 10,
-            marginTop: 10,
+            marginBottom: 5,
+            marginTop: 5,
             borderRadius: 2,
             backgroundColor: theme?.colors.primary.i80,
         },

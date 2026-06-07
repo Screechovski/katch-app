@@ -3,7 +3,7 @@ import { Alert, Text, FlatList } from 'react-native';
 import { CWrapper } from '@/components/ui/CWrapper';
 import { HistoryCard } from '@/components/HistoryCard';
 import { Storage } from '@/helpers/Storage';
-import { RemoveTrainApproveModal } from '@/components/RemoveTrainApproveModal';
+import { RemoveTrainApproveModal } from '@/components/modal/RemoveTrainApproveModal';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ApiV2, TrainV2 } from '@/helpers/api/v2';
 
