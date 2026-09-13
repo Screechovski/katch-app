@@ -4,7 +4,7 @@ import { CWrapper } from '@/shared/ui/CWrapper';
 import { useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ExerciseServer } from '@/models/ExerciseServer';
+import { ExerciseServer } from '@/entities/exercise';
 import { CurrentTrainExercise, useCurrentTrainStore } from '@/store/currentTrainStore';
 import { CurrentTraintSaveButton } from '@/components/CurrentTraintSaveButton';
 import { Storage } from '@/helpers/Storage';

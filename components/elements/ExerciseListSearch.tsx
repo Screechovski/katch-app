@@ -2,7 +2,7 @@ import { CInput } from '@/shared/ui/CInput';
 import { useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
-import { ExerciseServer } from '@/models/ExerciseServer';
+import { ExerciseServer } from '@/entities/exercise';
 import { CIconButton } from '@/shared/ui/CIconButton';
 import { useModal } from '@/hooks/useModal';
 

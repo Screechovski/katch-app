@@ -1,6 +1,5 @@
 import { FlatList, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
-import { ExerciseCardVertical } from './ExerciseCardVertical';
-import { ExerciseServer } from '@/models/ExerciseServer';
+import { ExerciseCardVertical, ExerciseServer } from '@/entities/exercise';
 import { Api } from '@/helpers/api/v1';
 import { useMemo } from 'react';
 

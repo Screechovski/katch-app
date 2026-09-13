@@ -1,4 +1,4 @@
-import { Model } from '@/models/Model';
+import { Model } from '@/shared/lib/model';
 
 export class ExerciseServer extends Model {
     id: number;

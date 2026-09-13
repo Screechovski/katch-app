@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Storage } from '@/helpers/Storage';
 import { CHr } from '@/shared/ui/CHr';
 import { useSettingsStore } from '@/store/settingsStore';
-import { HistoryExercises } from '@/components/HistoryExercise';
+import { HistoryExercises } from '@/entities/train';
 import { CLoader } from '@/shared/ui/CLoader';
 import { CInformer } from '@/shared/ui/CInformer';
 import { useToastStore } from '@/store/toastStore';

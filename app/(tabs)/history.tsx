@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, Text, FlatList } from 'react-native';
 import { CWrapper } from '@/shared/ui/CWrapper';
-import { HistoryCard } from '@/components/HistoryCard';
+import { HistoryCard } from '@/entities/train';
 import { Storage } from '@/helpers/Storage';
 import { RemoveTrainApproveModal } from '@/components/modal/RemoveTrainApproveModal';
 import { useInfiniteQuery } from '@tanstack/react-query';

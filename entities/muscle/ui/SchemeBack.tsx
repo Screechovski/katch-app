@@ -1,7 +1,7 @@
 import Svg, { Path } from 'react-native-svg';
 import React from 'react';
-import { useGetColor } from '@/components/Scheme/hooks/useGetColor';
-import { useGetSchemeWidth } from '@/components/Scheme/hooks/useGetSchemeWidth';
+import { useGetColor } from '../lib/useGetColor';
+import { useGetSchemeWidth } from '../lib/useGetSchemeWidth';
 
 interface Props {
     intence?: {

@@ -1,5 +1,5 @@
-import { GROUPS_MAP } from '@/components/Scheme/constants';
-import { interpolateColor } from '@/components/Scheme/helper';
+import { GROUPS_MAP } from './constants';
+import { interpolateColor } from './helper';
 import { useCallback, useMemo } from 'react';
 
 export function useGetColor(intence: { id: number; value: number }[]) {

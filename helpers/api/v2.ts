@@ -1,5 +1,5 @@
 import { instance } from '@/helpers/api/v1';
-import { ExerciseServer } from '@/models/ExerciseServer';
+import { ExerciseServer } from '@/entities/exercise';
 import { AxiosRequestConfig } from 'axios';
 
 export type SetParams = {
