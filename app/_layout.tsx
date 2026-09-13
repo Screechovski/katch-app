@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '@/shared/lib/theme';
 import { Toast } from '@/components/Toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';

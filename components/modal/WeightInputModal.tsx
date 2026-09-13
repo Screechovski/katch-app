@@ -1,9 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 import { useEffect, useState } from 'react';
-import { CModal } from '@/components/ui/CModal';
-import { CInput } from '@/components/ui/CInput';
-import { CButton } from '@/components/ui/CButton';
-import { CText } from '@/components/ui/CText';
+import { CModal } from '@/shared/ui/CModal';
+import { CInput } from '@/shared/ui/CInput';
+import { CButton } from '@/shared/ui/CButton';
+import { CText } from '@/shared/ui/CText';
 import { Storage } from '@/helpers/Storage';
 import { ApiV2 } from '@/helpers/api/v2';
 import { useModal } from '@/hooks/useModal';

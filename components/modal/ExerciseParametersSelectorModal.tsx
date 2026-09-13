@@ -1,5 +1,5 @@
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
-import { CModal } from '@/components/ui/CModal';
+import { CModal } from '@/shared/ui/CModal';
 import { Api } from '@/helpers/api/v1';
 import { useModal } from '@/hooks/useModal';
 

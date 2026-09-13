@@ -1,4 +1,4 @@
-import { CInformer } from '@/components/ui/CInformer';
+import { CInformer } from '@/shared/ui/CInformer';
 import { useToastStore } from '@/store/toastStore';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 

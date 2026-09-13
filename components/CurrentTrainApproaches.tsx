@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { CIconButton } from '@/components/ui/CIconButton';
+import { CIconButton } from '@/shared/ui/CIconButton';
 import { useMemo } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
-import { CHr } from '@/components/ui/CHr';
+import { useTheme } from '@/shared/lib/theme';
+import { CHr } from '@/shared/ui/CHr';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { prettySetParams } from '@/helpers/PrettySetParams';
 

@@ -1,4 +1,4 @@
-import { CWrapper } from '@/components/ui/CWrapper';
+import { CWrapper } from '@/shared/ui/CWrapper';
 import { View } from 'react-native';
 
 export default function StatisticPage() {

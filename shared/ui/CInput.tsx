@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, TextStyle, View } from 'react-native';
 import { useMemo } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { AntDesign } from '@expo/vector-icons';
 
 interface Props {

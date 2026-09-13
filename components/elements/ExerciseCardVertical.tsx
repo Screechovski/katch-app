@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { useMemo } from 'react';
 import {
     Image,

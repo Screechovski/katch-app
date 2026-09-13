@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
-import { CIconButton } from '@/components/ui/CIconButton';
+import { CIconButton } from '@/shared/ui/CIconButton';
 import { Api } from '@/helpers/api/v1';
 import { SchemeFront } from '@/components/Scheme/SchemeFront';
 import { SchemeBack } from '@/components/Scheme/SchemeBack';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { TrainV2 } from '@/helpers/api/v2';
 import { prettySetParams } from '@/helpers/PrettySetParams';

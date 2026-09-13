@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Modal, StyleSheet, View, ViewStyle } from 'react-native';
 import { CIconButton } from './CIconButton';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 
 interface Props {
     children: ReactNode;

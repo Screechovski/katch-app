@@ -1,9 +1,9 @@
-import { CInput } from '@/components/ui/CInput';
+import { CInput } from '@/shared/ui/CInput';
 import { useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
 import { ExerciseServer } from '@/models/ExerciseServer';
-import { CIconButton } from '@/components/ui/CIconButton';
+import { CIconButton } from '@/shared/ui/CIconButton';
 import { useModal } from '@/hooks/useModal';
 
 interface Props {

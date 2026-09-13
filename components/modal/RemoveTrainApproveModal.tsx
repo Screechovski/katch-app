@@ -1,7 +1,7 @@
-import { useTheme } from '@/components/ThemeProvider';
-import { CButton } from '@/components/ui/CButton';
-import { CInput } from '@/components/ui/CInput';
-import { CModal } from '@/components/ui/CModal';
+import { useTheme } from '@/shared/lib/theme';
+import { CButton } from '@/shared/ui/CButton';
+import { CInput } from '@/shared/ui/CInput';
+import { CModal } from '@/shared/ui/CModal';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { CButton } from '@/components/ui/CButton';
+import { CButton } from '@/shared/ui/CButton';
 import { useSystemStore } from '@/store/systemStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useModal } from '@/hooks/useModal';

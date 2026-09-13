@@ -1,7 +1,7 @@
-import { useTheme } from '@/components/ThemeProvider';
-import { CButton } from '@/components/ui/CButton';
-import { CCheckbox } from '@/components/ui/CCheckbox';
-import { CWrapper } from '@/components/ui/CWrapper';
+import { useTheme } from '@/shared/lib/theme';
+import { CButton } from '@/shared/ui/CButton';
+import { CCheckbox } from '@/shared/ui/CCheckbox';
+import { CWrapper } from '@/shared/ui/CWrapper';
 import { Api } from '@/helpers/api/v1';
 import { Storage } from '@/helpers/Storage';
 import { useSettingsStore } from '@/store/settingsStore';

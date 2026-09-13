@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { Slider } from '@miblanchard/react-native-slider';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';

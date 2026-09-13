@@ -1,6 +1,6 @@
 import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
-import { CWrapper } from '@/components/ui/CWrapper';
+import { CWrapper } from '@/shared/ui/CWrapper';
 import { useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

@@ -1,16 +1,16 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { CSlider } from '@/components/ui/CSlider';
-import { CButton } from '@/components/ui/CButton';
+import { CSlider } from '@/shared/ui/CSlider';
+import { CButton } from '@/shared/ui/CButton';
 import { useQuery } from '@tanstack/react-query';
 import { Storage } from '@/helpers/Storage';
-import { CHr } from '@/components/ui/CHr';
+import { CHr } from '@/shared/ui/CHr';
 import { useSettingsStore } from '@/store/settingsStore';
 import { HistoryExercises } from '@/components/HistoryExercise';
-import { CLoader } from '@/components/ui/CLoader';
-import { CInformer } from '@/components/ui/CInformer';
+import { CLoader } from '@/shared/ui/CLoader';
+import { CInformer } from '@/shared/ui/CInformer';
 import { useToastStore } from '@/store/toastStore';
 import { ApiV2 } from '@/helpers/api/v2';
 

@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { AntDesign } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';

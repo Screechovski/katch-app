@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { CLoader } from '@/components/ui/CLoader';
-import { useTheme } from '@/components/ThemeProvider';
+import { CLoader } from '@/shared/ui/CLoader';
+import { useTheme } from '@/shared/lib/theme';
 
 interface Props {
     onPress(): void;

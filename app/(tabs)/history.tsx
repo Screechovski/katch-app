@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, Text, FlatList } from 'react-native';
-import { CWrapper } from '@/components/ui/CWrapper';
+import { CWrapper } from '@/shared/ui/CWrapper';
 import { HistoryCard } from '@/components/HistoryCard';
 import { Storage } from '@/helpers/Storage';
 import { RemoveTrainApproveModal } from '@/components/modal/RemoveTrainApproveModal';

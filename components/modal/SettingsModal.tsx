@@ -1,7 +1,7 @@
 import { View } from 'react-native';
-import { CModal } from '@/components/ui/CModal';
-import { CButton } from '@/components/ui/CButton';
-import { CText } from '@/components/ui/CText';
+import { CModal } from '@/shared/ui/CModal';
+import { CButton } from '@/shared/ui/CButton';
+import { CText } from '@/shared/ui/CText';
 
 interface Props {
     visible: boolean;

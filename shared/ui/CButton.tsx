@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
-import { CLoader } from '@/components/ui/CLoader';
+import { CLoader } from '@/shared/ui/CLoader';
 import { useMemo } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 
 interface Props {
     children: string;

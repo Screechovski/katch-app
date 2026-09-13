@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { ApiV2 } from '@/helpers/api/v2';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { prettySetParams } from '@/helpers/PrettySetParams';

@@ -6,16 +6,16 @@ import {
     useWindowDimensions,
     View,
 } from 'react-native';
-import { CModal } from '@/components/ui/CModal';
-import { CText } from '@/components/ui/CText';
+import { CModal } from '@/shared/ui/CModal';
+import { CText } from '@/shared/ui/CText';
 import { ApiV2 } from '@/helpers/api/v2';
 import { Storage } from '@/helpers/Storage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Api } from '@/helpers/api/v1';
 import { useEffect, useMemo, useState } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { Ionicons } from '@expo/vector-icons';
-import { CButton } from '@/components/ui/CButton';
+import { CButton } from '@/shared/ui/CButton';
 import { useToastStore } from '@/store/toastStore';
 import { useModal } from '@/hooks/useModal';
 

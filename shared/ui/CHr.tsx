@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/shared/lib/theme';
 import { StyleSheet, View } from 'react-native';
 
 export const CHr = () => {

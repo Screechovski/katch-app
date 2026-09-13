@@ -1,7 +1,7 @@
-import { CButton } from '@/components/ui/CButton';
-import { CInformer } from '@/components/ui/CInformer';
-import { CInput } from '@/components/ui/CInput';
-import { CLoader } from '@/components/ui/CLoader';
+import { CButton } from '@/shared/ui/CButton';
+import { CInformer } from '@/shared/ui/CInformer';
+import { CInput } from '@/shared/ui/CInput';
+import { CLoader } from '@/shared/ui/CLoader';
 import { ApiV2 } from '@/helpers/api/v2';
 import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
