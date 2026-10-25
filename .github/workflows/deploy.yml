@@ -34,7 +34,7 @@ jobs:
                   username: ${{ secrets.SSH_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: ${{ secrets.SSH_PORT || 22 }}
-                  script: find /srv/katchapp/infra/web -mindepth 1 ! -name .gitkeep -delete
+                  script: find /root/katchapp/infra/web -mindepth 1 ! -name .gitkeep -delete
 
             - name: Upload build
               uses: appleboy/scp-action@v0.1.7
@@ -44,5 +44,5 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: ${{ secrets.SSH_PORT || 22 }}
                   source: "dist/*"
-                  target: "/srv/katchapp/infra/web"
+                  target: "/root/katchapp/infra/web"
                   strip_components: 1
