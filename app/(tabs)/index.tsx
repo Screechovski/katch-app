@@ -2,7 +2,6 @@ import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/shared/ui/CWrapper';
 import { useEffect } from 'react';
-import { useWindowDimensions } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExerciseServer } from '@/entities/exercise';
 import { CurrentTrainExercise, useCurrentTrainStore } from '@/store/currentTrainStore';
@@ -12,10 +11,11 @@ import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
 import { ApiV2 } from '@/helpers/api/v2';
 import { useModal } from '@/hooks/useModal';
+import { useScreenSize } from '@/hooks/useScreenWidth';
 
 export default function HomeScreen() {
     const queryClient = useQueryClient();
-    const { width } = useWindowDimensions();
+    const { width } = useScreenSize();
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
     const weightInputModal = useModal('weightInput');

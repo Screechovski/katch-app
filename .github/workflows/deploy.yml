@@ -1,13 +1,16 @@
-name: Deploy to Server
+name: Build & Deploy web
 
 on:
     push:
         branches: [main]
 
+concurrency:
+    group: prod-web
+    cancel-in-progress: true
+
 jobs:
     deploy:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -15,7 +18,8 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: 18
+                  node-version: 22
+                  cache: npm
 
             - name: Install dependencies
               run: npm ci
@@ -23,12 +27,22 @@ jobs:
             - name: Build project
               run: npm run build:web
 
-            - name: Deploy to server
+            - name: Clean target
+              uses: appleboy/ssh-action@v1.2.0
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  script: find /srv/katchapp/infra/web -mindepth 1 ! -name .gitkeep -delete
+
+            - name: Upload build
               uses: appleboy/scp-action@v0.1.7
               with:
                   host: ${{ secrets.SSH_HOST }}
                   username: ${{ secrets.SSH_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  source: 'dist/*'
-                  target: ${{ secrets.SSH_PATH }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  source: "dist/*"
+                  target: "/srv/katchapp/infra/web"
                   strip_components: 1

@@ -1,11 +1,4 @@
-import {
-    FlatList,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    useWindowDimensions,
-    View,
-} from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { CModal } from '@/shared/ui/CModal';
 import { CText } from '@/shared/ui/CText';
 import { ApiV2 } from '@/helpers/api/v2';
@@ -18,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CButton } from '@/shared/ui/CButton';
 import { useToastStore } from '@/store/toastStore';
 import { useModal } from '@/hooks/useModal';
+import { useScreenSize } from '@/hooks/useScreenWidth';
 
 const styles = StyleSheet.create({
     overlay: {
@@ -33,7 +27,7 @@ const styles = StyleSheet.create({
 });
 
 export function SettingsHideExercisesModal() {
-    const { height } = useWindowDimensions();
+    const { height } = useScreenSize();
     const exercisesQuery = useQuery({
         queryKey: ['exercises'],
         queryFn: async () => {

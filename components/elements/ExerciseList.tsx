@@ -1,7 +1,8 @@
-import { FlatList, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
+import { FlatList, StyleProp, Text, View, ViewStyle } from 'react-native';
 import { ExerciseCardVertical, ExerciseServer } from '@/entities/exercise';
 import { Api } from '@/helpers/api/v1';
 import { useMemo } from 'react';
+import { useScreenSize } from '@/hooks/useScreenWidth';
 
 interface Props {
     width?: number;
@@ -14,8 +15,7 @@ interface Props {
 
 export function ExerciseList(props: Props) {
     const count = 3;
-    const { width } = useWindowDimensions();
-
+    const { width } = useScreenSize();
     const itemWidth = useMemo(() => {
         const parentWidth = props.width ?? width;
 
