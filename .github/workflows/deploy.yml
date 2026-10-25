@@ -1,48 +1,53 @@
-name: Build & Deploy web
-
+name: Deploy web
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [main]
 
 concurrency:
-    group: prod-web
-    cancel-in-progress: true
+  group: prod-web
+  cancel-in-progress: true
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build project
-              run: npm run build:web
+      - name: Build web
+        run: npm run build:web
 
-            - name: Clean target
-              uses: appleboy/ssh-action@v1.2.0
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USER }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: ${{ secrets.SSH_PORT || 22 }}
-                  script: find /root/katchapp/infra/web -mindepth 1 ! -name .gitkeep -delete
+      - name: Pack build
+        run: tar czf web.tgz -C dist .
 
-            - name: Upload build
-              uses: appleboy/scp-action@v0.1.7
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USER }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: ${{ secrets.SSH_PORT || 22 }}
-                  source: "dist/*"
-                  target: "/root/katchapp/infra/web"
-                  strip_components: 1
+      - name: Upload build
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: web.tgz
+          target: /root/app/katch-app
+
+      - name: Apply
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /root/app/katch-app
+            find . -mindepth 1 -maxdepth 1 ! -name web.tgz -exec rm -rf {} +
+            tar xzf web.tgz
+            rm -f web.tgz
+            ls -1
