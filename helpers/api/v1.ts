@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { TrainServer, TrainsFromServer } from '@/models/TrainsServer';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
@@ -14,62 +13,5 @@ export const instance = axios.create({
 export class Api {
     static getPhotoUrl(photoName: string) {
         return `${API_BASE_URL}/image/exercise/${photoName}`;
-    }
-
-    static async exerciseHistory(
-        token: string,
-        exerciseId: number,
-    ): Promise<{
-        trains:
-            | {
-                  trainDate: string;
-                  trainId: number;
-                  approaches: {
-                      reps: number;
-                      weight: number;
-                      sets: number;
-                  }[];
-              }[]
-            | null;
-        rm: number;
-    }> {
-        const response = await instance.get(`/exercise/history/${exerciseId}`, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        return response.data;
-    }
-
-    static async trains(token: string, page: number): Promise<TrainsFromServer> {
-        const response = await instance.get(`/train?page=${page}`, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        return response.data;
-    }
-
-    static async saveTrain(token: string, train: any): Promise<TrainServer[]> {
-        const response = await instance.post('/train', train, {
-            headers: {
-                Authorization: token,
-            },
-        });
-        return response.data;
-    }
-
-    static async removeTrain(token: string, id: number): Promise<void> {
-        const response = await instance.delete('/train', {
-            params: { id },
-            headers: {
-                Authorization: token,
-            },
-        });
-        return response.data;
-    }
-
-    static checkToken(token: string): Promise<{ isValid: boolean }> {
-        return instance.post('/check-token', { token }).then((response) => response.data);
     }
 }

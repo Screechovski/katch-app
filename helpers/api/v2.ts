@@ -14,6 +14,8 @@ export type SetParams = {
     time: number;
 };
 
+export type TrainDifficulty = 'easy' | 'normal' | 'hard';
+
 export type TrainV2Exercise = {
     id: number;
     groups: {
@@ -33,6 +35,7 @@ export type TrainV2 = {
     id: number;
     date: string;
     userWeight: number;
+    difficulty?: TrainDifficulty | null;
     exercises: TrainV2Exercise[];
 };
 
@@ -47,9 +50,10 @@ type SaveTrainExercise = {
     id: number;
 } & Partial<SetParams>;
 
-type SaveTrain = {
+export type SaveTrain = {
     date: string;
     weight: number;
+    difficulty?: TrainDifficulty | null;
     exercises: SaveTrainExercise[];
 };
 

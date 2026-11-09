@@ -10,6 +10,7 @@ import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
 import { ApiV2 } from '@/helpers/api/v2';
+import type { TrainDifficulty } from '@/helpers/api/v2';
 import { useModal } from '@/hooks/useModal';
 import { useScreenSize } from '@/hooks/useScreenWidth';
 
@@ -61,6 +62,7 @@ export default function HomeScreen() {
     type Payload = {
         weight: number;
         date: string;
+        difficulty: TrainDifficulty | null;
         exercises: ({
             id: number;
         } & Partial<{
@@ -72,7 +74,7 @@ export default function HomeScreen() {
             weight: number;
         }>)[];
     };
-    function getSavePayload(weight: number): Payload {
+    function getSavePayload(weight: number, difficulty: TrainDifficulty | null): Payload {
         const exercises: Payload['exercises'] = [];
 
         currentTrainStore.train.exercises.forEach((_exercises) => {
@@ -85,38 +87,39 @@ export default function HomeScreen() {
         return {
             weight,
             date: new Date().toISOString(),
+            difficulty,
             exercises,
         };
     }
-    const saveOffline = async (weight: number) => {
+    const saveOffline = async (weight: number, difficulty: TrainDifficulty | null) => {
         let trains = await Storage.getData<unknown[]>(Storage.trains);
         if (!trains) {
             trains = [];
         }
-        Storage.saveData(Storage.trains, [...trains, getSavePayload(weight)]);
+        Storage.saveData(Storage.trains, [...trains, getSavePayload(weight, difficulty)]);
         currentTrainStore.clearExercises();
         toastStore.setSuccess('Тренировка сохранена локально');
     };
 
-    const saveOnline = async (weight: number) => {
+    const saveOnline = async (weight: number, difficulty: TrainDifficulty | null) => {
         const token = await Storage.getData<string>(Storage.token);
 
         if (token) {
-            await ApiV2.saveTrain(token, getSavePayload(weight));
+            await ApiV2.saveTrain(token, getSavePayload(weight, difficulty));
             currentTrainStore.clearExercises();
             toastStore.setSuccess('Тренировка сохранена');
             queryClient.invalidateQueries({ queryKey: ['trains'] });
         }
     };
 
-    async function onSave(weight: number) {
+    async function onSave(weight: number, difficulty: TrainDifficulty | null) {
         try {
             if (systemStore.isOffline) {
-                await saveOffline(weight);
+                await saveOffline(weight, difficulty);
                 weightInputModal.close();
                 return;
             }
-            await saveOnline(weight);
+            await saveOnline(weight, difficulty);
             weightInputModal.close();
         } catch (error) {
             toastStore.setError('Ошибка при сохранении тренировки: ' + error);

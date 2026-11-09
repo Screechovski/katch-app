@@ -1,11 +1,12 @@
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
+import type { TrainDifficulty } from '@/helpers/api/v2';
 import { create } from 'zustand';
 
 type ModalState = {
     modals: {
         settingsHideExercises: null | {};
         weightInput: null | {
-            setWeight(n: number): void;
+            onSave(weight: number, difficulty: TrainDifficulty | null): void;
         };
         exerciseParametersSelector: null | {
             imageName: string;

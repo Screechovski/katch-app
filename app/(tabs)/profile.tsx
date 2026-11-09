@@ -2,7 +2,7 @@ import { useTheme } from '@/shared/lib/theme';
 import { CButton } from '@/shared/ui/CButton';
 import { CCheckbox } from '@/shared/ui/CCheckbox';
 import { CWrapper } from '@/shared/ui/CWrapper';
-import { Api } from '@/helpers/api/v1';
+import { ApiV2 } from '@/helpers/api/v2';
 import { Storage } from '@/helpers/Storage';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useToastStore } from '@/store/toastStore';
@@ -48,7 +48,7 @@ export default function ProfilePage() {
                 }
 
                 for (const train of trains) {
-                    await Api.saveTrain(lsToken, train);
+                    await ApiV2.saveTrain(lsToken, train);
                     toastStore.setSuccess(`Тренировка ${train.date} сохранена`);
                 }
 

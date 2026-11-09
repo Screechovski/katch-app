@@ -6,7 +6,21 @@ import { SchemeBack, SchemeFront } from '@/entities/muscle';
 import { useTheme } from '@/shared/lib/theme';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { TrainV2 } from '@/helpers/api/v2';
+import type { TrainDifficulty } from '@/helpers/api/v2';
 import { prettySetParams } from '@/helpers/PrettySetParams';
+import { CBadge } from '@/shared/ui/CBadge';
+import { Colors } from '@/constants/Theme';
+
+const DIFFICULTY_LABELS: Record<TrainDifficulty, string> = {
+    easy: 'Легко',
+    normal: 'Средне',
+    hard: 'Тяжело',
+};
+const DIFFICULTY_COLORS: Record<TrainDifficulty, string> = {
+    easy: Colors.success.i7,
+    normal: Colors.warning.i8,
+    hard: Colors.danger.i6,
+};
 
 interface Props {
     train: TrainV2;
@@ -21,16 +35,23 @@ export function HistoryCard({ train, remove }: Props) {
                 card: {
                     flexDirection: 'column',
                     backgroundColor: theme?.colors.background.i3,
-                    borderRadius: 10,
-                    padding: 3,
+                    borderRadius: 16,
+                    padding: 6,
                     marginBottom: 6,
+                },
+                dateRow: {
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    gap: 5,
+                    marginBottom: 4,
                 },
                 date: {
                     fontSize: 13,
                     fontWeight: 600,
                     color: theme?.colors.background.i7,
                     textAlign: 'center',
-                    marginBottom: 2,
+                    marginLeft: 'auto',
+                    marginRight: 6,
                 },
                 line: {
                     fontSize: 16,
@@ -58,13 +79,18 @@ export function HistoryCard({ train, remove }: Props) {
                     fontSize: 14,
                     color: theme?.colors.background.i8,
                     fontWeight: 600,
+                    marginLeft: 6,
+                },
+                difficulty: {
+                    fontSize: 14,
+                    color: theme?.colors.background.i8,
                 },
                 imageWrapper: {
                     filter: theme?.theme === 'dark' ? 'invert(1)' : undefined,
                 },
                 image: {
-                    width: 40,
-                    height: 40,
+                    width: 30,
+                    height: 30,
                     borderRadius: 3,
                 },
             }),
@@ -100,7 +126,14 @@ export function HistoryCard({ train, remove }: Props) {
 
     return (
         <View style={styles.card}>
-            <Text style={styles.date}>{prettyDate(train.date)}</Text>
+            <View style={styles.dateRow}>
+                {!!train.difficulty && (
+                    <CBadge color={DIFFICULTY_COLORS[train.difficulty]}>
+                        {DIFFICULTY_LABELS[train.difficulty]}
+                    </CBadge>
+                )}
+                <Text style={styles.date}>{prettyDate(train.date)}</Text>
+            </View>
 
             {formatedExercises.map((exercise) => (
                 <View style={styles.line} key={exercise.key}>
