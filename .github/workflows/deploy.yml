@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           source: web.tgz
-          target: /root/app/katch-app
+          target: /srv/katchapp/web
 
       - name: Apply
         uses: appleboy/ssh-action@v1.2.0
@@ -46,7 +46,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -e
-            cd /root/app/katch-app
+            cd /srv/katchapp/web
             find . -mindepth 1 -maxdepth 1 ! -name web.tgz -exec rm -rf {} +
             tar xzf web.tgz
             rm -f web.tgz
