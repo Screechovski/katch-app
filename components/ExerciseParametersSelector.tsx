@@ -2,7 +2,7 @@ import { useTheme } from '@/shared/lib/theme';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { CSlider } from '@/shared/ui/CSlider';
+import { CWheelPicker } from '@/shared/ui/CWheelPicker';
 import { CButton } from '@/shared/ui/CButton';
 import { useQuery } from '@tanstack/react-query';
 import { Storage } from '@/helpers/Storage';
@@ -54,14 +54,22 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                     color: theme?.colors.background.i9,
                     flex: 1,
                 },
-                line: {
-                    marginBottom: 5,
+
+                wheels: {
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    gap: 4,
                 },
-                lineTitle: {
+                wheel: {
+                    width: 70,
+                },
+                wheelLabel: {
                     fontSize: 14,
                     fontFamily: 'Montserrat',
+                    textAlign: 'center',
                     color: theme?.colors.background.i9,
                 },
+
                 button: {
                     marginTop: 10,
                 },
@@ -74,6 +82,46 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
         [theme?.theme],
     );
 
+    const approachesValues = [1, 2, 3, 4, 5, 6, 7];
+    const [approachesValue, setApproachesValue] = useState(approachesValues[0]);
+
+    const repsValues = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20];
+    const [repsValue, setRepsValue] = useState(repsValues[0]);
+
+    const weightValues = (() => {
+        const res: number[] = [];
+        for (let i = 0; i <= 11; i++) {
+            res.push(i);
+        }
+
+        for (let i = 12.5; i <= 60; i += 2.5) {
+            res.push(i);
+        }
+
+        for (let i = 65; i <= 130; i += 5) {
+            res.push(i);
+        }
+
+        for (let i = 140; i <= 300; i += 10) {
+            res.push(i);
+        }
+        return res;
+    })();
+    const [weightValue, setWeightValue] = useState(weightValues[0]);
+
+    const inclineValues = Array.from({ length: 21 }, (_, i) => i); // 0..20°
+    const [inclineValue, setInclineValue] = useState(inclineValues[0]);
+
+    const speedValues = Array.from({ length: 39 }, (_, i) => 1 + i * 0.5); // 1..20 км/ч
+    const [speedValue, setSpeedValue] = useState(speedValues[0]);
+
+    // 3-10 (шаг 1), 12-28 (шаг 2), 30-90 (шаг 5)
+    const timeValues = [
+        3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50, 55, 60,
+        65, 70, 75, 80, 85, 90,
+    ];
+    const [timeValue, setTimeValue] = useState(timeValues[0]);
+
     const history = useQuery({
         queryKey: ['exerciseHistory', props.exerciseId],
         queryFn: async () => {
@@ -84,85 +132,31 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             return null;
         },
         refetchOnMount: false,
-        staleTime: 1000,
     });
-
-    const approaches = {
-        min: 1,
-        max: 6,
-    };
-    const [approachesValue, setApproachesValue] = useState(approaches.min);
-
-    const incline = {
-        min: 0,
-        max: 20,
-    };
-    const [inclineValue, setInclineValue] = useState(incline.min);
-
-    const speed = {
-        min: 0,
-        max: 12,
-    };
-    const [speedValue, setSpeedValue] = useState(speed.min);
-
-    const time = {
-        min: 4,
-        max: 40,
-    };
-    const [timeValue, setTimeValue] = useState(time.min);
-
-    const weight = useMemo(() => {
-        let base = {
-            min: 5,
-            max: 90,
-        };
-
-        switch (props.exerciseId) {
-            case 72: // Румынский подъем
-                base.min = 40;
-                base.max = 120;
-                break;
-            case 66: // Жим ногами
-                base.min = 50;
-                base.max = 150;
-                break;
-            case 65: // Гак-приседания
-                base.min = 10;
-                base.max = 220;
-                break;
-            case 6: // Жим гантелей сидя
-                base.min = 4;
-                base.max = 60;
-                break;
-            case 34: // Жим гантелей лежа
-            case 40: // Сведения рук в тренажере
-            case 95: // Подъем EZ-штанги на бицепс на скамье Скотта
-            case 19: // Подъем штанги на бицепс обратным хватом
-                base.min = 5;
-                base.max = 60;
-                break;
-            case 51: // Подтягивания на перекладине
-                base.min = -45;
-                base.max = 30;
-                break;
-            case 14: // Молоток
-            case 7: // Жим Арнольда
-            case 81: // Сгибания рук в запястьях
-                base.min = 5;
-                base.max = 40;
-            default:
-                break;
+    useMemo(() => {
+        if (!history.data?.history?.[0]) return;
+        const { approaches } = history.data?.history?.[0];
+        if (!approaches[0]) return;
+        const { reps, sets, weight, speed, time, incline } = approaches[0];
+        if (approachesValues.includes(sets) && sets !== approachesValue) {
+            setApproachesValue(sets);
         }
-
-        return base;
-    }, [props.exerciseId]);
-    const [weightValue, setWeightValue] = useState(weight.min);
-
-    const repeats = {
-        min: 4,
-        max: 16,
-    };
-    const [repeatsValue, setRepeatsValue] = useState(repeats.min);
+        if (repsValues.includes(reps) && reps !== repsValue) {
+            setRepsValue(reps);
+        }
+        if (weightValues.includes(weight) && weight !== weightValue) {
+            setWeightValue(weight);
+        }
+        if (speedValues.includes(speed) && speed !== speedValue) {
+            setSpeedValue(speed);
+        }
+        if (timeValues.includes(time) && time !== timeValue) {
+            setTimeValue(time);
+        }
+        if (inclineValues.includes(incline) && incline !== inclineValue) {
+            setInclineValue(incline);
+        }
+    }, [history.data?.history]);
 
     const onComplete = () => {
         const res: Partial<{
@@ -182,7 +176,7 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
         }
         if (!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId)) {
             res.sets = approachesValue;
-            res.reps = repeatsValue;
+            res.reps = repsValue;
             res.weight = weightValue;
         }
         props.onComplete({
@@ -252,13 +246,13 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
         };
 
         try {
-            return analyzeExerciseLoad({ rm, weightValue, repeatsValue });
+            return analyzeExerciseLoad({ rm, weightValue, repeatsValue: repsValue });
         } catch (error) {
             // @ts-ignore
             toastStore.setError(error?.message || 'ошибка при расчетах');
             return null;
         }
-    }, [history.data?.oneRepMax, weightValue, repeatsValue]);
+    }, [history.data?.oneRepMax, weightValue, repsValue]);
 
     const isHrVisible = useMemo(() => {
         return (
@@ -292,16 +286,29 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
                 <View>
                     {isHrVisible && (
                         <>
-                            <CHr />
-                            {history.data?.history && (
-                                <HistoryExercises trains={history.data.history} />
+                            {!!history.data?.history.length && (
+                                <>
+                                    <CHr />
+                                    <HistoryExercises trains={history.data.history} />
+                                </>
                             )}
                             {history.data?.history === null && (
-                                <Text style={{ textAlign: 'center' }}>пусто</Text>
+                                <>
+                                    <CHr />
+                                    <Text style={{ textAlign: 'center' }}>пусто</Text>
+                                </>
                             )}
-                            {history.isFetching && <CLoader />}
+                            {history.isFetching && (
+                                <>
+                                    <CHr />
+                                    <CLoader />
+                                </>
+                            )}
                             {history.error && (
-                                <CInformer message={history.error.message} type="error" />
+                                <>
+                                    <CHr />
+                                    <CInformer message={history.error.message} type="error" />
+                                </>
                             )}
                             <CHr />
                         </>
@@ -310,71 +317,53 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             )}
 
             {!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
-                <>
-                    <View style={styles.line}>
-                        <Text style={styles.lineTitle}>Подходы: {approachesValue}</Text>
-                        <CSlider
+                <View style={styles.wheels}>
+                    <View style={styles.wheel}>
+                        <Text style={styles.wheelLabel}>Подх.</Text>
+                        <CWheelPicker
                             value={approachesValue}
+                            list={approachesValues}
                             onChange={setApproachesValue}
-                            min={approaches.min}
-                            max={approaches.max}
                         />
                     </View>
-                    <View style={styles.line}>
-                        <Text style={styles.lineTitle}>Повторения: {repeatsValue}</Text>
-                        <CSlider
-                            value={repeatsValue}
-                            onChange={setRepeatsValue}
-                            min={repeats.min}
-                            max={repeats.max}
-                        />
+                    <View style={styles.wheel}>
+                        <Text style={styles.wheelLabel}>Повт.</Text>
+                        <CWheelPicker value={repsValue} list={repsValues} onChange={setRepsValue} />
                     </View>
-                    <View style={styles.line}>
-                        <Text style={styles.lineTitle}>Вес: {weightValue}</Text>
-                        <CSlider
+                    <View style={styles.wheel}>
+                        <Text style={styles.wheelLabel}>Вес</Text>
+                        <CWheelPicker
                             value={weightValue}
-                            step={2.5}
+                            list={weightValues}
                             onChange={setWeightValue}
-                            min={weight.min}
-                            max={weight.max}
                         />
                     </View>
-                </>
-            )}
-            {CARDIO_WITH_INCLINE.includes(props.exerciseId) && (
-                <View style={styles.line}>
-                    <Text style={styles.lineTitle}>Уклон: {inclineValue}°</Text>
-                    <CSlider
-                        value={inclineValue}
-                        step={1}
-                        onChange={setInclineValue}
-                        min={incline.min}
-                        max={incline.max}
-                    />
                 </View>
             )}
             {CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
-                <View style={styles.line}>
-                    <Text style={styles.lineTitle}>Скорость: {speedValue}км/ч</Text>
-                    <CSlider
-                        value={speedValue}
-                        step={0.5}
-                        onChange={setSpeedValue}
-                        min={speed.min}
-                        max={speed.max}
-                    />
-                </View>
-            )}
-            {CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
-                <View style={styles.line}>
-                    <Text style={styles.lineTitle}>Время: {timeValue}мин</Text>
-                    <CSlider
-                        value={timeValue}
-                        step={1}
-                        onChange={setTimeValue}
-                        min={time.min}
-                        max={time.max}
-                    />
+                <View style={styles.wheels}>
+                    {CARDIO_WITH_INCLINE.includes(props.exerciseId) && (
+                        <View style={styles.wheel}>
+                            <Text style={styles.wheelLabel}>Уклон</Text>
+                            <CWheelPicker
+                                value={inclineValue}
+                                list={inclineValues}
+                                onChange={setInclineValue}
+                            />
+                        </View>
+                    )}
+                    <View style={styles.wheel}>
+                        <Text style={styles.wheelLabel}>Скор.</Text>
+                        <CWheelPicker
+                            value={speedValue}
+                            list={speedValues}
+                            onChange={setSpeedValue}
+                        />
+                    </View>
+                    <View style={styles.wheel}>
+                        <Text style={styles.wheelLabel}>Время</Text>
+                        <CWheelPicker value={timeValue} list={timeValues} onChange={setTimeValue} />
+                    </View>
                 </View>
             )}
 

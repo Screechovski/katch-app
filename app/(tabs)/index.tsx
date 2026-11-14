@@ -74,6 +74,9 @@ export default function HomeScreen() {
             weight: number;
         }>)[];
     };
+    function getSavedExercisesIds() {
+        return currentTrainStore.train.exercises.map((exercises) => exercises.exerciseId);
+    }
     function getSavePayload(weight: number, difficulty: TrainDifficulty | null): Payload {
         const exercises: Payload['exercises'] = [];
 
@@ -92,6 +95,7 @@ export default function HomeScreen() {
         };
     }
     const saveOffline = async (weight: number, difficulty: TrainDifficulty | null) => {
+        // TODO выпилить все связанное с offline в текущей виде
         let trains = await Storage.getData<unknown[]>(Storage.trains);
         if (!trains) {
             trains = [];
@@ -106,9 +110,13 @@ export default function HomeScreen() {
 
         if (token) {
             await ApiV2.saveTrain(token, getSavePayload(weight, difficulty));
-            currentTrainStore.clearExercises();
             toastStore.setSuccess('Тренировка сохранена');
             queryClient.invalidateQueries({ queryKey: ['trains'] });
+            queryClient.invalidateQueries({ queryKey: ['excluded_exercises'] });
+            getSavedExercisesIds().forEach((id) => {
+                queryClient.invalidateQueries({ queryKey: ['exerciseHistory', id] });
+            }); // TODO разобраться почему не работает
+            currentTrainStore.clearExercises();
         }
     };
 

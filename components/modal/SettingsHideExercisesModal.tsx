@@ -87,7 +87,7 @@ export function SettingsHideExercisesModal() {
                 <CText variant="h3">Выберете упражнения которые хотите скрыть</CText>
                 {exercisesQuery.data && (
                     <FlatList
-                        style={{ flex: 1, marginBottom: 6, marginTop: 6 }}
+                        style={{ height: '100%', marginBottom: 6, marginTop: 6 }}
                         data={exercisesWithHidden}
                         renderItem={({ item }) => (
                             <View
