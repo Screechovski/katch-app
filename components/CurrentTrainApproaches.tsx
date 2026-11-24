@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { CIconButton } from '@/shared/ui/CIconButton';
-import { useMemo } from 'react';
-import { useTheme } from '@/shared/lib/theme';
+import { IconButton } from '@/shared/ui/Button';
+import { Colors } from '@/constants/Theme';
 import { CHr } from '@/shared/ui/CHr';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { prettySetParams } from '@/helpers/PrettySetParams';
@@ -12,45 +11,6 @@ interface CurrentTrainApproachesProps {
 }
 
 export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainApproachesProps) {
-    const theme = useTheme();
-    const styles = useMemo(
-        () =>
-            StyleSheet.create({
-                list: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 5,
-                },
-                approach: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: 5,
-                    width: '100%',
-                },
-                approachText: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 5,
-                    flex: 1,
-                },
-                name: {
-                    color: theme?.colors.background.i8,
-                    fontSize: 14,
-                    lineHeight: 14 * 1.2,
-                    textAlign: 'left',
-                    flex: 1,
-                },
-                weight: {
-                    color: theme?.colors.background.i8,
-                    fontSize: 14,
-                    fontWeight: '600',
-                },
-            }),
-        [theme?.theme],
-    );
-
     return (
         <>
             <View style={styles.list}>
@@ -60,11 +20,11 @@ export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainAppr
                             <Text style={styles.name}>{exercise.name}</Text>
                             <Text style={styles.weight}>{prettySetParams(exercise)}</Text>
                         </View>
-                        <CIconButton
+                        <IconButton
                             onPress={() => onDelete(index)}
-                            name="delete"
-                            inline
-                            variant="error"
+                            label={`Удалить подход: ${exercise.name}`}
+                            icon="trash-can-outline"
+                            variant="secondary"
                         />
                     </View>
                 ))}
@@ -73,3 +33,37 @@ export function CurrentTrainApproaches({ exercises, onDelete }: CurrentTrainAppr
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    list: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 5,
+    },
+    approach: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 5,
+        width: '100%',
+    },
+    approachText: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
+        flex: 1,
+    },
+    name: {
+        color: Colors.background.i8,
+        fontSize: 14,
+        lineHeight: 14 * 1.2,
+        textAlign: 'left',
+        flex: 1,
+    },
+    weight: {
+        color: Colors.background.i8,
+        fontSize: 14,
+        fontWeight: '600',
+    },
+});

@@ -1,9 +1,9 @@
-import { useTheme } from '@/shared/lib/theme';
-import { CButton } from '@/shared/ui/CButton';
-import { CInput } from '@/shared/ui/CInput';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
 import { CModal } from '@/shared/ui/CModal';
+import { workoutColors as colors, workoutFonts as fonts } from '@/shared/ui/workout/theme';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 interface Props {
     visible: boolean;
@@ -13,47 +13,32 @@ interface Props {
 }
 
 export function RemoveTrainApproveModal({ visible, trainDate, onClose, onRemove }: Props) {
-    const theme = useTheme();
-    const styles = StyleSheet.create({
-        container: {
-            borderRadius: 10,
-            minWidth: 300,
-        },
-        title: {
-            fontSize: 18,
-            marginBottom: 10,
-            color: theme?.colors.background.i8,
-        },
-        input: {
-            marginBottom: 10,
-        },
-    });
-    const [_trainDate, setTrainDate] = useState('');
-
-    const removeHandle = () => {
-        if ((!trainDate && _trainDate === '') || trainDate === _trainDate) {
-            onRemove();
-        }
-    };
+    const [enteredDate, setEnteredDate] = useState('');
+    const { width } = useWindowDimensions();
 
     useEffect(() => {
-        setTrainDate('');
-    }, [visible]);
+        setEnteredDate('');
+    }, [visible, trainDate]);
 
     return (
         <CModal visible={visible} onHide={onClose}>
-            <View style={styles.container}>
-                <Text style={styles.title}>Для подтверждения, введите дату тренировки</Text>
-                <CInput
-                    style={styles.input}
-                    placeholder={trainDate || ''}
-                    value={_trainDate}
-                    onInput={setTrainDate}
+            <View style={[styles.container, { width: Math.min(320, width - 48) }]}>
+                <Text accessibilityRole="header" style={styles.title}>Удалить тренировку?</Text>
+                <Input
+                    label="Дата тренировки для подтверждения"
+                    placeholder={trainDate}
+                    value={enteredDate}
+                    onChangeText={setEnteredDate}
                 />
-                <CButton onPress={removeHandle} variant="error">
-                    удалить
-                </CButton>
+                <Button onPress={onRemove} disabled={enteredDate !== (trainDate ?? '')} variant="secondary">
+                    Удалить
+                </Button>
             </View>
         </CModal>
     );
 }
+
+const styles = StyleSheet.create({
+    container: { gap: 14 },
+    title: { fontFamily: fonts.semibold, fontSize: 18, color: colors.ink },
+});

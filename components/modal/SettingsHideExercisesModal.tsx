@@ -6,9 +6,9 @@ import { Storage } from '@/helpers/Storage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Api } from '@/helpers/api/v1';
 import { useEffect, useMemo, useState } from 'react';
-import { useTheme } from '@/shared/lib/theme';
+import { Colors } from '@/constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { useToastStore } from '@/store/toastStore';
 import { useModal } from '@/hooks/useModal';
 import { useScreenSize } from '@/hooks/useScreenWidth';
@@ -38,7 +38,6 @@ export function SettingsHideExercisesModal() {
     const cardWidth = useMemo(() => {
         return 300 / 4 - 2;
     }, []);
-    const theme = useTheme();
     const [tmpHiddens, setTmpHiddens] = useState<number[]>([]);
     useEffect(() => {
         Storage.getData<number[]>(Storage.settingsHiddenExercises).then((storageHidden) => {
@@ -83,7 +82,7 @@ export function SettingsHideExercisesModal() {
 
     return (
         <CModal visible={modal.visible} onHide={modal.close}>
-            <View style={{ width: 300, maxHeight: height - 115 }}>
+            <View style={{ width: 300, maxHeight: height - 121 }}>
                 <CText variant="h3">Выберете упражнения которые хотите скрыть</CText>
                 {exercisesQuery.data && (
                     <FlatList
@@ -95,7 +94,7 @@ export function SettingsHideExercisesModal() {
                                     width: cardWidth,
                                     padding: 2,
                                     borderRadius: 6,
-                                    backgroundColor: theme?.colors.light.i4,
+                                    backgroundColor: Colors.light.i4,
                                     overflow: 'hidden',
                                 }}
                             >
@@ -145,7 +144,7 @@ export function SettingsHideExercisesModal() {
                         refreshing={false}
                     />
                 )}
-                <CButton onPress={saveHidden}>Сохранить</CButton>
+                <Button onPress={saveHidden}>Сохранить</Button>
             </View>
         </CModal>
     );

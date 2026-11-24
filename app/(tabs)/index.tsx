@@ -1,6 +1,7 @@
 import { CurrentTrainApproaches } from '@/components/CurrentTrainApproaches';
 import { ExerciseListSearch } from '@/components/elements/ExerciseListSearch';
 import { CWrapper } from '@/shared/ui/CWrapper';
+import { TAB_CONTENT_PADDING } from '@/constants/App';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExerciseServer } from '@/entities/exercise';
@@ -10,13 +11,16 @@ import { Storage } from '@/helpers/Storage';
 import { useSystemStore } from '@/store/systemStore';
 import { useToastStore } from '@/store/toastStore';
 import { ApiV2 } from '@/helpers/api/v2';
+import { Api } from '@/helpers/api/v1';
 import type { TrainDifficulty } from '@/helpers/api/v2';
 import { useModal } from '@/hooks/useModal';
 import { useScreenSize } from '@/hooks/useScreenWidth';
+import { useTabContentBottomPadding } from '@/hooks/useTabContentBottomPadding';
 
 export default function HomeScreen() {
     const queryClient = useQueryClient();
     const { width } = useScreenSize();
+    const bottomPadding = useTabContentBottomPadding();
     const systemStore = useSystemStore();
     const toastStore = useToastStore();
     const weightInputModal = useModal('weightInput');
@@ -47,7 +51,7 @@ export default function HomeScreen() {
     const currentTrainStore = useCurrentTrainStore();
     function onSelectExercise(exercise: ExerciseServer) {
         exerciseParametersSelectorModal.open({
-            imageName: exercise.imageName,
+            exercisePhoto: { uri: Api.getPhotoUrl(exercise.imageName) },
             exerciseId: exercise.id,
             exerciseName: exercise.name,
             onComplete: onParametersComplete,
@@ -135,7 +139,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <CWrapper style={{ flex: 1 }}>
+        <CWrapper style={{ ...TAB_CONTENT_PADDING, paddingBottom: 0 }}>
             {currentTrainStore.train.exercises.length !== 0 && (
                 <CurrentTrainApproaches
                     exercises={currentTrainStore.train.exercises}
@@ -149,7 +153,8 @@ export default function HomeScreen() {
 
             {exercisesQuery.data && (
                 <ExerciseListSearch
-                    width={width - 20}
+                    width={width - 2 * TAB_CONTENT_PADDING.paddingHorizontal}
+                    bottomPadding={bottomPadding}
                     loading={exercisesQuery.isFetching}
                     onSelect={onSelectExercise}
                     exercises={exercisesQuery.data}

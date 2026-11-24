@@ -1,6 +1,6 @@
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { CInformer } from '@/shared/ui/CInformer';
-import { CInput } from '@/shared/ui/CInput';
+import { Input } from '@/shared/ui/Input';
 import { CLoader } from '@/shared/ui/CLoader';
 import { ApiV2 } from '@/helpers/api/v2';
 import { Storage } from '@/helpers/Storage';
@@ -62,11 +62,12 @@ export function UserTokenForm(props: Props) {
                 gap: 10,
             }}
         >
-            <CInput
+            <Input
                 label="Введите токен пользователя"
                 placeholder="Введите токен"
                 value={token}
-                onInput={setToken}
+                onChangeText={setToken}
+                clearable
             />
 
             {!!error && <CInformer message={error} type="error" />}
@@ -75,12 +76,12 @@ export function UserTokenForm(props: Props) {
 
             {!loading && (
                 <View style={styles.buttons}>
-                    <CButton disabled={token.trim() === ''} onPress={checkToken}>
-                        войти
-                    </CButton>
-                    <CButton variant="success" onPress={goOffline}>
+                    <Button disabled={token.trim() === ''} onPress={checkToken}>
+                        Войти
+                    </Button>
+                    <Button variant="secondary" onPress={goOffline}>
                         Оффлайн режим
-                    </CButton>
+                    </Button>
                 </View>
             )}
         </View>

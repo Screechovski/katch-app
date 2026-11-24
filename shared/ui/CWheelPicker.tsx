@@ -9,6 +9,7 @@ import {
     Platform,
     ViewStyle,
 } from 'react-native';
+import { workoutColors as colors, workoutFonts as fonts } from '@/shared/ui/workout/theme';
 
 const ITEM_HEIGHT = 26; // Высота одной строки
 const VISIBLE_ITEMS = 5; // Сколько цифр видно одновременно (5 = 2 сверху, 1 по центру, 2 снизу)
@@ -17,6 +18,7 @@ interface CWheelPickerProps {
     list: number[];
     value: number;
     onChange: (value: number) => void;
+    variant?: 'default' | 'workout';
 }
 
 const indexOfValue = (list: number[], value: number) => {
@@ -24,7 +26,8 @@ const indexOfValue = (list: number[], value: number) => {
     return index < 0 ? 0 : index;
 };
 
-export function CWheelPicker({ list, value, onChange }: CWheelPickerProps) {
+export function CWheelPicker({ list, value, onChange, variant = 'default' }: CWheelPickerProps) {
+    const isWorkout = variant === 'workout';
     const valueIndex = indexOfValue(list, value);
     const [selectedIndex, setSelectedIndex] = useState(valueIndex);
     const listRef = useRef<FlatList<number>>(null);
@@ -35,21 +38,18 @@ export function CWheelPicker({ list, value, onChange }: CWheelPickerProps) {
     // последнее значение, ушедшее наружу — защита от двойного onChange
     const lastSent = useRef(value);
 
-    const scrollTo = (index: number) => {
-        const offset = index * ITEM_HEIGHT;
+    useEffect(() => {
+        lastSent.current = value;
+        setSelectedIndex(valueIndex);
+
+        const offset = valueIndex * ITEM_HEIGHT;
         ignoreOffset.current = offset;
         listRef.current?.scrollToOffset({ offset, animated: false });
         if (clearTimer.current) clearTimeout(clearTimer.current);
         clearTimer.current = setTimeout(() => {
             if (ignoreOffset.current === offset) ignoreOffset.current = null;
         }, 100);
-    };
-
-    useEffect(() => {
-        lastSent.current = value;
-        setSelectedIndex(valueIndex);
-        scrollTo(valueIndex);
-    }, [valueIndex]);
+    }, [value, valueIndex]);
 
     useEffect(
         () => () => {
@@ -106,14 +106,25 @@ export function CWheelPicker({ list, value, onChange }: CWheelPickerProps) {
 
         return (
             <View style={styles.itemContainer}>
-                <Text style={[styles.itemText, { fontSize, opacity, color }]}>{item}</Text>
+                <Text style={[
+                    styles.itemText,
+                    { fontSize, opacity, color },
+                    isWorkout && styles.workoutText,
+                    isWorkout && distance === 0 && styles.workoutSelectedText,
+                    isWorkout && distance >= 2 && styles.workoutFarText,
+                ]}>
+                    {isWorkout ? String(item).replace('.', ',') : item}
+                </Text>
             </View>
         );
     };
 
     return (
-        <View style={styles.wheelWrapper}>
-            <View style={styles.selectionIndicator} pointerEvents="none" />
+        <View style={[styles.wheelWrapper, isWorkout && styles.workoutWrapper]}>
+            <View
+                style={[styles.selectionIndicator, isWorkout && styles.workoutIndicator]}
+                pointerEvents="none"
+            />
 
             <FlatList
                 ref={listRef}
@@ -128,6 +139,7 @@ export function CWheelPicker({ list, value, onChange }: CWheelPickerProps) {
                 initialScrollIndex={valueIndex}
                 showsVerticalScrollIndicator={false}
                 snapToInterval={ITEM_HEIGHT}
+                nestedScrollEnabled={isWorkout}
                 decelerationRate="fast"
                 onScroll={handleScroll}
                 onMomentumScrollEnd={handleMomentumEnd}
@@ -148,19 +160,31 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    workoutWrapper: {
+        backgroundColor: colors.surface,
+        borderRadius: 16,
+        outlineStyle: 'solid',
+        outlineWidth: 1,
+        outlineColor: colors.border,
+        outlineOffset: -1,
+    },
     list: {
         width: '100%',
         ...(Platform.OS === 'web' ? ({ scrollSnapType: 'y mandatory' } as ViewStyle) : null),
     },
-    content: {
-        paddingVertical: ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2),
-    },
+    content: { paddingVertical: ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2) },
     selectionIndicator: {
         position: 'absolute',
         width: '100%',
         height: ITEM_HEIGHT,
         backgroundColor: '#F2F2F7',
         borderRadius: 10,
+    },
+    workoutIndicator: {
+        left: 5,
+        right: 5,
+        width: 'auto',
+        backgroundColor: colors.mint,
     },
     itemContainer: {
         height: ITEM_HEIGHT,
@@ -172,4 +196,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
     },
+    workoutText: { fontFamily: fonts.medium, fontVariant: ['tabular-nums'], color: colors.muted, opacity: 1 },
+    workoutSelectedText: { fontFamily: fonts.semibold, color: colors.mintDark },
+    workoutFarText: { opacity: 0.9 },
 });

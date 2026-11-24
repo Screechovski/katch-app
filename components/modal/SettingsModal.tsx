@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { CModal } from '@/shared/ui/CModal';
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { CText } from '@/shared/ui/CText';
 
 interface Props {
@@ -13,7 +13,7 @@ export function SettingsModal(props: Props) {
         <CModal visible={props.visible} onHide={props.onClose}>
             <View>
                 <CText variant="h3">Настройки</CText>
-                <CButton onPress={() => {}}>Скрыть упражнения</CButton>
+                <Button onPress={() => {}}>Скрыть упражнения</Button>
             </View>
         </CModal>
     );

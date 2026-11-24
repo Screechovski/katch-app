@@ -1,18 +1,15 @@
 import { ExerciseParametersSelector } from '@/components/ExerciseParametersSelector';
 import { CModal } from '@/shared/ui/CModal';
-import { Api } from '@/helpers/api/v1';
 import { useModal } from '@/hooks/useModal';
 
 export const ExerciseParametersSelectorModal = () => {
     const modal = useModal('exerciseParametersSelector');
 
     return (
-        <CModal visible={modal.visible} onHide={modal.close}>
+        <CModal visible={modal.visible} onHide={modal.close} variant="workout">
             {modal.payload && (
                 <ExerciseParametersSelector
-                    exercisePhoto={{
-                        uri: Api.getPhotoUrl(modal.payload.imageName),
-                    }}
+                    exercisePhoto={modal.payload.exercisePhoto}
                     exerciseId={modal.payload.exerciseId}
                     exerciseName={modal.payload.exerciseName}
                     onComplete={modal.payload.onComplete}

@@ -1,9 +1,9 @@
-import { useTheme } from '@/shared/lib/theme';
+import { workoutColors as colors, workoutFonts as fonts } from '@/shared/ui/workout/theme';
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import { useMemo, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { CWheelPicker } from '@/shared/ui/CWheelPicker';
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { useQuery } from '@tanstack/react-query';
 import { Storage } from '@/helpers/Storage';
 import { CHr } from '@/shared/ui/CHr';
@@ -17,7 +17,7 @@ import { ApiV2 } from '@/helpers/api/v2';
 interface ExerciseParametersSelectorProps {
     exerciseName: string;
     exerciseId: number;
-    exercisePhoto: { uri: string };
+    exercisePhoto: ImageSourcePropType;
     onComplete: (params: CurrentTrainExercise) => void;
 }
 
@@ -27,61 +27,8 @@ const CARDIO_WITH_INCLINE = [91];
 export function ExerciseParametersSelector(props: ExerciseParametersSelectorProps) {
     const settingsStore = useSettingsStore();
     const toastStore = useToastStore();
-    const theme = useTheme();
-    const styles = useMemo(
-        () =>
-            StyleSheet.create({
-                header: {
-                    flexDirection: 'row',
-                    alignItems: 'flex-end',
-                    gap: 10,
-                    marginBottom: 5,
-                },
-                imageWrapper: {
-                    height: 90,
-                    width: 90,
-                    minWidth: 90,
-                    borderRadius: 5,
-                    filter: theme?.theme === 'dark' ? 'invert(1)' : undefined,
-                },
-
-                image: {
-                    height: '100%',
-                    width: '100%',
-                },
-                exercisesName: {
-                    fontSize: 20,
-                    color: theme?.colors.background.i9,
-                    flex: 1,
-                },
-
-                wheels: {
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    gap: 4,
-                },
-                wheel: {
-                    width: 70,
-                },
-                wheelLabel: {
-                    fontSize: 14,
-                    fontFamily: 'Montserrat',
-                    textAlign: 'center',
-                    color: theme?.colors.background.i9,
-                },
-
-                button: {
-                    marginTop: 10,
-                },
-                hardInfo: {
-                    fontSize: 14,
-                    lineHeight: 1.4 * 14,
-                    height: 1.4 * 14 * 2,
-                },
-            }),
-        [theme?.theme],
-    );
-
+    const isCardio = CARDIO_WITH_SPEED_TIME.includes(props.exerciseId);
+    const hasIncline = CARDIO_WITH_INCLINE.includes(props.exerciseId);
     const approachesValues = [1, 2, 3, 4, 5, 6, 7];
     const [approachesValue, setApproachesValue] = useState(approachesValues[0]);
 
@@ -167,14 +114,14 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
             reps: number;
             weight: number;
         }> = {};
-        if (CARDIO_WITH_SPEED_TIME.includes(props.exerciseId)) {
+        if (isCardio) {
             res.speed = speedValue;
             res.time = timeValue;
         }
-        if (CARDIO_WITH_INCLINE.includes(props.exerciseId)) {
+        if (hasIncline) {
             res.incline = inclineValue;
         }
-        if (!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId)) {
+        if (!isCardio) {
             res.sets = approachesValue;
             res.reps = repsValue;
             res.weight = weightValue;
@@ -254,122 +201,83 @@ export function ExerciseParametersSelector(props: ExerciseParametersSelectorProp
         }
     }, [history.data?.oneRepMax, weightValue, repsValue]);
 
-    const isHrVisible = useMemo(() => {
-        return (
-            history.data?.history ||
-            history.data?.history === null ||
-            history.isFetching ||
-            history.error
-        );
-    }, [history.data?.history, history.error, history.isFetching]);
+    const wheels = isCardio
+        ? [
+            ...(hasIncline ? [{ label: 'Уклон, °', value: inclineValue, list: inclineValues, onChange: setInclineValue }] : []),
+            { label: 'Скорость, км/ч', value: speedValue, list: speedValues, onChange: setSpeedValue },
+            { label: 'Время, мин', value: timeValue, list: timeValues, onChange: setTimeValue },
+        ]
+        : [
+            { label: 'Подходы', value: approachesValue, list: approachesValues, onChange: setApproachesValue },
+            { label: 'Повторы', value: repsValue, list: repsValues, onChange: setRepsValue },
+            { label: 'Вес, кг', value: weightValue, list: weightValues, onChange: setWeightValue },
+        ];
+    const showHistory = settingsStore.isHistoryInExerciseSelector
+        && (history.data != null || history.isFetching || history.isError);
 
     return (
-        <View style={{ width: 300 }}>
+        <View style={styles.form}>
             <View style={styles.header}>
-                <View style={styles.imageWrapper}>
-                    <Image source={props.exercisePhoto} style={styles.image} />
-                </View>
-                <Text style={styles.exercisesName}>{props.exerciseName}</Text>
+                <Image source={props.exercisePhoto} style={styles.image} resizeMode="contain" />
+                <Text accessibilityRole="header" style={styles.exerciseName}>{props.exerciseName}</Text>
             </View>
 
-            <View>
-                {history.isFetching && <CLoader />}
-                {exerciseEffectiveness && <Text>RM {exerciseEffectiveness.rm}</Text>}
-                {exerciseEffectiveness && (
-                    <Text style={[styles.hardInfo, { color: exerciseEffectiveness.color }]}>
-                        {exerciseEffectiveness.description}
-                    </Text>
-                )}
+            <View style={styles.wheels}>
+                {wheels.map(({ label, ...wheel }) => (
+                    <View style={styles.wheel} key={label}>
+                        <Text style={styles.wheelLabel}>{label}</Text>
+                        <CWheelPicker variant="workout" {...wheel} />
+                    </View>
+                ))}
             </View>
 
-            {settingsStore.isHistoryInExerciseSelector && (
-                <View>
-                    {isHrVisible && (
-                        <>
-                            {!!history.data?.history.length && (
-                                <>
-                                    <CHr />
-                                    <HistoryExercises trains={history.data.history} />
-                                </>
-                            )}
-                            {history.data?.history === null && (
-                                <>
-                                    <CHr />
-                                    <Text style={{ textAlign: 'center' }}>пусто</Text>
-                                </>
-                            )}
-                            {history.isFetching && (
-                                <>
-                                    <CHr />
-                                    <CLoader />
-                                </>
-                            )}
-                            {history.error && (
-                                <>
-                                    <CHr />
-                                    <CInformer message={history.error.message} type="error" />
-                                </>
-                            )}
-                            <CHr />
-                        </>
-                    )}
-                </View>
-            )}
-
-            {!CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
-                <View style={styles.wheels}>
-                    <View style={styles.wheel}>
-                        <Text style={styles.wheelLabel}>Подх.</Text>
-                        <CWheelPicker
-                            value={approachesValue}
-                            list={approachesValues}
-                            onChange={setApproachesValue}
-                        />
-                    </View>
-                    <View style={styles.wheel}>
-                        <Text style={styles.wheelLabel}>Повт.</Text>
-                        <CWheelPicker value={repsValue} list={repsValues} onChange={setRepsValue} />
-                    </View>
-                    <View style={styles.wheel}>
-                        <Text style={styles.wheelLabel}>Вес</Text>
-                        <CWheelPicker
-                            value={weightValue}
-                            list={weightValues}
-                            onChange={setWeightValue}
-                        />
-                    </View>
-                </View>
-            )}
-            {CARDIO_WITH_SPEED_TIME.includes(props.exerciseId) && (
-                <View style={styles.wheels}>
-                    {CARDIO_WITH_INCLINE.includes(props.exerciseId) && (
-                        <View style={styles.wheel}>
-                            <Text style={styles.wheelLabel}>Уклон</Text>
-                            <CWheelPicker
-                                value={inclineValue}
-                                list={inclineValues}
-                                onChange={setInclineValue}
-                            />
+            {(exerciseEffectiveness || showHistory || history.isFetching) && (
+                <ScrollView style={styles.details} contentContainerStyle={styles.detailsContent} nestedScrollEnabled>
+                    {exerciseEffectiveness && (
+                        <View style={[styles.analysis, { borderLeftColor: exerciseEffectiveness.color }]}>
+                            <Text style={styles.sectionTitle}>Расчётный максимум · {exerciseEffectiveness.rm} кг</Text>
+                            <Text style={styles.detail}>{exerciseEffectiveness.description}</Text>
                         </View>
                     )}
-                    <View style={styles.wheel}>
-                        <Text style={styles.wheelLabel}>Скор.</Text>
-                        <CWheelPicker
-                            value={speedValue}
-                            list={speedValues}
-                            onChange={setSpeedValue}
-                        />
-                    </View>
-                    <View style={styles.wheel}>
-                        <Text style={styles.wheelLabel}>Время</Text>
-                        <CWheelPicker value={timeValue} list={timeValues} onChange={setTimeValue} />
-                    </View>
-                </View>
+                    {showHistory && (
+                        <View style={styles.history}>
+                            {exerciseEffectiveness && <CHr />}
+                            <Text accessibilityRole="header" style={styles.sectionTitle}>История упражнения</Text>
+                            {!!history.data?.history?.length && <HistoryExercises trains={history.data.history} />}
+                            {history.data && !history.data.history?.length && !history.isFetching && !history.isError && (
+                                <Text style={styles.detail}>Подходов пока нет</Text>
+                            )}
+                            {history.isError && <CInformer message={history.error.message} type="error" />}
+                        </View>
+                    )}
+                    {history.isFetching && <CLoader color={colors.accentFill} />}
+                </ScrollView>
             )}
 
-            <CButton style={styles.button} variant="success" onPress={onComplete}>
-                сохранить
-            </CButton>
+            <Button onPress={onComplete}>Сохранить</Button>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    form: { flexShrink: 1, gap: 14 },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        borderRadius: 16,
+        backgroundColor: colors.canvas,
+        padding: 8,
+    },
+    image: { width: 72, height: 72, borderRadius: 10, backgroundColor: colors.surface },
+    exerciseName: { flex: 1, fontFamily: fonts.semibold, fontSize: 18, lineHeight: 24, color: colors.ink },
+    wheels: { flexDirection: 'row', gap: 8, alignItems: 'flex-end' },
+    wheel: { flex: 1, minWidth: 0, gap: 7 },
+    wheelLabel: { fontFamily: fonts.semibold, fontSize: 12, textAlign: 'center', color: colors.ink },
+    details: { flexGrow: 0, flexShrink: 1, maxHeight: 156 },
+    detailsContent: { gap: 8 },
+    history: { gap: 6 },
+    analysis: { padding: 10, borderRadius: 12, borderLeftWidth: 3, backgroundColor: colors.canvas, gap: 4 },
+    sectionTitle: { fontFamily: fonts.semibold, fontSize: 13, color: colors.ink },
+    detail: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, color: colors.muted },
+});

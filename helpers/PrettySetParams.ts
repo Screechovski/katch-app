@@ -1,13 +1,13 @@
-import { SetParams } from '@/helpers/api/v2';
+import type { SetParams } from '@/helpers/api/v2';
 
 export const prettySetParams = (exercise: Partial<SetParams>) => {
     let line = [];
 
-    if (exercise.weight) {
-        line.push(`${exercise.weight}кг`);
-    }
     if (exercise.sets && exercise.reps) {
         line.push(`${exercise.sets}x${exercise.reps}`);
+    }
+    if (exercise.weight) {
+        line.push(`${exercise.weight}кг`);
     }
     if (exercise.speed) {
         line.push(`${exercise.speed}км/ч`);

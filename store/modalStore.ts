@@ -1,15 +1,17 @@
 import { CurrentTrainExercise } from '@/store/currentTrainStore';
 import type { TrainDifficulty } from '@/helpers/api/v2';
+import type { ImageSourcePropType } from 'react-native';
 import { create } from 'zustand';
 
 type ModalState = {
     modals: {
         settingsHideExercises: null | {};
         weightInput: null | {
+            showWeight?: boolean;
             onSave(weight: number, difficulty: TrainDifficulty | null): void;
         };
         exerciseParametersSelector: null | {
-            imageName: string;
+            exercisePhoto: ImageSourcePropType;
             exerciseId: number;
             exerciseName: string;
             onComplete(params: CurrentTrainExercise): void;

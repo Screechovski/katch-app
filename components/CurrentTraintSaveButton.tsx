@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { useSystemStore } from '@/store/systemStore';
 import { useModal } from '@/hooks/useModal';
 import type { TrainDifficulty } from '@/helpers/api/v2';
@@ -17,9 +17,9 @@ export function CurrentTraintSaveButton({ onSave }: CurrentTraintSaveButtonProps
     }
 
     return (
-        <CButton variant="success" style={styles.save} onPress={handleSavePress}>
+        <Button style={styles.save} onPress={handleSavePress}>
             {systemStore.isOffline ? 'Сохранить в очередь' : 'Сохранить'}
-        </CButton>
+        </Button>
     );
 }
 

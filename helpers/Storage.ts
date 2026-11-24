@@ -4,7 +4,6 @@ export class Storage {
     static token = 'token';
     static trains = 'PostTrains';
     static exercises = 'GetExercises';
-    static theme = '@app:theme';
     static settingsHiddenExercises = 'settings:hiddenExercises';
 
     static async saveData(key: string, value: any) {

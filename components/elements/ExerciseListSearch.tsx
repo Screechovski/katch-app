@@ -1,14 +1,15 @@
-import { CInput } from '@/shared/ui/CInput';
+import { Input } from '@/shared/ui/Input';
 import { useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ExerciseList } from './ExerciseList';
 import { ExerciseServer } from '@/entities/exercise';
-import { CIconButton } from '@/shared/ui/CIconButton';
+import { IconButton } from '@/shared/ui/Button';
 import { useModal } from '@/hooks/useModal';
 
 interface Props {
     style?: StyleProp<ViewStyle>;
     width?: number;
+    bottomPadding?: number;
     loading: boolean;
     exercises: ExerciseServer[];
     onSelect(item: ExerciseServer): void;
@@ -27,12 +28,9 @@ const style = StyleSheet.create({
     header: {
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: 10,
-        gap: 10,
-    },
-    settingsIcon: {
-        height: 50,
-        width: 50,
+        alignItems: 'center',
+        marginBottom: 8,
+        gap: 8,
     },
     listContainer: {
         flex: 1,
@@ -62,15 +60,19 @@ export function ExerciseListSearch(props: Props) {
     return (
         <View style={[props.style, style.wrap]}>
             <View style={style.header}>
-                <CInput
+                <Input
                     style={style.input}
+                    label="Поиск упражнений"
+                    hideLabel
+                    type="search"
                     value={searchValue}
-                    onInput={setSearchValue}
+                    onChangeText={setSearchValue}
                     placeholder="Поиск"
                 />
-                <CIconButton
-                    style={style.settingsIcon}
-                    name="setting"
+                <IconButton
+                    label="Настроить список упражнений"
+                    icon="tune-variant"
+                    variant="secondary"
                     onPress={() => modal.open({})}
                 />
             </View>
@@ -78,6 +80,7 @@ export function ExerciseListSearch(props: Props) {
             <View style={style.listContainer}>
                 <ExerciseList
                     width={props.width}
+                    bottomPadding={props.bottomPadding}
                     loading={props.loading}
                     exercises={filteredExercises}
                     onPress={props.onSelect}

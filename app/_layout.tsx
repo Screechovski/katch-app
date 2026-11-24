@@ -1,4 +1,4 @@
-import { ThemeProvider, useTheme } from '@/shared/lib/theme';
+import { workoutColors, workoutFonts } from '@/shared/ui/workout/theme';
 import { Toast } from '@/components/Toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
@@ -17,22 +17,23 @@ const styles = StyleSheet.create({
     outer: {
         flex: 1,
         alignItems: 'center',
+        backgroundColor: workoutColors.canvas,
     },
     app: {
         flex: 1,
         width: '100%',
         maxWidth: APP_MAX_WIDTH,
     },
+    screen: { backgroundColor: workoutColors.canvas },
 });
 
 function AppShell() {
-    const theme = useTheme();
-
     return (
-        <View style={[styles.outer, { backgroundColor: theme?.colors.background.i3 }]}>
-            <View style={[styles.app, { backgroundColor: theme?.colors.background.i2 }]}>
+        <View style={styles.outer}>
+            <StatusBar barStyle="dark-content" />
+            <View style={styles.app}>
                 <View style={{ paddingTop: StatusBar.currentHeight }} />
-                <Stack screenOptions={{ headerShown: false }} />
+                <Stack screenOptions={{ headerShown: false, contentStyle: styles.screen }} />
                 <SettingsHideExercisesModal />
                 <WeightInputModal />
                 <ExerciseParametersSelectorModal />
@@ -44,15 +45,14 @@ function AppShell() {
 
 export default function RootLayout() {
     useFonts({
-        Montserrat: require('../assets/font/Montserrat-Medium.ttf'),
+        [workoutFonts.medium]: require('../assets/font/Montserrat-Medium.ttf'),
+        [workoutFonts.semibold]: require('../assets/font/Montserrat-SemiBold.ttf'),
     });
 
     return (
         <StrictMode>
             <QueryClientProvider client={queryClient}>
-                <ThemeProvider>
-                    <AppShell />
-                </ThemeProvider>
+                <AppShell />
             </QueryClientProvider>
         </StrictMode>
     );

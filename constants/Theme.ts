@@ -50,23 +50,3 @@ export const Colors = {
         i9: '#000000',
     },
 };
-
-export const ColorsDark = {
-    ...Colors,
-    background: {
-        i2: '#000000',
-        i3: '#141414',
-        i4: '#525252',
-        i5: '#d4d4d4',
-        i6: '#e5e5e5',
-        i7: '#f5f5f5',
-        i8: '#f5f5f5',
-        i9: '#fff',
-    },
-    primary: {
-        ...Colors.primary,
-        i80: 'rgba(96, 85, 248, 1)',
-    },
-};
-
-export type IColor = typeof Colors;

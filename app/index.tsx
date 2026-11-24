@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { CLoader } from '@/shared/ui/CLoader';
 import { Storage } from '@/helpers/Storage';
-import { CButton } from '@/shared/ui/CButton';
+import { Button } from '@/shared/ui/Button';
 import { useToastStore } from '@/store/toastStore';
 import { useSystemStore } from '@/store/systemStore';
 import { ApiV2 } from '@/helpers/api/v2';
@@ -63,10 +63,10 @@ export default function Index() {
         <View style={styles.wrapper}>
             {!isLoading && (
                 <View style={styles.buttons}>
-                    <CButton onPress={checkToken}>Попробовать снова</CButton>
-                    <CButton variant="success" onPress={goOffline}>
+                    <Button onPress={checkToken}>Попробовать снова</Button>
+                    <Button variant="secondary" onPress={goOffline}>
                         Оффлайн режим
-                    </CButton>
+                    </Button>
                 </View>
             )}
             {isLoading && <CLoader />}

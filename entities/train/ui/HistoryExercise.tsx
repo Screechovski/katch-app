@@ -1,4 +1,4 @@
-import { useTheme } from '@/shared/lib/theme';
+import { workoutColors as colors, workoutFonts as fonts } from '@/shared/ui/workout/theme';
 import { ApiV2 } from '@/helpers/api/v2';
 import { prettyDate } from '@/helpers/PrettyDate';
 import { prettySetParams } from '@/helpers/PrettySetParams';
@@ -9,38 +9,14 @@ type Props = {
 };
 
 export const HistoryExercises = (props: Props) => {
-    const theme = useTheme();
-    const styles = StyleSheet.create({
-        list: {
-            gap: 5,
-        },
-        item: {
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-        },
-        date: {
-            marginRight: 'auto',
-            marginLeft: 5,
-        },
-        dot: {
-            height: 6,
-            width: 6,
-            borderRadius: 3,
-            marginTop: 8,
-            backgroundColor: theme?.colors.primary.i80,
-        },
-    });
-
     return (
         <View style={styles.list}>
             {(props.trains || []).map((train) => (
                 <View style={styles.item} key={train.id}>
-                    <View style={styles.dot}></View>
                     <Text style={styles.date}>{prettyDate(train.date)}</Text>
-                    <View>
+                    <View style={styles.approaches}>
                         {train.approaches.map((set, i) => (
-                            <Text style={{ display: 'flex' }} key={i}>
+                            <Text style={styles.params} key={i}>
                                 {prettySetParams(set)}
                             </Text>
                         ))}
@@ -50,3 +26,19 @@ export const HistoryExercises = (props: Props) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    list: { gap: 5 },
+    item: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 10,
+        padding: 8,
+        borderRadius: 10,
+        backgroundColor: colors.canvas,
+    },
+    date: { fontFamily: fonts.semibold, fontSize: 12, color: colors.ink },
+    approaches: { flexShrink: 1, alignItems: 'flex-end' },
+    params: { fontFamily: fonts.medium, fontSize: 12, color: colors.muted, textAlign: 'right' },
+});
